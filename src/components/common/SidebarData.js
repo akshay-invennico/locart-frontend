@@ -3,14 +3,9 @@ import {
   PiCalendarBlank,
   PiShoppingCartLight,
 } from "react-icons/pi";
-import { FaStar, FaUsers } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
 import { BsShop } from "react-icons/bs";
-import { LiaGraduationCapSolid } from "react-icons/lia";
-import { LuClock8, LuWallet } from "react-icons/lu";
-import { GoGift } from "react-icons/go";
-import { IoSettingsOutline } from "react-icons/io5";
 import { PiChartBarBold, PiShoppingCart } from "react-icons/pi";
-import { StoreIcon } from "lucide-react";
 import Image from "next/image";
 
 //  Left Sidebar items
@@ -40,23 +35,13 @@ export const leftSidebarItems = [
     url: "/my-ecom/order",
     icon: <PiShoppingCartLight size={21} />,
   },
-  {
-    title: "Payment & PayOuts",
-    url: "/payment-and-payouts",
-    icon: <LuWallet size={21} />,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: <IoSettingsOutline size={21} />,
-  },
 ];
 
 //  Client Sidebar items
-export const clientSidebarItems =(id)=> [
+export const clientSidebarItems = (id) => [
   {
     title: "Overview",
-   url: `/users/details/overview/${id}`,
+    url: `/users/details/overview/${id}`,
     icon: <PiChartBarBold size={20} />,
   },
   {
@@ -136,19 +121,7 @@ export const myStoreSidebarItems = [
         height={20}
       />
     ),
-  },
-  // {
-  //   title: "Amenities",
-  //   url: "/my-store/amenities",
-  //   icon: (
-  //     <Image
-  //       src="/icons/store_amenities.svg"
-  //       alt="stylist services"
-  //       width={20}
-  //       height={20}
-  //     />
-  //   ),
-  // },
+  }
 ];
 
 export const myEcomSidebarItems = [
@@ -187,19 +160,7 @@ export const myEcomSidebarItems = [
         height={20}
       />
     ),
-  },
-  // {
-  //   title: "Offers",
-  //   url: "/my-ecom/offer",
-  //   icon: (
-  //     <Image
-  //       src="/icons/myecom_offers.svg"
-  //       alt="My Ecom Offers"
-  //       width={20}
-  //       height={20}
-  //     />
-  //   ),
-  // },
+  }
 ];
 
 export const loctitianSidebarItems = [
