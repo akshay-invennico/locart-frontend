@@ -90,7 +90,7 @@ const OperatingHoursPage = () => {
     return (
       <div className="w-full bg-white rounded-lg border border-gray-200 mb-4">
         <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-800">Operating Hours</h2>
+          <h2 className="text-lg font-semibold mb-2">Operating Hours</h2>
         </div>
         <div className="p-6 flex justify-center items-center h-64">
           <div className="text-gray-500">Loading...</div>
@@ -102,7 +102,7 @@ const OperatingHoursPage = () => {
   return (
     <div className="w-full bg-white rounded-lg border border-gray-200 mb-4">
       <div className="p-6 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800">Operating Hours</h2>
+        <h2 className="text-lg font-semibold mb-2">Operating Hours</h2>
       </div>
 
       <div className="p-6">
