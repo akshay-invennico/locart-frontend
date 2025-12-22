@@ -73,8 +73,10 @@ const AuthPage = () => {
   // Handlers
   const handleLogin = async (data) => {
     try {
-      const res = await dispatch(loginUser(data));
+      const res = await dispatch(loginUser(data)).unwrap();
       setUser(res.user);
+      const redirectTo = "/" || res?.redirect;
+      router.push(redirectTo);
       toast.success(res?.message || "Login successful");
     } catch (err) {
       const msg = err?.message || "Login failed";
