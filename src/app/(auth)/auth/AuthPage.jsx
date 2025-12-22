@@ -50,10 +50,8 @@ const AuthPage = () => {
   const confirmPassword = watch("confirmPassword");
 
   useEffect(() => {
-    console.log("useEffect called");
     const tokenFromUrl = searchParams.get("token");
     if (!tokenFromUrl) {
-      toast.error("Invalid or expired link");
       setCurrentView("login");
       setLoading(false);
       return;
@@ -67,7 +65,6 @@ const AuthPage = () => {
         setCurrentView("reset-password");
       })
       .catch((err) => {
-        toast.error(err?.message || "Invalid or expired link");
         setCurrentView("login");
       })
       .finally(() => setLoading(false));

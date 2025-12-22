@@ -62,7 +62,7 @@ export const verifyResetToken = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(
         err.response?.data || {
-          message: err.message || "Invalid or expired token",
+          message: err.message || "Token verification failed",
         }
       );
     }
@@ -110,7 +110,7 @@ const getInitialState = () => {
       if (storedRole) {
         return { ...defaultAuthState, role: storedRole };
       }
-    } catch (_) {}
+    } catch (_) { }
   }
   return {
     // user: null,
@@ -164,7 +164,7 @@ const authSlice = createSlice({
               })
             );
             localStorage.setItem("role", state.role);
-          } catch (_) {}
+          } catch (_) { }
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -173,7 +173,7 @@ const authSlice = createSlice({
         if (typeof window !== "undefined") {
           try {
             localStorage.removeItem("auth");
-          } catch (_) {}
+          } catch (_) { }
         }
       })
       // refresh token reducers
@@ -227,7 +227,7 @@ const authSlice = createSlice({
       })
       .addCase(verifyResetToken.rejected, (state, action) => {
         state.verifyStatus = "failed";
-        state.error = action.payload?.message || "Invalid or expired token";
+        state.error = action.payload?.message || "Token verification failed";
       })
 
       // perform reset password reducers
