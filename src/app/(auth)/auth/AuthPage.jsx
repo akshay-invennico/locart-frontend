@@ -50,6 +50,7 @@ const AuthPage = () => {
   const confirmPassword = watch("confirmPassword");
 
   useEffect(() => {
+    console.log("useEffect called");
     const tokenFromUrl = searchParams.get("token");
     if (!tokenFromUrl) {
       toast.error("Invalid or expired link");
@@ -72,18 +73,12 @@ const AuthPage = () => {
       .finally(() => setLoading(false));
   }, [dispatch, searchParams]);
 
-  if (loading) {
-    return <Spinner />;
-  }
-
   // Handlers
   const handleLogin = async (data) => {
     try {
-      const res = await dispatch(loginUser(data)).unwrap();
+      const res = await dispatch(loginUser(data));
       setUser(res.user);
       toast.success(res?.message || "Login successful");
-      const redirectTo = "/" || res?.redirect;
-      router.push(redirectTo);
     } catch (err) {
       const msg = err?.message || "Login failed";
       toast.error(msg);
@@ -134,6 +129,10 @@ const AuthPage = () => {
       toast.error(err?.message || "Failed to reset password");
     }
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   const renderForm = () => {
     switch (currentView) {
