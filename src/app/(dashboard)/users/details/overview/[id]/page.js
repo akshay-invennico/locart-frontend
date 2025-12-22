@@ -3,23 +3,20 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchClientById } from "@/state/client/clientSlice";
-import PortfolioCard from "@/components/common/PortfolioCard";
-import { FaUser } from "react-icons/fa6";
-import { FaScissors } from "react-icons/fa6";
-import { FaCalendar } from "react-icons/fa6";
 import Image from "next/image";
 import ActionComponent from "@/components/grid/actionComponent";
 import { columns } from "../column";
 import Spinner from "@/components/common/Spinner";
 import { useParams } from "next/navigation";
+import { stats } from "./data";
+import StatCard from "./StatCard";
 
 const ClientDetails = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-
   const { id: clientId } = useParams();
 
-  const { client, summaryBoxes, loading } = useSelector(
+  const { client, loading } = useSelector(
     (state) => state.client
   );
 
@@ -34,36 +31,6 @@ const ClientDetails = () => {
       </div>
     );
   }
-
-  const OverviewData = [
-    {
-      color: "bg-primary1",
-      head: "Total Bookings",
-      total: summaryBoxes?.find((s) => s.key === "totalBookings")?.value ?? 0,
-      countIcon: "",
-      upCount: "8.06",
-      MainIcon: <FaUser size={20} color={"var(--color-primary1)"} />,
-      description: "01 New Booking this month",
-    },
-    {
-      color: "bg-secondary1",
-      head: "Product Orders",
-      total: summaryBoxes?.find((s) => s.key === "productOrders")?.value ?? 0,
-      countIcon: "",
-      upCount: "0.00",
-      MainIcon: <FaScissors size={20} color={"var(--color-secondary1)"} />,
-      description: "0 Product Orders this month",
-    },
-    {
-      color: "bg-tertiary1",
-      head: "Total Spent",
-      total: summaryBoxes?.find((s) => s.key === "totalSpent")?.value ?? 0,
-      countIcon: "8.06%",
-      upCount: "8.06",
-      MainIcon: <FaCalendar size={20} color={"var(--color-tertiary1)"} />,
-      description: "$189 Spent this month",
-    }
-  ];
 
   const handleBack = () => router.back();
 
@@ -93,8 +60,10 @@ const ClientDetails = () => {
         </div>
       </div>
 
-      <div className="mb-4">
-        <PortfolioCard data={OverviewData} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {stats.map((card) => (
+          <StatCard key={card.id} data={card} icon={card.icon} />
+        ))}
       </div>
 
       <div className="border border-[#E4E4E6] rounded-lg p-6 bg-[#FFFFFF]">

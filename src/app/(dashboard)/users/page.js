@@ -168,12 +168,12 @@ const Page = () => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-6">
         {/* Search box with fixed width */}
         <div className="relative w-[400px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
-            className="pl-10 w-full"
+            className="pl-10 w-full placeholder:text-[#D2D4D4]"
             placeholder="Search here..."
             value={searchText}
             onChange={handleSearch}
@@ -184,7 +184,7 @@ const Page = () => {
         <div className="flex gap-2">
           <ActionComponent
             actions={downloadActions}
-            buttonClassName="inline-flex items-center justify-center p-2 border border-[#02C8DE] bg-white rounded-md shadow-sm hover:bg-gray-50"
+            buttonClassName="inline-flex items-center justify-center p-2 border border-[#02C8DE] bg-white rounded-md hover:bg-gray-50"
             icon={<Download className="w-4 h-4 text-[#02C8DE]" />}
           />
 
@@ -210,7 +210,7 @@ const Page = () => {
               },
             ]}
             icon={<Filter className="w-4 h-4 text-[#02C8DE]" />}
-            buttonClassName="inline-flex items-center justify-center p-2 border border-[#02C8DE] bg-white rounded-md shadow-sm hover:bg-gray-50"
+            buttonClassName="inline-flex items-center justify-center p-2 border border-[#02C8DE] bg-white rounded-md hover:bg-gray-50"
           />
         </div>
       </div>
