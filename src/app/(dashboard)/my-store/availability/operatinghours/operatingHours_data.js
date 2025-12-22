@@ -1,0 +1,51 @@
+export const operatingHours_data = [
+  {
+    id: 1,
+    day: "Mon",
+    open: "10:00 AM",
+    close: "8:00 PM",
+    isOpen: true,
+  },
+  {
+    id: 2,
+    day: "Tue",
+    open: "10:00 AM",
+    close: "8:00 PM",
+    isOpen: true,
+  },
+  {
+    id: 3,
+    day: "Wed",
+    open: "10:00 AM",
+    close: "8:00 PM",
+    isOpen: true,
+  },
+  {
+    id: 4,
+    day: "Thu",
+    open: "10:00 AM",
+    close: "8:00 PM",
+    isOpen: true,
+  },
+  {
+    id: 5,
+    day: "Fri",
+    open: "10:00 AM",
+    close: "8:00 PM",
+    isOpen: true,
+  },
+  {
+    id: 6,
+    day: "Sat",
+    open: "10:00 AM",
+    close: "8:00 PM",
+    isOpen: true,
+  },
+  {
+    id: 7,
+    day: "Sun",
+    open: "10:00 AM",
+    close: "8:00 PM",
+    isOpen: false,
+  },
+];

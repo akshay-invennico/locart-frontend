@@ -1,0 +1,20 @@
+"use client";
+import React from 'react'
+import HolidayPage from './holiday/HolidayPage';
+import OperatingHoursPage from './operatinghours/OperatingHoursPage';
+
+const AvailabilityPage = () => {
+  const options = {
+    select: false,
+    order: true,
+    sortable: true,
+  };
+  return (
+     <div className="w-full h-full">
+      <OperatingHoursPage />
+      <HolidayPage />
+    </div>
+  )
+}
+
+export default AvailabilityPage;
