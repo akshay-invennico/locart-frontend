@@ -171,7 +171,6 @@ const AppointmentPage = () => {
       filters.service_ids = formData.service.map((s) => s.value).join(",");
     }
 
-    console.log("API-ready filters:", filters);
     dispatch(fetchAllAppointments(filters));
   };
 
@@ -500,13 +499,11 @@ const AppointmentPage = () => {
             },
           }}
           bulkActionsConfig={(() => {
-            // Get user role for conditional bulk actions
             const storedRole =
               typeof window !== "undefined" ? localStorage?.getItem("role") : null;
             const role = (user?.role || storedRole || "").toLowerCase();
             const isLoctitian = role === "loctitian";
 
-            // Base actions available to all roles
             const baseActions = [
               {
                 label: "Flag Booking",
@@ -553,26 +550,10 @@ const AppointmentPage = () => {
                   },
                 ],
               },
-              // {
-              //   label: "Archive Booking",
-              //   iconUrl: "/icons/archiveClient.svg",
-              //   type: "popUp",
-              //   component: (
-              //     <PopupForm
-              //       config={archiveBookingConfigAll}
-              //       width="500px"
-              //       height="500px"
-              //       onApply={(data) => console.log("Archive applied:", data)}
-              //       onCancel={() => console.log("Cancelled")}
-              //     />
-              //   ),
-              // },
             ];
 
-            // Role-based status update actions
             const statusActions = isLoctitian
               ? [
-                // Loctitian can only mark as Ongoing or Completed
                 {
                   label: "Mark As Ongoing",
                   iconUrl: "/icons/markCompleted.svg",
@@ -585,7 +566,6 @@ const AppointmentPage = () => {
                 },
               ]
               : [
-                // Other roles (admin, manager, etc.) have full access
                 {
                   label: "Mark As Pending",
                   iconUrl: "/icons/markCompleted.svg",
@@ -603,21 +583,17 @@ const AppointmentPage = () => {
                 },
               ];
 
-            // Combine status actions with base actions
             return [...statusActions, ...baseActions];
           })()}
         />
       </div>
 
-
-      {/* Loading State */}
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
           <Spinner />
         </div>
       )}
 
-      {/* Cancel Popup */}
       {showCancelPopup && selectedBooking && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 shadow-md rounded-md"
@@ -643,10 +619,10 @@ const AppointmentPage = () => {
                       setShowRefundPopup(true);
                     })
                     .catch((err) => {
-                      console.error("❌ Error fetching refund summary:", err);
+                      console.error("Error fetching refund summary:", err);
                     });
                 } else {
-                  console.warn("⚠️ No bookingId found for selected booking");
+                  console.warn("No bookingId found for selected booking");
                 }
               }}
               onCancel={() => setShowCancelPopup(false)}
@@ -655,7 +631,6 @@ const AppointmentPage = () => {
         </div>
       )}
 
-      {/* Refund Popup */}
       {showRefundPopup && refundData && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"

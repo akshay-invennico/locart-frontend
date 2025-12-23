@@ -125,13 +125,26 @@ export const getColumns = (
     },
     {
       key: "date",
-      title: "Date & Time",
+      title: "Date",
       component: {
         type: "date",
         options: {
-          format: "dd MM, yyyy hh:mm a",
+          format: "dd MM, yyyy",
         },
       },
+    },
+    {
+      title: "Time",
+      key: "time",
+      component: {
+        type: "date",
+        options: {
+          format: "time"
+        },
+        style: {
+          text: "text-gray-900"
+        }
+      }
     },
 
     {
