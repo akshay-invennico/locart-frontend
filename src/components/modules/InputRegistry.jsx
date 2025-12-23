@@ -28,7 +28,7 @@ const InputField = ({
         onChange={onChange}
         placeholder={placeholder}
         style={css}
-        className="w-full px-3 py-2 border border-gray-300 rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary1 focus:border-primary1 placeholder-gray-400 text-gray-700"
+        className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary1 focus:border-primary1 placeholder-gray-400 text-gray-700"
       />
     </div>
   );

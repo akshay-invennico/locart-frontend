@@ -12,10 +12,6 @@ export const addStylistConfig = {
     },
     { type: "divider" },
     {
-      type: "textBlock",
-      label: "Stylist Profile Photo",
-    },
-    {
       type: "file",
       label: "Stylist Profile Photo",
     },

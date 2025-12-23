@@ -119,7 +119,7 @@ const DynamicForm = ({
       case "textBlock":
         return (
           <p
-            className="text-xs text-[#7B7B7B] sm:text-sm break-words"
+            className="text-xs text-[#7B7B7B] sm:text-sm break-words mb-2"
             style={field.css}
           >
             {field.content || field.label}
@@ -511,7 +511,7 @@ const DynamicForm = ({
       case "textarea":
         return (
           <div className="w-full">
-            <div className="flex justify-between mb-2">
+            <div className="flex justify-between">
               <label className="text-xs text-[#7B7B7B] sm:text-sm break-words">
                 {field?.label}
               </label>
@@ -530,7 +530,7 @@ const DynamicForm = ({
       case "file":
         return (
           <div className="w-full">
-            <div className="flex justify-between mb-2">
+            <div className="flex justify-between">
               <label className="text-xs text-[#7B7B7B] sm:text-sm break-words">
                 {field?.label}
               </label>
@@ -1142,7 +1142,7 @@ const DynamicForm = ({
             </label>
 
             <div
-              className="flex justify-between items-center w-full border border-gray-300  px-3 py-2 rounded-sm bg-white text-[#7B7B7B] shadow-sm cursor-pointer min-h-[41px]"
+              className="flex justify-between items-center w-full border border-gray-300  px-3 py-2 rounded-sm bg-white text-[#7B7B7B] cursor-pointer min-h-[41px]"
               onClick={() =>
                 setShowDropdowns((prev) => ({
                   ...prev,
@@ -1505,7 +1505,7 @@ const DynamicForm = ({
         {config?.fields?.map((field, index) => (
           <div
             key={field.name || `${field.type}-${index}`}
-            className="form-group mb-4"
+            className="form-group mb-2"
             style={field.containerCss || {}}
           >
             {renderField(field)}
