@@ -11,6 +11,8 @@ import Spinner from "@/components/common/Spinner";
 import { fallbackStats } from "./data";
 import StatCard from "./StatCard";
 import { HelpCircle } from "lucide-react";
+import { sendForgotPassword } from "@/state/auth/authSlice";
+import { toast } from "sonner";
 
 const ClientDetails = () => {
   const router = useRouter();
@@ -32,6 +34,31 @@ const ClientDetails = () => {
   }, [clientId, dispatch]);
 
   const handleBack = () => router.back();
+
+  const handleSendResetPasswordLink = (client) => {
+    const email = client?.email;
+
+    if (!email) {
+      toast.error("Email not found for this client");
+      return;
+    }
+
+    dispatch(sendForgotPassword(email))
+      .unwrap()
+      .then(() => {
+        toast.success("Reset password link sent successfully");
+      })
+      .catch((err) => {
+        console.error("Failed to send reset password link:", err);
+        toast.error("Failed to send reset password link");
+      });
+  };
+
+  // Memoize the columns with the handler
+  const columnsWithHandler = useMemo(
+    () => columns(handleSendResetPasswordLink),
+    [handleSendResetPasswordLink]
+  );
 
   const mappedStats = useMemo(() => {
     const safeSummaryBoxes = Array.isArray(summaryBoxes)
@@ -91,8 +118,8 @@ const ClientDetails = () => {
 
         <div className="cursor-pointer">
           <ActionComponent
-            actions={columns[0].component.options.actions}
-            columns={columns}
+            actions={columnsWithHandler[0].component.options.actions}
+            columns={columnsWithHandler}
             data={client}
           />
         </div>

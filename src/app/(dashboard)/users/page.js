@@ -15,7 +15,9 @@ import {
   setClientFilters,
   suspendClientsByIds,
 } from "@/state/client/clientSlice";
+import { sendForgotPassword } from "@/state/auth/authSlice";
 import { exportGridPDF, exportGridCSV } from "@/lib/HelpFulFunction";
+import { toast } from "sonner";
 
 const filterConfig = {
   formCss: {
@@ -93,7 +95,6 @@ const Page = () => {
   };
 
   const handleSuspendClients = (formData, rowsOrRow) => {
-
     // Normalize to array
     const rows = Array.isArray(rowsOrRow) ? rowsOrRow : [rowsOrRow];
 
@@ -114,6 +115,25 @@ const Page = () => {
         dispatch(fetchClients(filters));
       })
       .catch((err) => console.error("Suspend failed:", err));
+  };
+
+  const handleSendResetPasswordLink = (row) => {
+    const email = row?.user?.email || row?.email;
+
+    if (!email) {
+      console.error("Email not found for this client");
+      return;
+    }
+
+    dispatch(sendForgotPassword(email))
+      .unwrap()
+      .then(() => {
+        toast.success("Reset password link sent successfully");
+      })
+      .catch((err) => {
+        console.error("Failed to send reset password link:", err);
+        toast.error("Failed to send reset password link");
+      });
   };
 
   const applyFilters = (data) => {
@@ -219,7 +239,7 @@ const Page = () => {
         <GridCommonComponent
           data={clients || []}
           options={options}
-          columns={columns}
+          columns={columns(handleSendResetPasswordLink)}
           theme={{
             border: "border-gray-300",
             header: {

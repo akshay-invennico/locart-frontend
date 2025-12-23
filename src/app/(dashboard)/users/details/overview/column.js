@@ -1,9 +1,8 @@
 import PopupForm from "@/components/ui/popupform";
-import ViewUser from "../../viewUser";
 import { archiveClientConfig, reactivateClientConfig } from "./config";
 
-export const columns =[
-    {
+export const columns = (handleSendResetPasswordLink) => [
+  {
     key: "actions",
     title: "Actions",
     component: {
@@ -41,8 +40,12 @@ export const columns =[
           {
             label: "Share Reset Password Link",
             iconUrl: "/icons/lock.svg",
-            type: "popUp",
-            component: <ViewUser />,
+            type: "action",
+            onClick: (row) => {
+              if (handleSendResetPasswordLink) {
+                handleSendResetPasswordLink(row);
+              }
+            },
           },
         ],
       },

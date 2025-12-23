@@ -72,7 +72,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white border border-[#E4E4E6] rounded-2xl shadow-md mt-6 font-sans">
+    <div className="p-6 max-w-4xl mx-auto bg-white border border-[#E4E4E6] rounded-2xl mt-6 font-sans">
       <h2 className="text-2xl font-semibold mb-2">My Profile</h2>
       <p className="text-sm text-gray-500 mb-6">
         Manage your personal information and update your account credentials securely.

@@ -3,7 +3,7 @@
 import { reactivateClientConfig } from "./config";
 import PopupForm from "@/components/ui/popupform";
 
-export const columns = [
+export const columns = (handleSendResetPasswordLink) => [
   {
     key: "user",
     title: "Clients",
@@ -116,22 +116,7 @@ export const columns = [
             iconUrl: "/icons/show.svg",
             type: "navigate",
             url: (row) => `/users/details/overview/${row.id}`
-            // url: "/users/details/overview/",
           },
-          // {
-          //   label: "Archive Client",
-          //   iconUrl: "/icons/archiveClient.svg",
-          //   type: "popUp",
-          //   component: (
-          //     <PopupForm
-          //       config={archiveClientConfig}
-          //       width="500px"
-          //       height="500px"
-          //       onApply={(data) => console.log("Archive applied:", data)}
-          //       onCancel={() => console.log("Cancelled")}
-          //     />
-          //   ),
-          // },
           {
             label: "Suspend Client",
             iconUrl: "/icons/suspendClient.svg",
@@ -145,13 +130,16 @@ export const columns = [
               />
             ),
           },
-
-          // {
-          //   label: "Share Reset Password Link",
-          //   iconUrl: "/icons/lock.svg",
-          //   // type: "popUp",
-          //   onClick: (data) => console.log("password Reset link send", data),
-          // },
+          {
+            label: "Share Reset Password Link",
+            iconUrl: "/icons/lock.svg",
+            type: "action",
+            onClick: (row) => {
+              if (handleSendResetPasswordLink) {
+                handleSendResetPasswordLink(row);
+              }
+            },
+          },
         ],
       },
     },
