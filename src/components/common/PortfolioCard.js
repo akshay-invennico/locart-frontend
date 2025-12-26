@@ -164,13 +164,6 @@ const ResponsiveDashboard = () => {
     role === "loctitian" ? 3 : 5
   )}`;
 
-  if (normalizedSummary.length == 0)
-    return (
-      <div className="w-full text-center">
-        <p>No data found</p>
-      </div>
-    );
-
   return (
     <>
       {/* Mobile View */}
@@ -201,12 +194,12 @@ const ResponsiveDashboard = () => {
                             )})`}
                           />
                         </div>
-                        {item.upCount} %
+                        {item.upCount || 0} %
                       </div>
                     </div>
                     <div className="flex flex-row gap-[8px] items-center">
                       <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                        {item.MainIcon}
+                        {item.MainIcon || ""}
                       </div>
                       <p className="text-[24px] font-medium text-white">
                         {/* {(item.value ?? 0).toFixed(2)} */}
@@ -256,15 +249,14 @@ const ResponsiveDashboard = () => {
                         color={`var(--color-${item.color.replace("bg-", "")})`}
                       />
                     </div>
-                    {item.upCount} %
+                    {item.upCount || 0} %
                   </div>
                 </div>
                 <div className="flex flex-row gap-[8px] items-center">
                   <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                    {item.MainIcon}
+                    {item.MainIcon || ""}
                   </div>
                   <p className="text-[24px] font-medium text-white">
-                    {/* {(item.value ?? 0).toFixed(2)} */}
                     {(Number(item.value) || 0).toFixed(2)}
                   </p>
                 </div>
