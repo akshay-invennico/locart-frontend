@@ -30,7 +30,7 @@ export const useStylistColumns = (handleUpdateStylist) => {
       isObject: true,
       structure: {
         name: "fullName",
-        profile: "profile_photo",
+        profile: "avatarUrl",
       },
       component: {
         type: "standard_avatar",

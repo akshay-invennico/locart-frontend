@@ -125,7 +125,7 @@ const OperatingHoursPage = () => {
               <div>
                 <input
                   type="text"
-                  value={item.open}
+                  value={item.open || ""}
                   disabled={!item.isOpen}
                   onChange={(e) => handleTimeChange(item.id, "open", e.target.value)}
                   onBlur={() => handleTimeBlur(item.id)}
@@ -140,7 +140,7 @@ const OperatingHoursPage = () => {
               <div>
                 <input
                   type="text"
-                  value={item.close}
+                  value={item.close || ""}
                   disabled={!item.isOpen}
                   onChange={(e) => handleTimeChange(item.id, "close", e.target.value)}
                   onBlur={() => handleTimeBlur(item.id)}

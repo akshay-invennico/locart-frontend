@@ -101,7 +101,7 @@ const dashboardSlice = createSlice({
         const incoming = action.payload?.stylists || [];
         state.stylists = incoming.map((s) => ({
           rank: s.rank,
-          stylist: { name: s.stylist, email: "", profile: "" },
+          stylist: { name: s.stylist, email: s.stylist.email, profile: s.stylist.profile },
           salon: s.salon,
           appointments: s.appointments,
           avg_rating: s.avgRating,

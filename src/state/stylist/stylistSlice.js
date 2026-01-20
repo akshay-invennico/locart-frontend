@@ -46,9 +46,9 @@ export const addStylist = createAsyncThunk(
 
 export const updateStylist = createAsyncThunk(
     "stylists/updateStylist",
-    async (data, { rejectWithValue }) => {
+    async ({ id, formData }, { rejectWithValue }) => {
         try {
-            const response = await updateStylistService(data.id, data);
+            const response = await updateStylistService(id, formData);
             return response;
         } catch (error) {
             return rejectWithValue(

@@ -155,9 +155,13 @@ const GridCommonComponent = ({
       if (column.structure) {
         Object.keys(column.structure).forEach((key) => {
           const path = column.structure[key];
-          Object.assign(structuredData, (value || row));
-          structuredData[key] = getNestedValue(value, path);
+          const source = (value && typeof value === "object") ? value : row;
+          Object.assign(structuredData, source);
+          structuredData[key] = getNestedValue(source, path);
         });
+        if (!column.structure.name && typeof value === 'string') {
+          structuredData.name = value;
+        }
       } else {
         Object.assign(structuredData, value);
       }

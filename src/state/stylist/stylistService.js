@@ -27,7 +27,11 @@ export const getStylistsById = async (id) => {
 
 export const createStylist = async (data) => {
   try {
-    const response = await api.post("/store/stylists", data);
+    const response = await api.post("/store/stylists", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error creating stylist:", error);

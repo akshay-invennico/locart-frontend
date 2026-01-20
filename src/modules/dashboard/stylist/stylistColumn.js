@@ -6,9 +6,7 @@ export const stylistColumns = [
   {
     key: "stylist",
     title: "Stylist",
-    isPrimary: true,
     isObject: true,
-    sortable: true,
     structure: {
       name: "name",
       email: "email",
@@ -54,7 +52,7 @@ export const stylistColumns = [
     },
   },
   {
-    key: "avg_rating",
+    key: "avgRating",
     title: "Avg Rating",
     sortable: true,
     render: (value) => (
@@ -64,7 +62,7 @@ export const stylistColumns = [
     ),
   },
   {
-    key: "revenue",
+    key: "revenueGenerated",
     title: "Revenue Generated",
     sortable: true,
     component: {

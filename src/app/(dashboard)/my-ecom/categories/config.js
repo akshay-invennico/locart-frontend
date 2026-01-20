@@ -60,18 +60,18 @@ export const createCategoryConfig = {
     {
       type: "textBlock",
       label: "Category Icon",
-     
+
     },
     {
       type: "file",
       label: "Category Icon",
-       name : "category_photo"
+      name: "category_photo"
     },
     {
       type: "textBlock",
       label: "Category Name",
     },
-    { type: "input", placeholder: "e.g, Loc Retwist", name :"name" },
+    { type: "input", placeholder: "e.g, Loc Retwist", name: "name" },
 
     {
       type: "selectCheckbox",
@@ -87,7 +87,7 @@ export const createCategoryConfig = {
       type: "textarea",
       label: "Description",
       placeholder: "Category Description",
-      name : "description"
+      name: "description"
     },
   ],
   footer: {
@@ -237,7 +237,7 @@ export const getViewCategoryDetailsConfig = (category) => ({
       items: [
         { label: "Category Name", value: category?.name || "N/A" },
         { label: "Status", value: category?.status, valueStyle: { color: "#02C8DE" } },
-        { label: "Product Count", value: category?.order|| 0 },
+        { label: "Product Count", value: category?.order || 0 },
       ],
     },
 

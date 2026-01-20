@@ -68,7 +68,7 @@ const ProductPage = () => {
   }, [filters]);
 
   useEffect(() => {
-    dispatch(fetchAllCategories());
+    dispatch(fetchAllCategories({ type: "product" }));
   }, [dispatch]);
 
   const handleDeleteProduct = (row) => {

@@ -87,7 +87,7 @@ export const getColumns = (handleDeleteCategory, handleCategoryStatusUpdate, han
     },
   },
   {
-    key: "productsCount",
+    key: "itemsCount",
     title: "Product Count",
     component: { type: "phone", style: { color: "var(--color-dull-text)" } },
   },

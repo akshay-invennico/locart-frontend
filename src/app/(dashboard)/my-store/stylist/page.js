@@ -70,7 +70,6 @@ const StylistPage = () => {
   };
 
   const handleAddStylist = async (data) => {
-
     const statusRaw = data?.status;
     const status = Array.isArray(statusRaw)
       ? statusRaw[0]?.toLowerCase() || "active"
@@ -78,22 +77,36 @@ const StylistPage = () => {
         ? statusRaw.toLowerCase()
         : "active";
 
-    const payload = {
-      fullName: data?.fullName?.trim() || "",
-      email: data?.email?.trim() || "",
-      phoneNumber: data?.phoneNumber?.trim() || "",
-      services: Array.isArray(data?.services) ? data.services : [],
-      workingDays: Array.isArray(data?.workingDays) ? data.workingDays : [],
-      workingHours: {
-        start: data?.workingHours_from || "09:00",
-        end: data?.workingHours_to || "17:00",
-      },
-      experience_years: Number(data?.experience_years || 0),
-      status: status,
-      about: data?.textarea || "",
-    };
+    const formData = new FormData();
+    formData.append("fullName", data?.fullName?.trim() || "");
+    formData.append("email", data?.email?.trim() || "");
+    formData.append("phoneNumber", data?.phoneNumber?.trim() || "");
+    formData.append("experience", Number(data?.experience_years || 0));
+    formData.append("status", status);
+    formData.append("about", data?.textarea || "");
+    formData.append("specialization", data?.specialization || "");
 
-    await dispatch(addStylist(payload));
+    if (Array.isArray(data?.services)) {
+      data.services.forEach(service => formData.append("services", service));
+    }
+    if (Array.isArray(data?.workingDays)) {
+      data.workingDays.forEach(day => formData.append("workingDays", day));
+    }
+
+    const start = data?.workingHours_from || "09:00";
+    const end = data?.workingHours_to || "17:00";
+    formData.append("workingHours", JSON.stringify({ start, end }));
+
+    if (data?.profile_photo) {
+      if (data.profile_photo instanceof File) {
+        formData.append("profilePhoto", data.profile_photo);
+      } else if (data.profile_photo.file instanceof File) {
+        formData.append("profilePhoto", data.profile_photo.file);
+      }
+    }
+
+
+    await dispatch(addStylist(formData));
     dispatch(fetchStylists());
   };
 
@@ -105,23 +118,37 @@ const StylistPage = () => {
         ? statusRaw.toLowerCase()
         : "active";
 
-    const payload = {
-      id: data?.id,
-      fullName: data?.fullName?.trim() || "",
-      email: data?.email?.trim() || "",
-      phoneNumber: data?.phoneNumber?.trim() || "",
-      services: Array.isArray(data?.services) ? data.services : [],
-      workingDays: Array.isArray(data?.workingDays) ? data.workingDays : [],
-      workingHours: {
-        start: data?.workingHours_from || "09:00",
-        end: data?.workingHours_to || "17:00",
-      },
-      experience_years: Number(data?.experience_years || 0),
-      status: status,
-      about: data?.textarea || "",
-    };
+    const formData = new FormData();
+    formData.append("fullName", data?.fullName?.trim() || "");
+    formData.append("email", data?.email?.trim() || "");
+    formData.append("phoneNumber", data?.phoneNumber?.trim() || "");
+    formData.append("experience", Number(data?.experience_years || 0));
+    formData.append("status", status);
+    formData.append("about", data?.textarea || "");
+    formData.append("specialization", data?.specialization || "");
 
-    await dispatch(updateStylist(payload));
+    if (Array.isArray(data?.services)) {
+      data.services.forEach(service => formData.append("services", service));
+    }
+    if (Array.isArray(data?.workingDays)) {
+      data.workingDays.forEach(day => formData.append("workingDays", day));
+    }
+
+    const start = data?.workingHours_from || "09:00";
+    const end = data?.workingHours_to || "17:00";
+    formData.append("workingHours", JSON.stringify({ start, end }));
+
+    if (data?.profile_photo) {
+      if (data.profile_photo instanceof File) {
+        formData.append("profilePhoto", data.profile_photo);
+      } else if (data.profile_photo.file instanceof File) {
+        formData.append("profilePhoto", data.profile_photo.file);
+      }
+    }
+
+
+
+    await dispatch(updateStylist({ id: data?.id, formData }));
     dispatch(fetchStylists());
   };
 
@@ -195,6 +222,11 @@ const StylistPage = () => {
                   onCancel={() => console.log("Cancelled")}
                 />
               ),
+            },
+            {
+              type: "file",
+              label: "Stylist Profile Photo",
+              name: "profile_photo",
             },
             {
               label: "Export Selection",

@@ -14,6 +14,7 @@ export const addStylistConfig = {
     {
       type: "file",
       label: "Stylist Profile Photo",
+      name: "profile_photo",
     },
     {
       type: "textBlock",

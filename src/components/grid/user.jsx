@@ -85,18 +85,16 @@ const Standard_Avatar = ({ user, style }) => {
           )}
           {email && (
             <div
-              className={`text-gray-500 text-sm ${
-                !name ? "font-medium text-gray-900" : ""
-              } truncate`}
+              className={`text-gray-500 text-sm ${!name ? "font-medium text-gray-900" : ""
+                } truncate`}
             >
               {email}
             </div>
           )}
           {category && (
             <div
-              className={`text-gray-500 text-sm ${
-                !name ? "font-medium text-gray-900" : ""
-              } truncate`}
+              className={`text-gray-500 text-sm ${!name ? "font-medium text-gray-900" : ""
+                } truncate`}
             >
               {category}
             </div>
