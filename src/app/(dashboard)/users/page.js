@@ -169,7 +169,7 @@ const Page = () => {
       onClick: () =>
         exportGridPDF({
           rows: clients,
-          columns: columns,
+          columns: columns(null),
           filename: "clients.pdf",
           title: "Clients List",
         }),
@@ -180,7 +180,7 @@ const Page = () => {
       onClick: () =>
         exportGridCSV({
           rows: clients,
-          columns: columns,
+          columns: columns(null),
           filename: "clients.csv",
         }),
     },
@@ -270,7 +270,7 @@ const Page = () => {
                   onClick: (selectedRows) => {
                     exportGridPDF({
                       rows: selectedRows,
-                      columns: columns,
+                      columns: columns(null),
                       filename: "selected_clients.pdf",
                       title: "Selected Clients",
                     });
@@ -284,7 +284,7 @@ const Page = () => {
                   onClick: (selectedRows) => {
                     exportGridCSV({
                       rows: selectedRows,
-                      columns: columns,
+                      columns: columns(null),
                       filename: "selected_clients.csv",
                     });
                   },

@@ -313,7 +313,6 @@ const GridCommonComponent = ({
                         type="checkbox"
                         checked={selectAll}
                         onChange={handleSelectAll}
-                        // className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                         className="w-4 h-4 rounded border border-gray-500
                         bg-white
                         checked:bg-primary1 
@@ -351,31 +350,41 @@ const GridCommonComponent = ({
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {data.map((row, rowIndex) => (
-                  <tr
-                    key={rowIndex}
-                    className={`border-b hover:bg-gray-50 transition-colors ${selectedRows.includes(rowIndex)
-                      ? "bg-gray-100"
-                      : "bg-white"
-                      }`}
-                  >
-                    {select && (
-                      <td
-                        className="px-2 py-4 whitespace-nowrap"
-                        style={{
-                          left: 0,
-                          zIndex: 10,
-                          background: selectedRows.includes(rowIndex)
-                            ? "#f3f4f6"
-                            : "white",
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(rowIndex)}
-                          onChange={() => handleRowSelect(rowIndex)}
-                          // className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                          className="w-4 h-4 rounded border border-gray-500
+                {data.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={columns.length + (select ? 1 : 0) + (order ? 1 : 0)}
+                      className="text-center py-5 text-gray-400"
+                    >
+                      No Data Found
+                    </td>
+                  </tr>
+                ) : (
+                  data.map((row, rowIndex) => (
+                    <tr
+                      key={rowIndex}
+                      className={`border-b hover:bg-gray-50 transition-colors ${selectedRows.includes(rowIndex)
+                        ? "bg-gray-100"
+                        : "bg-white"
+                        }`}
+                    >
+                      {select && (
+                        <td
+                          className="px-2 py-4 whitespace-nowrap"
+                          style={{
+                            left: 0,
+                            zIndex: 10,
+                            background: selectedRows.includes(rowIndex)
+                              ? "#f3f4f6"
+                              : "white",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(rowIndex)}
+                            onChange={() => handleRowSelect(rowIndex)}
+                            // className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            className="w-4 h-4 rounded border border-gray-500
                         bg-white
                         checked:bg-[#02C8DE] 
                         relative cursor-pointer
@@ -383,37 +392,37 @@ const GridCommonComponent = ({
                         checked:before:text-white before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2
                         appearance-none
                         flex items-center justify-center"
-                        />
-                      </td>
-                    )}
-                    {order && (
-                      <td className="px-2  py-4 whitespace-nowrap text-xs sm:text-sm">
-                        {rowIndex + 1}
-                      </td>
-                    )}
-                    {columns.map((column, colIndex) => (
-                      <td
-                        key={colIndex}
-                        className={`px-2  py-4 whitespace-nowrap text-xs sm:text-sm
+                          />
+                        </td>
+                      )}
+                      {order && (
+                        <td className="px-2  py-4 whitespace-nowrap text-xs sm:text-sm">
+                          {rowIndex + 1}
+                        </td>
+                      )}
+                      {columns.map((column, colIndex) => (
+                        <td
+                          key={colIndex}
+                          className={`px-2  py-4 whitespace-nowrap text-xs sm:text-sm
                           ${column.component?.style?.text || "text-gray-900"}
                         `}
-                        style={{ minWidth: column.minWidth || "auto" }}
-                      >
-                        <div className="flex items-center justify-start max-w-xs lg:max-w-none ">
-                          {/* {renderCellContent(column, row[column.key], row)} */}
+                          style={{ minWidth: column.minWidth || "auto" }}
+                        >
+                          <div className="flex items-center justify-start max-w-xs lg:max-w-none ">
+                            {/* {renderCellContent(column, row[column.key], row)} */}
 
-                          {renderCellContent(
-                            column,
-                            column.component?.type === "action"
-                              ? row
-                              : row[column.key],
-                            row
-                          )}
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
+                            {renderCellContent(
+                              column,
+                              column.component?.type === "action"
+                                ? row
+                                : row[column.key],
+                              row
+                            )}
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
+                  )))}
               </tbody>
             </table>
           </div>
@@ -425,30 +434,33 @@ const GridCommonComponent = ({
   // Mobile Card View
   const renderCardView = () => (
     <div className="space-y-3 px-2 sm:px-4">
-      {data.map((row, rowIndex) => {
-        const isExpanded = expandedCard === rowIndex;
-        const primaryColumn =
-          columns.find((col) => col.isPrimary) || columns[0];
+      {data.length === 0 ? (
+        <div className="text-center py-5 text-gray-400">No Data Found</div>
+      ) : (
+        data.map((row, rowIndex) => {
+          const isExpanded = expandedCard === rowIndex;
+          const primaryColumn =
+            columns.find((col) => col.isPrimary) || columns[0];
 
-        return (
-          <div
-            key={rowIndex}
-            className={`bg-white rounded-lg border ${theme?.border || "border-gray-200"
-              }  shadow-sm ${selectedRows.includes(rowIndex)
-                ? "ring-2 ring-indigo-500 ring-opacity-50"
-                : ""
-              }`}
-          >
-            {/* Card Header */}
-            <div className="p-3 sm:p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
-                {select && (
-                  <input
-                    type="checkbox"
-                    checked={selectedRows.includes(rowIndex)}
-                    onChange={() => handleRowSelect(rowIndex)}
-                    // className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0"
-                    className="w-4 h-4 rounded border border-gray-500
+          return (
+            <div
+              key={rowIndex}
+              className={`bg-white rounded-lg border ${theme?.border || "border-gray-200"
+                }  shadow-sm ${selectedRows.includes(rowIndex)
+                  ? "ring-2 ring-indigo-500 ring-opacity-50"
+                  : ""
+                }`}
+            >
+              {/* Card Header */}
+              <div className="p-3 sm:p-4 flex items-center justify-between">
+                <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+                  {select && (
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.includes(rowIndex)}
+                      onChange={() => handleRowSelect(rowIndex)}
+                      // className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0"
+                      className="w-4 h-4 rounded border border-gray-500
                         bg-white
                         checked:bg-primary1
                         relative cursor-pointer
@@ -456,103 +468,103 @@ const GridCommonComponent = ({
                         checked:before:text-white before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2
                         appearance-none
                         flex items-center justify-center"
-                  />
-                )}
+                    />
+                  )}
 
-                {order && (
-                  <div className="flex-shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-medium text-gray-600">
-                      {rowIndex + 1}
-                    </span>
-                  </div>
-                )}
+                  {order && (
+                    <div className="flex-shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600">
+                        {rowIndex + 1}
+                      </span>
+                    </div>
+                  )}
 
-                {/* Primary content */}
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm">
-                    {renderCellContent(
-                      primaryColumn,
-                      row[primaryColumn.key],
-                      row
-                    )}
+                  {/* Primary content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm">
+                      {renderCellContent(
+                        primaryColumn,
+                        row[primaryColumn.key],
+                        row
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                {/* Expand/Collapse Button */}
+                <button
+                  onClick={() => toggleCardExpansion(rowIndex)}
+                  className={`ml-2 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 ${
+                    // Hide expand button if all non-primary columns are nonExpandable like activity_cell -- Activity section Component
+                    columns.filter((col) => !col.isPrimary && !col.nonExpandable)
+                      .length === 0
+                      ? "hidden"
+                      : ""
+                    }`}
+                  aria-label={isExpanded ? "Collapse" : "Expand"}
+                >
+                  {isExpanded ? (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20 12H4"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                  )}
+                </button>
               </div>
 
-              {/* Expand/Collapse Button */}
-              <button
-                onClick={() => toggleCardExpansion(rowIndex)}
-                className={`ml-2 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 ${
-                  // Hide expand button if all non-primary columns are nonExpandable like activity_cell -- Activity section Component
-                  columns.filter((col) => !col.isPrimary && !col.nonExpandable)
-                    .length === 0
-                    ? "hidden"
-                    : ""
-                  }`}
-                aria-label={isExpanded ? "Collapse" : "Expand"}
-              >
-                {isExpanded ? (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20 12H4"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
-
-            {/* Expanded Card Content */}
-            {isExpanded && (
-              <div className="border-t border-gray-100 bg-gray-50">
-                <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
-                  {columns // skip the nonExpandable columns
-                    .filter(
-                      (column) => !column.isPrimary && !column.nonExpandable
-                    )
-                    .map((column, colIndex) => (
-                      <div
-                        key={colIndex}
-                        className={`flex justify-between items-center py-1 sm:py-2 border-b border-gray-200 last:border-b-0 min-h-[2rem]
+              {/* Expanded Card Content */}
+              {isExpanded && (
+                <div className="border-t border-gray-100 bg-gray-50">
+                  <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                    {columns // skip the nonExpandable columns
+                      .filter(
+                        (column) => !column.isPrimary && !column.nonExpandable
+                      )
+                      .map((column, colIndex) => (
+                        <div
+                          key={colIndex}
+                          className={`flex justify-between items-center py-1 sm:py-2 border-b border-gray-200 last:border-b-0 min-h-[2rem]
                         ${column.component?.style?.text}`}
-                      >
-                        <span className="text-xs sm:text-sm font-medium text-gray-600 flex-shrink-0 w-24 sm:w-32">
-                          {column.title}
-                        </span>
-                        <div className="text-xs sm:text-sm text-gray-900 text-right flex-1 min-w-0 ml-2">
-                          <div className="flex items-center justify-end w-full">
-                            {renderCellContent(column, row[column.key], row)}
+                        >
+                          <span className="text-xs sm:text-sm font-medium text-gray-600 flex-shrink-0 w-24 sm:w-32">
+                            {column.title}
+                          </span>
+                          <div className="text-xs sm:text-sm text-gray-900 text-right flex-1 min-w-0 ml-2">
+                            <div className="flex items-center justify-end w-full">
+                              {renderCellContent(column, row[column.key], row)}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
+              )}
+            </div>
+          );
+        }))}
     </div>
   );
 
