@@ -58,8 +58,8 @@ const LeftSidebar = () => {
           <SidebarMenuButton
             asChild
             className={`w-8 h-8 p-0 flex items-center justify-center border rounded-[6px] transition-colors duration-200 ${isActive(item.url)
-                ? "bg-[var(--color-primary1)] text-white border-[var(--color-secondary1)]"
-                : "border-[var(--border-admin)] text-black hover:bg-[var(--color-primary1)] hover:text-white hover:border-[var(--color-secondary1)]"
+              ? "bg-[var(--color-primary1)] text-white border-[var(--color-secondary1)]"
+              : "border-[var(--border-admin)] text-black hover:bg-[var(--color-primary1)] hover:text-white hover:border-[var(--color-secondary1)]"
               }`}
           >
             <Link

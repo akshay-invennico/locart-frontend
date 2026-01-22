@@ -1,5 +1,5 @@
 import PopupForm from "@/components/ui/popupform";
-import { archiveClientConfig, reactivateClientConfig } from "./config";
+import { reactivateClientConfig } from "./config";
 
 export const columns = (handleSendResetPasswordLink) => [
   {
@@ -10,20 +10,6 @@ export const columns = (handleSendResetPasswordLink) => [
       style: {},
       options: {
         actions: [
-          {
-            label: "Archive Client",
-            iconUrl: "/icons/archiveClient.svg",
-            type: "popUp",
-            component: (
-              <PopupForm
-                config={archiveClientConfig}
-                width="500px"
-                height="500px"
-                onApply={(data) => console.log("Archive applied:", data)}
-                onCancel={() => console.log("Cancelled")}
-              />
-            ),
-          },
           {
             label: "Reactivate Client",
             iconUrl: "/icons/reactivateClient.svg",

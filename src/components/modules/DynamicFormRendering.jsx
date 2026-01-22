@@ -87,8 +87,10 @@ const DynamicForm = ({
     }));
   };
 
-  const handleApply = () => {
-    onApply?.(formData);
+  const handleApply = (customData) => {
+    const dataToSubmit = customData !== undefined ? customData : formData;
+    onApply?.(dataToSubmit);
+    if (onCancel) onCancel();
   };
 
   const handleCancel = () => {
@@ -1533,10 +1535,12 @@ const DynamicForm = ({
               type="button"
               onClick={() => {
                 if (config.footer.apply.onClick) {
+                  // Call custom onClick handler first
                   config.footer.apply.onClick(formData);
-                } else {
-                  handleApply(); // ✅ fallback to built-in submission
                 }
+                // Always call handleApply to ensure form closes
+                // Pass formData to maintain consistency
+                handleApply(formData);
               }}
               className={
                 config?.footer?.apply?.className ||

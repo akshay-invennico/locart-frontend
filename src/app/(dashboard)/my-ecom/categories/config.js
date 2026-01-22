@@ -21,12 +21,10 @@ export const CategoryFilterConfig = {
       label: "Category Status",
       options: [
         { value: "All", label: "All" },
-        { value: "In-stock", label: "In-Stock" },
-        { value: "Out-of-Stock", label: "Out-of-Stock" },
+        { value: "Active", label: "Active" },
+        { value: "InActive", label: "Inactive" },
       ],
     },
-
-    { type: "numberRange", name: "StockRange", label: "Stock Range" },
   ],
   footer: {
     cancel: {

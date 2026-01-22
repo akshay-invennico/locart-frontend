@@ -45,16 +45,6 @@ const filterConfig = {
         { value: "suspend", label: "Suspended" },
       ],
     },
-    {
-      type: "checkboxGroup",
-      name: "clientType",
-      label: "Client Type",
-      options: [
-        { value: "all", label: "All" },
-        { value: "client", label: "Client" },
-        { value: "customer", label: "Customer" },
-      ],
-    },
     { type: "dateRange", name: "joinedDate", label: "Join Date" },
     { type: "numberRange", name: "spendAmount", label: "Spent Amount" },
   ],

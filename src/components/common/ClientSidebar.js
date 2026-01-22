@@ -27,7 +27,7 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
     // Only highlight subpath if it matches fully and is the longest match
     return (
       normalizedPath.startsWith(normalizedUrl + "/") &&
-      normalizedUrl !== "/my-store" 
+      normalizedUrl !== "/my-store"
     );
   };
 
@@ -109,10 +109,9 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
                 href={item.url}
                 onClick={(e) => handleNavClick(e, item.url)}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors
-                  ${
-                    isActive(item.url)
-                      ? "border border-primary1 text-primary1 bg-primary1/10"
-                      : "text-black hover:bg-gray-100"
+                  ${isActive(item.url)
+                    ? "border border-primary1 text-primary1 bg-primary1/10"
+                    : "text-black hover:bg-gray-100"
                   }`}
                 style={{
                   position: "relative",

@@ -76,12 +76,14 @@ const getHeadForKey = (key) => {
 };
 
 const formatMessageNumberWithText = (str) => {
-  if (!str) return "";
+  if (typeof str !== "string") return "";
 
   const match = str.match(/-?\$?([\d.,]+)/);
   if (!match) return str;
 
-  const num = parseFloat(match[1].replace(/,/g, ""));
+  const num = Number(match[1].replace(/,/g, ""));
+  if (Number.isNaN(num)) return str;
+
   const formatted = num.toFixed(2);
 
   return str.replace(match[1], formatted);
@@ -134,24 +136,64 @@ const ResponsiveDashboard = () => {
     }
   };
 
-  const normalizedSummary = Array.isArray(summaryBoxes)
-    ? summaryBoxes
-    : [
-      { key: "totalAppointments", value: summaryBoxes?.totalAppointments },
-      { key: "todaysAppointments", value: summaryBoxes?.todaysAppointments },
-      { key: "upcomingAppointments", value: summaryBoxes?.upcomingAppointments },
-    ];
+  const normalizeSummaryBoxes = (summaryBoxes = []) => {
+    if (!Array.isArray(summaryBoxes)) return [];
+
+    return summaryBoxes.map((item) => {
+      if (item.key === "todaysAppointments") {
+        return {
+          key: item.key,
+          value: Number(item.currentValue || 0),
+          upCount: 0,
+          trend: "same",
+          message: "Bookings scheduled for today.",
+        };
+      }
+
+      const isRevenue =
+        item.key === "bookingRevenue" || item.key === "productRevenue";
+
+      const value = isRevenue
+        ? Number(item.currentValue || 0).toFixed(2)
+        : Number(item.currentValue || 0);
+
+      let message = "No change from last month";
+
+      if (item.lastMonthValue !== undefined) {
+        if (item.difference > 0) {
+          message = `+${item.difference} compared to last month`;
+        } else if (item.difference < 0) {
+          message = `${item.difference} compared to last month`;
+        }
+      }
+
+      return {
+        key: item.key,
+        value,
+        upCount: item.percentage ?? 0,
+        trend: item.trend ?? "same",
+        message,
+      };
+    });
+  };
+
+
+  const normalizedSummary = normalizeSummaryBoxes(summaryBoxes);
+
+
 
   // Map API response to UI structure
   let PortfolioData =
-    normalizedSummary?.map((item) => ({
+    normalizedSummary.map((item) => ({
       color: getColorForKey(item.key),
       head: getHeadForKey(item.key),
-      value: item.value ?? 0,
-      message: item.message ?? " ",
+      value: item.value,
+      message: item.message,
       MainIcon: getIconForKey(item.key),
-      upCount: "0", // placeholder for percent changes if available
+      upCount: item.upCount,
+      trend: item.trend,
     })) || [];
+
 
   if (role === "loctitian") {
     PortfolioData = PortfolioData.slice(0, 3);
@@ -186,15 +228,24 @@ const ResponsiveDashboard = () => {
                       <h3 className="text-[16px] font-medium">{item.head}</h3>
                       <div className="flex items-center gap-[4px]">
                         <div className="flex justify-center items-center w-[13px] h-[13px] bg-white rounded-full">
-                          <FaArrowUp
-                            size={10}
-                            color={`var(--color-${item.color.replace(
-                              "bg-",
-                              ""
-                            )})`}
-                          />
+                          {item.trend === "down" ? (
+                            <FaArrowUp
+                              size={10}
+                              style={{ transform: "rotate(180deg)" }}
+                              color="red"
+                            />
+                          ) : (
+                            <FaArrowUp
+                              size={10}
+                              color={
+                                item.trend === "up"
+                                  ? "green"
+                                  : "gray"
+                              }
+                            />
+                          )}
                         </div>
-                        {item.upCount || 0} %
+                        {item.upCount} %
                       </div>
                     </div>
                     <div className="flex flex-row gap-[8px] items-center">
@@ -202,7 +253,6 @@ const ResponsiveDashboard = () => {
                         {item.MainIcon || ""}
                       </div>
                       <p className="text-[24px] font-medium text-white">
-                        {/* {(item.value ?? 0).toFixed(2)} */}
                         {(Number(item.value) || 0).toFixed(2)}
                       </p>
                     </div>
