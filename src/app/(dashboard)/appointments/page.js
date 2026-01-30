@@ -10,9 +10,7 @@ import DynamicForm from "@/components/modules/DynamicFormRendering";
 import {
   AddAppointmentConfig,
   AppointmentFilterConfig,
-  archiveBookingConfigAll,
   flagBookingConfigAll,
-  getAppointmentFilterConfig,
   refundDetailsConfig,
   cancelBookingConfig,
 } from "./config";
@@ -29,10 +27,9 @@ import {
 } from "@/state/appointment/appointmentSlice";
 import { getColumns } from "./column";
 import Spinner from "@/components/common/Spinner";
-import ViewUser from "../users/viewUser";
 import { fetchStoreServices } from "@/state/store/storeSlice";
 import { fetchStylists } from "@/state/stylist/stylistSlice";
-import { exportGridCSV, exportGridPDF } from "@/lib/HelpFulFunction";
+import { exportGridCSV, exportGridPDF, generateInvoicePDF } from "@/lib/HelpFulFunction";
 import { toast } from "sonner";
 
 const options = {
@@ -349,11 +346,50 @@ const AppointmentPage = () => {
     },
   ];
 
+  const handleDownloadInvoice = (row) => {
+    try {
+      console.log("row", row);
+      // const invoiceData = {
+      //   invoiceNo: row.booking_number || "000",
+      //   issueDate: row.date || new Date().toLocaleDateString(),
+      //   dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      //   deliveryDate: row.date,
+      //   client: {
+      //     name: row.clientName?.name || "N/A",
+      //     address: "Sarabhai Campus, K10 Grand",
+      //     cityState: "390012 Vadodara Gujarat",
+      //     country: "India",
+      //   },
+      //   items: [
+      //     {
+      //       description: row.serviceNames || "Service",
+      //       quantity: "1 hours",
+      //       price: row.amount || 0,
+      //       discount: row.discount || 0,
+      //       amount: (row.amount || 0) - (row.discount || 0),
+      //     },
+      //   ],
+      //   subtotal: (row.amount || 0) - (row.discount || 0),
+      //   tax: ((row.amount || 0) * 0.08).toFixed(2),
+      //   total: ((row.amount || 0) - (row.discount || 0) + (row.amount || 0) * 0.08).toFixed(2),
+      // };
+
+      // generateInvoicePDF(invoiceData);
+      // toast.success("Invoice downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating invoice:", error);
+      toast.error("Failed to generate invoice");
+    }
+  };
+
   const columns = getColumns(
     handleViewBooking,
     handleEditBooking,
     handleInitiateRefundClick,
-    handleBulkStatusUpdate
+    handleBulkStatusUpdate,
+    false,
+    "Paid",
+    handleDownloadInvoice
   );
 
   const formattedData = Array.isArray(data)
@@ -366,7 +402,7 @@ const AppointmentPage = () => {
         ? {
           name: item.client.name || "N/A",
           email: item.client.email || "N/A",
-          profile: item.client.profile_picture || item.client.avatar || "",
+          profile: item.client.profile || "",
         }
         : { name: "N/A", email: "N/A", profile: "" },
       stylistName: item.stylist?.name || "N/A",

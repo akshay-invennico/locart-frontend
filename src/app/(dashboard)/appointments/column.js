@@ -111,7 +111,8 @@ export const getColumns = (
   handleInitiateRefundClick,
   handleBulkStatusUpdate,
   isLoctitan = false,
-  paymentStatus = "Paid"
+  paymentStatus = "Paid",
+  handleDownloadInvoice
 ) => [
     {
       key: "booking_number",
@@ -311,7 +312,9 @@ export const getColumns = (
                 {
                   label: "Download Invoice",
                   iconUrl: "/icons/downloadGray.svg",
-                  onClick: (data) => console.log("Download Invoice", data),
+                  onClick: (row) => {
+                    if (handleDownloadInvoice) handleDownloadInvoice(row);
+                  },
                 },
                 {
                   label: "Initiate Refund",
@@ -375,7 +378,9 @@ export const getColumns = (
               {
                 label: "Download Invoice",
                 iconUrl: "/icons/downloadGray.svg",
-                onClick: (data) => console.log("Download Invoice", data),
+                onClick: (row) => {
+                  if (handleDownloadInvoice) handleDownloadInvoice(row);
+                },
               },
               // {
               //   label: "Archive Booking",
