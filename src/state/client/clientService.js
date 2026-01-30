@@ -145,3 +145,13 @@ export const suspendClients = async (clientIds, reason) => {
     throw error?.response?.data || error.message;
   }
 };
+
+export const reactivateClient = async (id) => {
+  try {
+    const { data } = await api.put(`/client/${id}/reactivate`);
+    return data;
+  } catch (error) {
+    console.error("Error reactivating client:", error);
+    throw error?.response?.data || error.message;
+  }
+};

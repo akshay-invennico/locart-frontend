@@ -14,6 +14,7 @@ import {
   fetchClients,
   setClientFilters,
   suspendClientsByIds,
+  reactivateClientById,
 } from "@/state/client/clientSlice";
 import { sendForgotPassword } from "@/state/auth/authSlice";
 import { exportGridPDF, exportGridCSV } from "@/lib/HelpFulFunction";
@@ -92,19 +93,41 @@ const Page = () => {
       return console.error("No clients selected");
     }
 
-    const clientIds = rows.map((row) => row.id || row.clientId);
+    const clientIds = rows.map((row) => row.id || row.clientId || row._id);
+
+    let reason = formData?.suspend_reason || "Repeated policy violations";
+    if (formData?.note) {
+      reason += ` - ${formData.note}`;
+    }
 
     dispatch(
       suspendClientsByIds({
         clientIds,
-        reason: formData?.reason || "Repeated policy violations",
+        reason,
       })
     )
       .unwrap()
       .then(() => {
         dispatch(fetchClients(filters));
+        toast.success("Client suspended successfully");
       })
-      .catch((err) => console.error("Suspend failed:", err));
+      .catch((err) => {
+        console.error("Suspend failed:", err);
+        toast.error(err || "Failed to suspend client");
+      });
+  };
+
+  const handleReactivateClient = (row) => {
+    dispatch(reactivateClientById(row.id || row._id))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchClients(filters));
+        toast.success("Client reactivated successfully");
+      })
+      .catch((err) => {
+        console.error("Reactivate failed:", err);
+        toast.error(err || "Failed to reactivate client");
+      });
   };
 
   const handleSendResetPasswordLink = (row) => {
@@ -229,7 +252,11 @@ const Page = () => {
         <GridCommonComponent
           data={clients || []}
           options={options}
-          columns={columns(handleSendResetPasswordLink)}
+          columns={columns(
+            handleSendResetPasswordLink,
+            handleSuspendClients,
+            handleReactivateClient
+          )}
           theme={{
             border: "border-gray-300",
             header: {

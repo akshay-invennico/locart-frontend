@@ -8,6 +8,7 @@ import {
   archiveClients,
   getClientOrders,
   suspendClients,
+  reactivateClient,
 } from "./clientService";
 
 export const fetchClients = createAsyncThunk(
@@ -96,6 +97,18 @@ export const suspendClientsByIds = createAsyncThunk(
     try {
       const data = await suspendClients(clientIds, reason);
       return { data, clientIds };
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
+export const reactivateClientById = createAsyncThunk(
+  "client/reactivateClientById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const data = await reactivateClient(id);
+      return { data, id };
     } catch (error) {
       return rejectWithValue(error?.response?.data || error.message);
     }
@@ -244,6 +257,21 @@ const clientSlice = createSlice({
       .addCase(suspendClientsByIds.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to suspend clients";
+      })
+      .addCase(reactivateClientById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(reactivateClientById.fulfilled, (state, action) => {
+        state.loading = false;
+        const id = action.payload.id;
+        state.clients = state.clients.map((client) =>
+          client._id === id ? { ...client, status: "active" } : client
+        );
+      })
+      .addCase(reactivateClientById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to reactivate client";
       });
   },
 });
