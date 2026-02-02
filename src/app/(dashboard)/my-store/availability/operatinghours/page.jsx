@@ -2,6 +2,108 @@
 import React, { useState, useEffect } from "react";
 import { getStore, editStoreOperatingHours } from "@/state/store/storeService";
 import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+const TimePickerPopover = ({ value, onChange, disabled }) => {
+  const [isAm, setIsAm] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (value) {
+        setIsAm(value.toLowerCase().includes("am"));
+      } else {
+        setIsAm(true);
+      }
+    }
+  }, [isOpen, value]);
+
+  const generateTimeSlots = () => {
+    const slots = [];
+    const period = isAm ? "AM" : "PM";
+
+    slots.push(`12:00 ${period}`);
+    slots.push(`12:30 ${period}`);
+
+    for (let i = 1; i <= 11; i++) {
+      slots.push(`${i}:00 ${period}`);
+      slots.push(`${i}:30 ${period}`);
+    }
+    return slots;
+  };
+
+  const handleSelect = (time) => {
+    onChange(time);
+    setIsOpen(false);
+  };
+
+  const timeSlots = generateTimeSlots();
+
+  if (disabled) {
+    return (
+      <div className="w-32 px-3 py-2 border border-gray-200 rounded-md text-sm text-gray-400 bg-gray-50 cursor-not-allowed flex items-center h-[38px]">
+        {value || "--:--"}
+      </div>
+    );
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <div
+          className="w-32 px-3 py-2 border border-gray-200 hover:border-primary1 rounded-md text-sm cursor-pointer transition-colors flex items-center h-[38px] text-gray-700"
+        >
+          {value || "--:--"}
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-[400px] p-4" align="start">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-base font-medium text-gray-700">Time Slot</h3>
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setIsAm(true)}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${isAm ? "bg-white text-primary1 shadow-sm border border-gray-200" : "text-gray-500 hover:text-gray-700"
+                }`}
+            >
+              AM
+            </button>
+            <button
+              onClick={() => setIsAm(false)}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${!isAm ? "bg-white text-primary1 shadow-sm border border-gray-200" : "text-gray-500 hover:text-gray-700"
+                }`}
+            >
+              PM
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-5 gap-2">
+          {timeSlots.map((time) => {
+            const isSelected = value === time;
+            const displayTime = time.split(' ')[0];
+
+            return (
+              <button
+                key={time}
+                onClick={() => handleSelect(time)}
+                className={`flex items-center justify-center py-2 px-1 text-xs rounded-md border transition-all ${isSelected
+                  ? "border-primary1 text-primary1 bg-primary1/5 font-medium"
+                  : "border-gray-200 text-gray-600 hover:border-primary1 hover:text-primary1"
+                  }`}
+              >
+                {displayTime}
+              </button>
+            );
+          })}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const OperatingHoursPage = () => {
   const [operatingHours, setOperatingHours] = useState([]);
@@ -71,19 +173,18 @@ const OperatingHoursPage = () => {
     });
   };
 
-  const handleTimeChange = (id, type, value) => {
-    setOperatingHours((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, [type]: value } : item
-      )
-    );
-  };
-
-  const handleTimeBlur = (id) => {
-    const dayData = operatingHours.find(item => item.id === id);
-    if (dayData) {
-      saveOperatingHours(dayData);
-    }
+  const handleTimeUpdate = (id, type, value) => {
+    setOperatingHours((prev) => {
+      const updated = prev.map((item) => {
+        if (item.id === id) {
+          const updatedItem = { ...item, [type]: value };
+          saveOperatingHours(updatedItem);
+          return updatedItem;
+        }
+        return item;
+      });
+      return updated;
+    });
   };
 
   if (loading) {
@@ -101,8 +202,8 @@ const OperatingHoursPage = () => {
 
   return (
     <div className="w-full bg-white rounded-lg border border-gray-200 mb-4">
-      <div className="p-6 border-b border-gray-100">
-        <h2 className="text-lg font-semibold mb-2">Operating Hours</h2>
+      <div className="px-6 py-4 border-b border-gray-100">
+        <h2 className="text-lg font-semibold">Operating Hours</h2>
       </div>
 
       <div className="p-6">
@@ -117,38 +218,24 @@ const OperatingHoursPage = () => {
           {operatingHours.map((item) => (
             <div
               key={item.id}
-              className={`grid grid-cols-4 gap-4 items-center py-4 border-b border-gray-50 last:border-0 ${!item.isOpen ? "opacity-60" : ""
+              className={`grid grid-cols-4 gap-4 items-center py-4 border-b border-[#E4E4E6] last:border-0 ${!item.isOpen ? "opacity-60" : ""
                 }`}
             >
               <div className="font-medium text-gray-700">{item.day}</div>
 
               <div>
-                <input
-                  type="text"
-                  value={item.open || ""}
+                <TimePickerPopover
+                  value={item.open}
+                  onChange={(time) => handleTimeUpdate(item.id, 'open', time)}
                   disabled={!item.isOpen}
-                  onChange={(e) => handleTimeChange(item.id, "open", e.target.value)}
-                  onBlur={() => handleTimeBlur(item.id)}
-                  className={`w-32 px-3 py-2 border rounded-md text-sm outline-none transition-colors
-                    ${item.isOpen
-                      ? "border-primary1 text-primary1 focus:ring-1 focus:ring-primary1"
-                      : "border-gray-200 text-gray-400 bg-gray-50"
-                    }`}
                 />
               </div>
 
               <div>
-                <input
-                  type="text"
-                  value={item.close || ""}
+                <TimePickerPopover
+                  value={item.close}
+                  onChange={(time) => handleTimeUpdate(item.id, 'close', time)}
                   disabled={!item.isOpen}
-                  onChange={(e) => handleTimeChange(item.id, "close", e.target.value)}
-                  onBlur={() => handleTimeBlur(item.id)}
-                  className={`w-32 px-3 py-2 border rounded-md text-sm outline-none transition-colors
-                    ${item.isOpen
-                      ? "border-primary1 text-primary1 focus:ring-1 focus:ring-primary1"
-                      : "border-gray-200 text-gray-400 bg-gray-50"
-                    }`}
                 />
               </div>
 
