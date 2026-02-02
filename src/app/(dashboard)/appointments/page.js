@@ -83,7 +83,7 @@ const AppointmentPage = () => {
           name: b.client?.name,
           email: b.client?.email,
           phone: b.client?.phone,
-          profile: b.client?.profile_picture,
+          profile: b.client?.profile,
         },
       ])
     ).values()
@@ -401,7 +401,7 @@ const AppointmentPage = () => {
         ? {
           name: item.client.name || "N/A",
           email: item.client.email || "N/A",
-          profile: item.client.profile || "",
+          profilePhoto: item.client.profilePhoto || "",
         }
         : { name: "N/A", email: "N/A", profile: "" },
       stylistName: item.stylist?.name || "N/A",

@@ -6,13 +6,13 @@ export const getStoreFormConfig = (mode = "create", initialData = {}) => {
       margin: "0 auto",
       fontFamily: "Arial, sans-serif",
     },
-   fields: [
+    fields: [
       { type: "header", label: mode === "create" ? "Create Store" : "Edit Store" },
       { type: "subheader", text: mode === "create" ? "Enter details" : "Update details" },
       { type: "divider" },
 
       { type: "textBlock", label: "Street Logo" },
-      { type: "file", name: "logo", value: initialData.logo || "" },
+      { type: "file", name: "logo", value: initialData.profileImage || "" },
 
       { type: "textBlock", label: "Cover Image" },
       { type: "file", name: "coverImage", value: initialData.coverImage || "" },
@@ -99,7 +99,7 @@ export const getStoreFormConfig = (mode = "create", initialData = {}) => {
         value: initialData.about || "",
       },
     ],
-     footer: {
+    footer: {
       cancel: {
         label: "Cancel",
         className: "w-full border border-[#02C8DE] text-[#02C8DE] px-4 py-2 rounded",
@@ -108,7 +108,7 @@ export const getStoreFormConfig = (mode = "create", initialData = {}) => {
       apply: {
         label: mode === "create" ? "Create Store" : "Update Store",
         className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
-        onClick : null,
+        onClick: null,
       },
     },
   };
@@ -120,13 +120,13 @@ export const bannerProfileConfig = {
     label: "Cover Image",
     key: "coverImage",
     type: "image",
-    value: "/icons/bannerImage.svg", 
+    value: "/icons/bannerImage.svg",
   },
   profileImage: {
     label: "Profile Image",
     key: "profileImage",
     type: "image",
-    value: "/icons/bannerProfile.svg", 
+    value: "/icons/bannerProfile.svg",
   },
   storeName: {
     label: "Store Name",

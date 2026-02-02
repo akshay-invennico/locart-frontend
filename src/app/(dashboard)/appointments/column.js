@@ -5,19 +5,14 @@ import PopupForm from "@/components/ui/popupform";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  archiveBookingConfig,
-  bookingDetailsConfig,
-  cancelBookingConfig,
   editBookingConfig,
   flagBookingConfig,
   getBookingDetailsConfig,
-  refundDetailsConfig,
   stylistManageAvailability,
 } from "./config";
 import {
   viewBookingDetailsConfig,
   viewBookingDetailsConfigFromAPI,
-  createEditBookingConfig,
 } from "./dynamicConfig.js";
 import { fetchAppointmentDetails } from "@/state/appointment/appointmentSlice";
 import { fetchStylists } from "@/state/stylist/stylistSlice";
@@ -155,7 +150,7 @@ export const getColumns = (
       structure: {
         name: "name",
         email: "email",
-        profile: "profile",
+        profile: "profilePhoto",
       },
       component: {
         type: "standard_avatar",

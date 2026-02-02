@@ -92,7 +92,12 @@ const FileUpload = ({ onChange, value, multiple = false }) => {
       {files.length > 0 && (
         <div className="flex flex-wrap gap-4">
           {files.map((file, index) => {
-            const previewUrl = file instanceof File ? URL.createObjectURL(file) : null;
+            const previewUrl =
+              file instanceof File
+                ? URL.createObjectURL(file)
+                : typeof file === "string"
+                  ? file
+                  : null;
 
             return (
               <div key={index} className="relative w-24 h-24 border rounded-lg overflow-hidden group">
@@ -104,7 +109,9 @@ const FileUpload = ({ onChange, value, multiple = false }) => {
                       fill
                       className="object-cover"
                       onLoadingComplete={() => {
-                        URL.revokeObjectURL(previewUrl);
+                        if (file instanceof File) {
+                          URL.revokeObjectURL(previewUrl);
+                        }
                       }}
                     />
                   </div>

@@ -523,7 +523,7 @@ const DynamicForm = ({
             </div>
             <textarea
               {...commonProps}
-              className={`w-full border border-gray-300 focus:outline-none rounded resize-y px-3 py-2 text-black ${commonProps.className}`}
+              className={`w-full border border-gray-300 focus:outline-none rounded resize-y px-3 py-2 text-gray-700 ${commonProps.className}`}
               rows={field.rows || 4}
             />
           </div>

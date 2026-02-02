@@ -212,10 +212,6 @@ export const EditStylistConfig = {
     },
     { type: "divider" },
     {
-      type: "textBlock",
-      label: "Stylist Profile Photo",
-    },
-    {
       type: "file",
       label: "Stylist Profile Photo",
       name: "profile_photo",
@@ -488,7 +484,7 @@ export const getStylistDetailsConfig = (stylist) => ({
     {
       type: "profileCard",
       name: "profile",
-      avatar: stylist?.avatarUrl || "/noimage.png",
+      avatar: stylist?.profilePhoto || "/noimage.png",
       name: stylist?.fullName || "N/A",
       email: stylist?.email || "N/A",
       subtitle: "Stylist",
