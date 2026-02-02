@@ -93,16 +93,16 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
 
       {/* Sidebar - ABOVE overlay */}
       <div
-        className={`client-sidebar w-[220px] h-full bg-white border-r border-gray-200 transition-all duration-500 ease-in-out
-          ${isMobile ? "fixed top-0 z-[60]" : "relative"}
+        className={`client-sidebar w-[220px] min-h-screen bg-white border-r border-gray-200 transition-all duration-500 ease-in-out
+          ${isMobile ? "fixed top-0 z-[60] h-full" : "fixed left-[72px] top-16 h-[calc(100vh-64px)] z-40"}
           ${isMobile && isClientSidebarOpen ? "left-[72px]" : ""}
           ${isMobile && !isClientSidebarOpen ? "left-[-250px]" : ""}
         `}
         style={{ pointerEvents: "auto" }}
       >
         <div className="py-4">
-          <div className="px-3 text-gray-400 text-sm mb-3">{sidebarHeader}</div>
-          <nav className="flex flex-col gap-2 px-2">
+          <div className="px-4 text-gray-400 text-sm mb-3">{sidebarHeader}</div>
+          <nav className="flex flex-col gap-2 px-4">
             {sidebarItems.map((item, index) => (
               <Link
                 key={index}

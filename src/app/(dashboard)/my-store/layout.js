@@ -25,7 +25,7 @@ export default function MyStorePageLayout({ children }) {
   const showSidebar = role && role !== "loctitian";
 
   return (
-    <div className="flex h-full gap-6 relative">
+    <div className="flex h-full gap-2 relative">
       {showSidebar && (
         <>
           <div className="hidden md:block w-[220px] flex-shrink-0 sticky top-0 overflow-y-auto">
