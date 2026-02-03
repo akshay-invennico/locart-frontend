@@ -45,7 +45,7 @@ const AppointmentPage = () => {
   const [search, setSearch] = useState("");
 
   const dispatch = useDispatch();
-  const { data, selectedAppointment, loading, error } = useSelector(
+  const { data, loading } = useSelector(
     (state) => state.appointment
   );
   const { services } = useSelector((state) => state.salon);
@@ -175,24 +175,18 @@ const AppointmentPage = () => {
     dispatch(fetchAppointmentDetails(row.bookingId));
   };
 
-  const handleCancelBooking = (row) => {
-    setSelectedBooking(row);
-    setShowCancelPopup(true);
-  };
-
   const handleEditBooking = async (row, data) => {
     const appointmentId = row.bookingId;
 
     const payload = {
-      service_id: data.service_id?.[0],
-      stylist_id: data.stylist_id?.[0],
-      date: data.date,
-      time: data.time_slot,
+      service_id: Array.isArray(data.service_id) && data.service_id.length > 0 ? data.service_id[0] : data.service_id,
+      stylist_id: data.stylist_id,
+      time: data.time_slot || data.time,
       amount: Number(data.amount) || 0,
       discount: Number(data.discount) || 0,
-      status: data.booking_status?.[0],
+      status: data.booking_status,
       booking_note: data.booking_note || "",
-      payment_status: data.payment_status?.[0],
+      payment_status: data.payment_status,
     };
 
     try {

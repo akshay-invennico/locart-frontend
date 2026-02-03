@@ -224,3 +224,16 @@ export const getProductById = async (productId) => {
     throw err.response?.data || err.message;
   }
 };
+
+export const updateProductService = async (productId, formData) => {
+  try {
+    const response = await api.patch(`ecom/product/${productId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

@@ -29,63 +29,101 @@ const EditBookingSidebar = ({ row, onApply }) => {
   const [loading, setLoading] = useState(true);
   const [initialValues, setInitialValues] = useState(null);
 
-  // Fetch appointment details & stylists
   useEffect(() => {
     if (row?.bookingId) dispatch(fetchAppointmentDetails(row.bookingId));
     dispatch(fetchStylists());
   }, [dispatch, row?.bookingId]);
 
-  // Map data to initialValues once everything is loaded
   useEffect(() => {
-    const appt = selectedAppointment?.data || selectedAppointment || {};
+    const appt = selectedAppointment?.data || selectedAppointment;
 
-    // Wait until services & stylists are loaded
     if (!services?.length || !stylists?.length) return;
+    if (!appt || (appt.booking_id !== row.bookingId && appt.booking_id !== row.booking_id)) {
+      return;
+    }
+
+    const getServiceIds = () => {
+      if (Array.isArray(appt.services) && appt.services.length > 0) {
+        return appt.services.map(s => s._id || s.id);
+      }
+      if (appt.service_id) return [appt.service_id];
+      return [];
+    };
+
+    const getStylistId = () => {
+      if (appt.stylist?.id || appt.stylist?._id) return appt.stylist.id || appt.stylist._id;
+      if (appt.stylist_id) return appt.stylist_id;
+      return "";
+    };
 
     const mapped = {
-      booking_id: appt.booking_id || "",
+      booking_id: appt.booking_number || "",
+      date: appt.date || "",
       client_name: appt.client?.name || "",
       client_mobile: appt.client?.phone || "",
-      service_id: appt.services?.map((s) => s._id) || [],
-      stylist_id: appt.stylist?.id ? [appt.stylist.id] : [],
-      date: appt.date || "",
-      time_slot: appt.time || "",
-      amount: appt.invoice?.service_charges || 0,
-      discount: appt.invoice?.loyalty_discount || 0,
-      booking_status: appt.status ? [appt.status] : [],
+
+      service_id: getServiceIds(),
+      stylist_id: getStylistId(),
+
+      time_slot: appt.time || appt.time_slot || row?.time || "",
+      amount: appt.amount || row?.amount || 0,
+      discount: appt.discount || row?.discount || 0,
+
+      booking_status: appt.status
+        ? appt.status.toLowerCase()
+        : row?.status
+          ? row.status.toLowerCase()
+          : "",
+
       booking_note: appt.booking_note || "",
+
       payment_status: appt.payment?.payment_status
-        ? [appt.payment.payment_status]
-        : [],
+        ? appt.payment.payment_status.toLowerCase()
+        : appt.payment_status
+          ? appt.payment_status.toLowerCase()
+          : row?.paymentStatus
+            ? row.paymentStatus.toLowerCase()
+            : "",
     };
 
     setInitialValues(mapped);
     setLoading(false);
-  }, [selectedAppointment, services, stylists]);
+  }, [selectedAppointment, services, stylists, row]);
 
   if (loading) return <Spinner />;
 
+  const updateFieldOptions = (field) => {
+    if (field.type === "inputGroup" && field.fields) {
+      return {
+        ...field,
+        fields: field.fields.map(updateFieldOptions),
+      };
+    }
+
+    if (field.name === "stylist_id") {
+      return {
+        ...field,
+        options: stylists.map((s) => ({
+          value: s._id,
+          label: s.fullName || s.name,
+        })),
+      };
+    }
+
+    if (field.name === "service_id") {
+      return {
+        ...field,
+        options: services.map((s) => ({ value: s._id, label: s.name })),
+      };
+    }
+
+    return field;
+  };
+
   const updatedConfig = {
     ...editBookingConfig,
-    data: initialValues,
-    fields: editBookingConfig.fields.map((f) => {
-      if (f.name === "stylist_id") {
-        return {
-          ...f,
-          options: stylists.map((s) => ({
-            value: s._id,
-            label: s.fullName || s.name,
-          })),
-        };
-      }
-      if (f.name === "service_id") {
-        return {
-          ...f,
-          options: services.map((s) => ({ value: s._id, label: s.name })),
-        };
-      }
-      return f;
-    }),
+    initialValues: initialValues,
+    fields: editBookingConfig.fields.map(updateFieldOptions),
     footer: {
       ...editBookingConfig.footer,
       apply: {
@@ -95,7 +133,8 @@ const EditBookingSidebar = ({ row, onApply }) => {
     },
   };
 
-  return <DynamicForm config={updatedConfig} isEdit />;
+  return <DynamicForm config={updatedConfig} isEdit initialValues={initialValues} recordKey={row.bookingId
+  } />;
 };
 
 export default EditBookingSidebar;

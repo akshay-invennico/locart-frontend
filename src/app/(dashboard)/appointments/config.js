@@ -536,22 +536,35 @@ export const editBookingConfig = {
       css: { backgroundColor: "#F5F5F5" },
       readonly: true,
     },
-
     {
-      type: "date",
+      type: "inputReadOnly",
       name: "date",
       label: "Booking Date",
+      placeholder: "15 Jul, 2025",
+      css: { backgroundColor: "#F5F5F5" },
+      readonly: true,
     },
     {
-      type: "time",
-      name: "time_slot",
-      label: "Booking Time",
-    },
-    {
-      type: "selectCheckbox",
-      name: "stylist_id",
-      label: "Select Stylist",
-      options: [],
+      type: "inputGroup",
+      columns: 2,
+      fields: [
+        {
+          type: "inputReadOnly",
+          name: "client_name",
+          label: "Client Name",
+          placeholder: "John Doe",
+          css: { backgroundColor: "#F5F5F5" },
+          readonly: true,
+        },
+        {
+          type: "inputReadOnly",
+          name: "client_mobile",
+          label: "Client Mobile",
+          placeholder: "+1234567890",
+          css: { backgroundColor: "#F5F5F5" },
+          readonly: true,
+        },
+      ],
     },
     {
       type: "selectCheckbox",
@@ -560,26 +573,61 @@ export const editBookingConfig = {
       options: [],
     },
     {
-      type: "selectCheckbox",
+      type: "select",
+      name: "stylist_id",
+      label: "Select Stylist",
+      options: [],
+    },
+    {
+      type: "time",
+      name: "time_slot",
+      label: "Time",
+    },
+    {
+      type: "inputGroup",
+      columns: 2,
+      fields: [
+        {
+          type: "input",
+          label: "Amount",
+          name: "amount",
+          placeholder: "$99",
+        },
+        {
+          type: "input",
+          label: "Discount",
+          name: "discount",
+          placeholder: "2%",
+        },
+      ],
+    },
+    {
+      type: "select",
       name: "payment_status",
       label: "Payment Status",
       options: [
         { value: "unpaid", label: "Unpaid" },
         { value: "paid", label: "Paid" },
-        ,
       ],
     },
-
     {
-      type: "selectCheckbox",
+      type: "select",
       name: "booking_status",
       label: "Booking Status",
       options: [
         { value: "upcoming", label: "Upcoming" },
         { value: "ongoing", label: "Ongoing" },
+        { value: "pending", label: "Pending" },
         { value: "completed", label: "Completed" },
         { value: "cancelled", label: "Cancelled" },
       ],
+    },
+    {
+      type: "textarea",
+      label: "Booking Note",
+      label2: "Max 200 Words | Optional",
+      placeholder: "Note",
+      name: "booking_note",
     },
   ],
   footer: {

@@ -1,25 +1,5 @@
 "use client";
-
-import CancelOrderModal from "@/components/common/cancleOrderCompoent";
-import OrderSummary from "@/components/common/orderComponent";
-import PopupForm from "@/components/ui/popupform";
-import { Eye, Trash } from "lucide-react";
-import ViewUser from "../../users/viewUser";
-import DynamicForm from "@/components/modules/DynamicFormRendering";
-import DetailView from "@/components/modules/DetailView";
-import {
-  archiveOrderConfig,
-  flagOrderConfig,
-  orderDetailsConfig,
-  refundDetailsConfig,
-  getProductDetailsConfig,
-} from "./config";
-import { bookingDetailsConfig } from "../../appointments/config";
-import { editBookingConfig } from "./config";
-import { ProductDetailsConfig } from "./config";
-import { editProductConfig } from "./config";
-
-export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handleViewProduct) => [
+export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handleViewProduct, handleEditProduct) => [
   {
     key: "product",
     title: "Product",
@@ -92,7 +72,6 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
       type: "action",
       options: {
         actions: (row) => {
-          // row.status determines which actions to show
           if (row.status === "Inactive") {
             return [
               {
@@ -105,7 +84,7 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
                 label: "Edit Product",
                 iconUrl: "/icons/editBooking.svg",
                 type: "sidebar",
-                component: <DynamicForm config={editBookingConfig} />,
+                onClick: (row) => handleEditProduct(row._id),
               },
               {
                 label: "Mark As Active",
@@ -117,20 +96,6 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
                     row.status.toLowerCase() === "active" ? "inactive" : "active"
                   ),
               },
-              // {
-              //   label: "Archive Order",
-              //   iconUrl: "/icons/archiveClient.svg",
-              //   type: "popUp",
-              //   component: (
-              //     <PopupForm
-              //       config={archiveOrderConfig}
-              //       width="500px"
-              //       height="500px"
-              //       onApply={(data) => console.log("Archive applied:", data)}
-              //       onCancel={() => console.log("Cancelled")}
-              //     />
-              //   ),
-              // },
               {
                 label: "Delete Product",
                 iconUrl: "/icons/deleteProduct.svg",
@@ -140,7 +105,6 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
             ];
           }
 
-          // default actions for other statuses
           return [
             {
               label: "View Product",
@@ -152,7 +116,7 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
               label: "Edit Product",
               iconUrl: "/icons/editBooking.svg",
               type: "sidebar",
-              component: <DynamicForm config={editProductConfig} />,
+              onClick: (row) => handleEditProduct(row._id),
             },
             {
               label: "Mark As InActive",
@@ -164,20 +128,6 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
                   row.status.toLowerCase() === "active" ? "inactive" : "active"
                 ),
             },
-            // {
-            //   label: "Archive Product",
-            //   iconUrl: "/icons/archiveClient.svg",
-            //   type: "popUp",
-            //   component: (
-            //     <PopupForm
-            //       config={archiveOrderConfig}
-            //       width="500px"
-            //       height="500px"
-            //       onApply={(data) => console.log("Archive applied:", data)}
-            //       onCancel={() => console.log("Cancelled")}
-            //     />
-            //   ),
-            // },
             {
               label: "Delete Product",
               iconUrl: "/icons/deleteProduct.svg",

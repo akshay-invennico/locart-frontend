@@ -134,12 +134,20 @@ export const createProductConfig = (onSubmit, categoryOptions) => ({
   },
 });
 
-export const editProductConfig = {
+export const getEditProductConfig = (product, onSubmit, onCancel, categoryOptions) => ({
   formCss: {
     maxWidth: "600px",
     width: "100%",
     margin: "0 auto",
     fontFamily: "Arial, sans-serif",
+  },
+  initialValues: {
+    name: product?.name || product?.productName,
+    category_id: product?.category_id || product?.category?.[0]?._id,
+    unit_price: product?.unit_price || product?.price?.$numberDecimal || product?.price,
+    stock_quantity: product?.stock_quantity || product?.stock,
+    description: product?.description,
+    product_images: product?.images || product?.imageUrls || []
   },
 
   fields: [
@@ -154,91 +162,38 @@ export const editProductConfig = {
     { type: "divider", name: "divider" },
 
     { type: "textBlock", label: "Product Photos" },
-    { type: "file", label: "Product photos" },
+    {
+      type: "file",
+      name: "new_images",
+      label: "Add New Photos",
+      multiple: true
+    },
     {
       type: "thumbnailList",
-      label: "Product Photos",
-      images: [
-        {
-          src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
-          )}`,
-          alt: "Product 1",
-          onChange: (updatedImages) =>
-            console.log("Updated images:", updatedImages),
-        },
-        {
-          src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
-          )}`,
-          alt: "Product 2",
-          onChange: (updatedImages) =>
-            console.log("Updated images:", updatedImages),
-        },
-        {
-          src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
-          )}`,
-          alt: "Product 3",
-          onChange: (updatedImages) =>
-            console.log("Updated images:", updatedImages),
-        },
-        {
-          src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
-          )}`,
-          alt: "Product 4",
-          onChange: (updatedImages) =>
-            console.log("Updated images:", updatedImages),
-        },
-        {
-          src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
-          )}`,
-          alt: "Product 5",
-          onChange: (updatedImages) =>
-            console.log("Updated images:", updatedImages),
-        },
-        {
-          src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
-          )}`,
-          alt: "Product 6",
-          onChange: (updatedImages) =>
-            console.log("Updated images:", updatedImages),
-        },
-      ],
+      label: "Current Product Photos",
+      name: "product_images"
     },
 
     {
       type: "input",
-      name: "productName",
+      name: "name",
       label: "Product Name",
       placeholder: "Enter product name",
     },
 
     {
       type: "selectCheckbox",
-      name: "categories",
+      name: "category_id",
       label: "Categories",
-      options: [
-        { label: "Care Kit", value: "Care Kit" },
-        { label: "Moisturizing Cream", value: "Moisturizing Cream" },
-        { label: "Detangling Spray", value: "Detangling Spray" },
-        { label: "Nourishing Oil", value: "Nourishing Oil" },
-        { label: "Curl Defining Gel", value: "Curl Defining Gel" },
-        { label: "Smoothing Serum", value: "Smoothing Serum" },
-        { label: "Heat Protectant Spray", value: "Heat Protectant Spray" },
-        { label: "Leave-In Conditioner", value: "Leave-In Conditioner" },
-      ],
+      options: categoryOptions,
     },
     {
       type: "inputPair",
       label1: "Price",
-      name1: "price",
+      name1: "unit_price",
       placeholder1: "Enter price",
       label2: "Stock",
-      name2: "stock",
+      name2: "stock_quantity",
       placeholder2: "Enter stock quantity",
     },
     {
@@ -254,13 +209,15 @@ export const editProductConfig = {
       label: "Cancel",
       className:
         "w-full border border-[#02C8DE] text-[#02C8DE] px-4 py-2 rounded",
+      onClick: onCancel,
     },
     apply: {
       label: "Update Product",
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
+      onClick: (data) => onSubmit(data),
     },
   },
-};
+});
 
 export const flagOrderConfig = {
   title: "",

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllOrders, updateOrderStatus, getAllProducts, getAllCategories, createEcomOrder, flagOrders, updateProductStatusService, deleteProductService, updateCategoryStatusService, deleteCategoryService, getOrderById, createProductService, bulkUpdateProductStatusService, bulkDeleteProductsService, getProductById, getCategoryById, createCategoryService, updateCategoryService } from "./ecomService";
+import { getAllOrders, updateOrderStatus, getAllProducts, getAllCategories, createEcomOrder, flagOrders, updateProductStatusService, deleteProductService, updateCategoryStatusService, deleteCategoryService, getOrderById, createProductService, bulkUpdateProductStatusService, bulkDeleteProductsService, getProductById, getCategoryById, createCategoryService, updateCategoryService, updateProductService } from "./ecomService";
 
 export const fetchAllOrders = createAsyncThunk(
   "ecom/fetchAllOrders",
@@ -78,6 +78,18 @@ export const createProduct = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const data = await createProductService(formData);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  "ecom/updateProduct",
+  async ({ productId, formData }, { rejectWithValue }) => {
+    try {
+      const data = await updateProductService(productId, formData);
       return data.data;
     } catch (err) {
       return rejectWithValue(err);

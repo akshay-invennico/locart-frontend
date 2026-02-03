@@ -20,6 +20,7 @@ import {
   updateProductStatus,
   deleteProduct,
   createProduct,
+  updateProduct,
   fetchAllCategories,
   bulkUpdateProductStatus,
   bulkDeleteProducts,
@@ -29,6 +30,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DetailView from "@/components/modules/DetailView";
 import { exportGridCSV, exportGridPDF } from "@/lib/HelpFulFunction";
 import { toast } from "sonner";
+import { getEditProductConfig } from "./config";
 
 const options = {
   select: true,
@@ -177,6 +179,73 @@ const ProductPage = () => {
       });
   };
 
+  const handleUpdateProductSubmit = async (data, originalProduct) => {
+    const formData = new FormData();
+
+    if (data.name) formData.append("name", data.name);
+    if (data.description) formData.append("description", data.description);
+    if (data.unit_price) formData.append("unit_price", data.unit_price);
+    if (data.stock_quantity) formData.append("stock_quantity", data.stock_quantity);
+    if (data.category_id) formData.append("category_id", data.category_id);
+
+    if (data.new_images && data.new_images.length > 0) {
+      if (typeof data.new_images === 'string') {
+      } else if (data.new_images instanceof FileList || Array.isArray(data.new_images)) {
+        Array.from(data.new_images).forEach((file) => {
+          formData.append("products", file);
+        });
+      } else if (data.new_images instanceof File) {
+        formData.append("products", data.new_images);
+      }
+    }
+
+    const keptImages = data.product_images || [];
+    const imagesToDelete = originalProduct.images.filter(
+      oldImg => !keptImages.includes(oldImg)
+    );
+
+    if (imagesToDelete.length > 0) {
+      imagesToDelete.forEach(img => formData.append("images_to_delete[]", img));
+    }
+
+    try {
+      await dispatch(updateProduct({
+        productId: originalProduct._id,
+        formData
+      })).unwrap();
+
+      toast.success("Product updated successfully");
+      setSidebarContent(null);
+      dispatch(fetchAllProducts(filters));
+    } catch (error) {
+      console.error("Update failed", error);
+      toast.error(error.message || "Failed to update product");
+    }
+  };
+
+  const handleEditProduct = async (id) => {
+    try {
+      const product = await dispatch(fetchProductById(id)).unwrap();
+      const config = getEditProductConfig(
+        product,
+        (data) => handleUpdateProductSubmit(data, product),
+        () => setSidebarContent(null),
+        categoryOptions
+      );
+
+      setSidebarContent(
+        <DynamicForm
+          key={product._id}
+          config={config}
+          isEdit={true}
+          recordKey={product._id}
+        />
+      );
+    } catch (error) {
+      toast.error("Failed to load product details");
+    }
+  };
+
   const downloadActions = [
     {
       header: "Download List",
@@ -209,7 +278,8 @@ const ProductPage = () => {
   const columns = getColumns(
     handleDeleteProduct,
     handleProductStatusUpdate,
-    handleViewProduct
+    handleViewProduct,
+    handleEditProduct
   );
 
   return (
