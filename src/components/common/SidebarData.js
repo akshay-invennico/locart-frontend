@@ -183,7 +183,7 @@ export const loctitianSidebarItems = [
   },
   {
     title: "Availability",
-    url: "/my-store/availability",
+    url: "/stylists/availability",
     icon: (
       <Image
         src="/icons/stylist_availability.svg"

@@ -1,19 +1,84 @@
 import ActionComponent from "@/components/grid/actionComponent";
 import GridCommonComponent from "@/components/grid/gridCommonComponent";
 import DynamicForm from "@/components/modules/DynamicFormRendering";
-import { Plus } from "lucide-react";
-import React from "react";
-import { addHolidayConfig, editHolidayConfig } from "./config";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addHolidayConfig } from "./config";
 import { Holiday_Columns } from "./column";
-import { holiday_data } from "./holiday_data";
 import Image from "next/image";
+import {
+  fetchAllHolidays,
+  createHoliday,
+  fetchStoreDetails,
+  removeHoliday,
+  editHoliday,
+} from "@/state/store/storeSlice";
 
 const HolidayPage = () => {
-  const options = {
-    select: false,
-    order: true,
-    sortable: true,
+  const dispatch = useDispatch();
+  const { store, holidays, loading } = useSelector((state) => state.salon);
+  const storeId = store?._id;
+
+  useEffect(() => {
+    dispatch(fetchStoreDetails());
+    dispatch(fetchAllHolidays());
+  }, [dispatch]);
+
+  const handleAddHoliday = async (formData, closeSidebar) => {
+    if (!storeId) {
+      console.error("Store ID not found!");
+      return;
+    }
+    const payload = {
+      salonId: storeId,
+      date: new Date(formData.date).toISOString().split("T")[0],
+      occasion: formData.occasion,
+      description: formData.occasion,
+    };
+
+
+    const res = await dispatch(createHoliday(payload));
+
+    if (res?.meta?.requestStatus === "fulfilled") {
+      await dispatch(fetchAllHolidays());
+      closeSidebar();
+    } else {
+      console.error("Holiday Creation Failed:", res);
+    }
   };
+
+  const handleDelete = async (id, closePopup) => {
+    const res = await dispatch(removeHoliday(id));
+
+    if (res?.meta?.requestStatus === "fulfilled") {
+      await dispatch(fetchAllHolidays());
+      closePopup();
+    } else {
+      console.error("Holiday Delete Failed:", res);
+    }
+  };
+
+  const handleEditHoliday = async (formData, closeSidebar, row) => {
+    const payload = {
+      date: new Date(formData.date).toISOString().split("T")[0],
+      occasion: formData.occasion,
+    };
+
+    const res = await dispatch(
+      editHoliday({
+        id: row._id,
+        data: payload,
+      })
+    );
+
+    if (res?.meta?.requestStatus === "fulfilled") {
+      await dispatch(fetchAllHolidays());
+      closeSidebar();
+    } else {
+      console.error("Holiday Update Failed:", res);
+    }
+  };
+
   return (
     <div className="w-full border rounded-lg p-4">
       <div className="mt-2">
@@ -26,7 +91,12 @@ const HolidayPage = () => {
             actions={[
               {
                 type: "sidebar",
-                component: <DynamicForm config={addHolidayConfig} />,
+                component: (
+                  <DynamicForm
+                    config={addHolidayConfig}
+                    onApply={handleAddHoliday}
+                  />
+                ),
               },
             ]}
             icon={
@@ -42,9 +112,8 @@ const HolidayPage = () => {
           />
         </div>
         <GridCommonComponent
-          data={holiday_data}
-          columns={Holiday_Columns}
-          // options={options}
+          data={holidays || []}
+          columns={Holiday_Columns(handleDelete, handleEditHoliday)}
           theme={{
             border: "border-gray-300",
             header: { bg: "bg-gray-100" },

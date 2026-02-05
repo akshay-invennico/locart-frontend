@@ -5,11 +5,11 @@ import PopupForm from "@/components/ui/popupform";
 import { cancelHolidayConfig, editHolidayConfig } from "./config";
 
 
-export const Holiday_Columns = [
+export const Holiday_Columns = (handleDelete, handleEditHoliday) => [
   {
     key: "date",
     title: "Date",
-   
+
     sortable: false,
     component: {
       type: "date",
@@ -17,7 +17,7 @@ export const Holiday_Columns = [
       options: {
         format: "M d yyyy",
       },
-       style:{
+      style: {
         color: "#7B7B7B",
       }
     },
@@ -25,17 +25,17 @@ export const Holiday_Columns = [
   {
     key: "day",
     title: "Day",
-    component:{
-      style:{
+    component: {
+      style: {
         color: "#7B7B7B",
       }
     },
   },
   {
-    key: "reason",
+    key: "occasion",
     title: "Occasion/Reason",
     component: {
-      style:{
+      style: {
         color: "#7B7B7B",
       }
     },
@@ -52,18 +52,33 @@ export const Holiday_Columns = [
             label: "Edit Holiday",
             iconUrl: "/icons/editService.svg",
             type: "sidebar",
-            component: <DynamicForm config={editHolidayConfig} />,
+            component: (rowData) => (
+              <DynamicForm
+                config={editHolidayConfig}
+                isEdit={true}
+                initialValues={{
+                  date: rowData.date?.split("T")[0],
+                  occasion: rowData.occasion,
+                  // description: rowData.description
+                }}
+                onApply={(formValues, closeSidebar) =>
+                  handleEditHoliday(formValues, closeSidebar, rowData)
+                }
+
+              />
+            ),
+
           },
           {
             label: "Delete Holiday",
             iconUrl: "/icons/deleteService.svg",
             type: "popUp",
-            component: (
+            component: (rowData) => (
               <PopupForm
                 config={cancelHolidayConfig}
                 width="500px"
-                onApply={(data) => console.log("Deleted:", data)}
-                onCancel={() => console.log("Cancelled")}
+                onApply={() => handleDelete(rowData?._id)}
+                onCancel={() => { }}
               />
             ),
           },

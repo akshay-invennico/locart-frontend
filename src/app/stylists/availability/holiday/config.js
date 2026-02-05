@@ -15,9 +15,10 @@ export const addHolidayConfig = {
     {
       type: "date",
       label: "Date",
+      name: "date",
     },
 
-    { type: "textarea", label: "Occasion/Reason", placeholder: "Occasion/Reason",  },
+    { type: "textarea", label: "Occasion/Reason", placeholder: "Occasion/Reason", name: "occasion" },
   ],
   footer: {
     cancel: {
@@ -29,7 +30,7 @@ export const addHolidayConfig = {
     apply: {
       label: "Add Holiday",
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
-      onClick: (data) => console.log("Added", data),
+      onClick: null,
     },
   },
 };
@@ -70,9 +71,10 @@ export const editHolidayConfig = {
     {
       type: "date",
       label: "Date",
+      name: "date"
     },
-  
-    { type: "textarea", label: "Occasion/Reason", placeholder: "Occasion/Reason" },
+
+    { type: "textarea", label: "Occasion/Reason", placeholder: "Occasion/Reason", name: "occasion" },
   ],
   footer: {
     cancel: {
@@ -84,7 +86,7 @@ export const editHolidayConfig = {
     apply: {
       label: "Update Holiday",
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
-      onClick: (data) => console.log("Added", data),
+      onClick: null,
     },
   },
 };
