@@ -1,37 +1,103 @@
-import React from "react";
-import GridCommonComponent from "@/components/grid/gridCommonComponent";
+"use client";
+import React, { useState } from "react";
+import Table from "@/components/common/Table";
 import { LocUsersData } from "./loyaltesPoints";
-import { columns } from "./column";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react"; // Import the search icon
+import LoyaltySidebar from "./components/LoyaltySidebar";
+import LoyaltyStats from "./components/LoyaltyStats";
+import EarnRules from "./components/EarnRules";
+import PointsSettings from "./components/PointsSettings";
 
-const options = {
-  select: true,
-  order: false,
-};
+const Page = () => {
+  const [activeTab, setActiveTab] = useState('loc-points');
 
+  const tableColumns = [
+    {
+      header: "Clients",
+      accessor: "name",
+      render: (row) => (
+        <div className="flex items-center gap-3">
+          <img
+            src={row.profile}
+            alt={row.name}
+            className="h-10 w-10 rounded-full object-cover shadow-sm"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(row.name)}&background=random`;
+            }}
+          />
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-gray-900">{row.name}</span>
+            <span className="text-xs text-gray-500">{row.email}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "Loyalty Points",
+      accessor: "loyaltyPoints",
+    },
+    {
+      header: "Badges Earned",
+      accessor: "badgesEarned",
+    },
+    {
+      header: "Lifetime Points",
+      accessor: "lifetimeEarning",
+      render: (row) => (
+        <span className="text-primary1 font-bold">
+          ${row.lifetimeEarning}
+        </span>
+      ),
+    },
+    {
+      header: "Last Activity",
+      accessor: "lastActivity",
+      render: (row) => {
+        const date = new Date(row.lastActivity);
+        return (
+          <span className="text-gray-500 text-sm">
+            {date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+          </span>
+        )
+      }
+    }
+  ];
 
-const page = () => {
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'earn-rules':
+        return <EarnRules />;
+      case 'points-settings':
+        return <PointsSettings />;
+      case 'loc-points':
+      default:
+        return (
+          <>
+            <LoyaltyStats />
+            <div className="">
+              <Table
+                title=""
+                data={LocUsersData}
+                columns={tableColumns}
+                enableSearch={true}
+                enableDownload={true}
+                itemsPerPage={10}
+              />
+            </div>
+          </>
+        );
+    }
+  };
+
   return (
-    <div className="w-full">
-      <div className="relative mb-2 w-[400px]">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-        <Input className="pl-10" placeholder="Search here..." />
-      </div>
-      <div className="">
-        <GridCommonComponent
-          data={LocUsersData}
-          options={options}
-          columns={columns}
-          theme={{
-            border: "border-gray-300",
-            header: {
-              bg: "bg-gray-100",
-            },
-          }}
-        />
+    <div className="flex min-h-screen">
+      <LoyaltySidebar activeTab={activeTab} onTabChange={setActiveTab} />
+
+      <div className="flex-1 pl-6 overflow-y-auto">
+        {renderContent()}
       </div>
     </div>
   );
 };
-export default page;
+
+export default Page;

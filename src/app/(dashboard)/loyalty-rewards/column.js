@@ -50,24 +50,6 @@ export const columns = [
     },
   },
   {
-    key: "status",
-    title: "Status",
-    component: {
-      type: "badge",
-      style: {
-        borderRadius: "3.15px",
-        padding: "8px 12px",
-      },
-      options: {
-        value: {
-          active: "#097416",
-          inactive: "#9CA3AF",
-          suspended: "#BC0D10",
-        },
-      },
-    },
-  },
-  {
     key: "actions",
     title: "Actions",
     component: {

@@ -3,7 +3,7 @@ import {
   PiCalendarBlank,
   PiShoppingCartLight,
 } from "react-icons/pi";
-import { FaUsers } from "react-icons/fa";
+import { FaGift, FaUsers } from "react-icons/fa";
 import { BsShop } from "react-icons/bs";
 import { PiChartBarBold, PiShoppingCart } from "react-icons/pi";
 import Image from "next/image";
@@ -34,6 +34,11 @@ export const leftSidebarItems = [
     title: "My Ecom",
     url: "/my-ecom/order",
     icon: <PiShoppingCartLight size={21} />,
+  },
+  {
+    title: "Loyalty & Rewards",
+    url: "/loyalty-rewards",
+    icon: <FaGift size={21} />,
   },
 ];
 
