@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Table from "@/components/common/Table";
-import { LocUsersData } from "./loyaltesPoints";
+import { getLoyaltyUsers } from "@/state/loyalty/loyaltyService";
 import LoyaltySidebar from "./components/LoyaltySidebar";
 import LoyaltyStats from "./components/LoyaltyStats";
 import EarnRules from "./components/EarnRules";
@@ -9,6 +9,25 @@ import PointsSettings from "./components/PointsSettings";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState('loc-points');
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await getLoyaltyUsers();
+        if (response.success) {
+          setUsers(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch users", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const tableColumns = [
     {
@@ -17,12 +36,12 @@ const Page = () => {
       render: (row) => (
         <div className="flex items-center gap-3">
           <img
-            src={row.profile}
+            src={row.profile_picture || "/user.png"}
             alt={row.name}
             className="h-10 w-10 rounded-full object-cover shadow-sm"
             onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(row.name)}&background=random`;
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/user.png";
             }}
           />
           <div className="flex flex-col">
@@ -34,26 +53,23 @@ const Page = () => {
     },
     {
       header: "Loyalty Points",
-      accessor: "loyaltyPoints",
-    },
-    {
-      header: "Badges Earned",
-      accessor: "badgesEarned",
+      accessor: "loyalty_points",
     },
     {
       header: "Lifetime Points",
-      accessor: "lifetimeEarning",
+      accessor: "lifetime_points_value",
       render: (row) => (
         <span className="text-primary1 font-bold">
-          ${row.lifetimeEarning}
+          ${row.lifetime_points_value}
         </span>
       ),
     },
     {
       header: "Last Activity",
-      accessor: "lastActivity",
+      accessor: "last_activity",
       render: (row) => {
-        const date = new Date(row.lastActivity);
+        if (!row.last_activity) return <span className="text-gray-400 text-sm">-</span>;
+        const date = new Date(row.last_activity);
         return (
           <span className="text-gray-500 text-sm">
             {date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -77,11 +93,12 @@ const Page = () => {
             <div className="">
               <Table
                 title=""
-                data={LocUsersData}
+                data={users}
                 columns={tableColumns}
                 enableSearch={true}
                 enableDownload={true}
-                itemsPerPage={10}
+                itemsPerPage={5}
+                loading={loading}
               />
             </div>
           </>

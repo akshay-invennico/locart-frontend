@@ -76,7 +76,7 @@ const Pagination = ({
                 className={cn(
                   "relative inline-flex items-center px-4 py-2 border text-sm font-medium",
                   currentPage === page
-                    ? "z-10 bg-primary-50 border-primary-500 text-primary-600"
+                    ? "z-10 bg-primary1-50 border-primary1-500 text-primary1-600"
                     : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                 )}
                 style={currentPage === page ? { backgroundColor: '#eff6ff', borderColor: '#3b82f6', color: '#2563eb' } : {}}

@@ -1,14 +1,15 @@
 import React from 'react';
 import { Gift, RefreshCw, DollarSign, CheckCircle2 } from 'lucide-react';
+import { getSummary } from '@/state/loyalty/loyaltyService';
 
-const StatCard = ({ title, value, description, icon: Icon, colorClass, iconBgClass }) => {
+const StatCard = ({ title, value, description, icon: Icon, colorClass }) => {
   return (
     <div className={`${colorClass} rounded-lg p-4 text-white flex flex-col justify-between h-40`}>
       <div>
         <p className="text-sm font-medium opacity-90 mb-1">{title}</p>
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-full ${iconBgClass} bg-opacity-20`}>
-            <Icon className="w-6 h-6 text-white" />
+          <div className={`p-2 rounded-full bg-white/20`}>
+            <Icon size={24} color="white" />
           </div>
           <h3 className="text-3xl font-bold">{value}</h3>
         </div>
@@ -19,10 +20,30 @@ const StatCard = ({ title, value, description, icon: Icon, colorClass, iconBgCla
 };
 
 const LoyaltyStats = () => {
+  const [data, setData] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const response = await getSummary();
+        if (response.success) {
+          setData(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch loyalty summary:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSummary();
+  }, []);
+
   const stats = [
     {
       title: 'Total Points Earned',
-      value: '125,430',
+      value: loading ? '...' : data?.totalPointsEarned ?? 0,
       description: 'Lifetime points accumulated by all Clients.',
       icon: CheckCircle2,
       colorClass: 'bg-[#02C8DE]',
@@ -30,7 +51,7 @@ const LoyaltyStats = () => {
     },
     {
       title: 'Total Points Redeemed',
-      value: '98,700',
+      value: loading ? '...' : data?.totalPointsRedeemed ?? 0,
       description: 'Points converted into rewards/discounts.',
       icon: Gift,
       colorClass: 'bg-[#00A78E]',
@@ -38,7 +59,7 @@ const LoyaltyStats = () => {
     },
     {
       title: 'Active Points in Circulation',
-      value: '26,730',
+      value: loading ? '...' : data?.activePoints ?? 0,
       description: 'Points still available with Clients to redeem.',
       icon: RefreshCw,
       colorClass: 'bg-[#3B82F6]',
@@ -46,7 +67,7 @@ const LoyaltyStats = () => {
     },
     {
       title: 'Estimated Discount Value',
-      value: '$2,673',
+      value: loading ? '...' : `$${data?.estimatedDiscountValue ?? 0}`,
       description: 'Approx. cost of all circulating points.',
       icon: DollarSign,
       colorClass: 'bg-[#7C3AED]',

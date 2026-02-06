@@ -1,12 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { updateLoyaltySettings, getLoyaltySettings } from "@/state/loyalty/loyaltyService";
+import { toast } from "sonner";
 
 const PointsSettings = () => {
   const [pointValue, setPointValue] = useState("0.10");
   const [isSaving, setIsSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = () => {
-    console.log("handle save")
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await getLoyaltySettings();
+        if (response.success && response.data) {
+          setPointValue(response.data.pointValue);
+        }
+      } catch (error) {
+        console.error("Failed to fetch loyalty settings", error);
+        toast.error("Failed to fetch current settings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
     setIsSaving(true);
+    try {
+      const response = await updateLoyaltySettings({ pointValue: parseFloat(pointValue) });
+      if (response.success) {
+        toast.success("Loyalty settings updated successfully");
+      }
+    } catch (error) {
+      console.error("Failed to update settings", error);
+      toast.error("Failed to update loyalty settings");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -40,7 +72,7 @@ const PointsSettings = () => {
                   step="0.01"
                   value={pointValue}
                   onChange={(e) => setPointValue(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary1 focus:border-primary1"
                   placeholder="0.10"
                   required
                 />
@@ -69,7 +101,7 @@ const PointsSettings = () => {
             <button
               type="submit"
               disabled={isSaving}
-              className="px-5 py-2 rounded-lg bg-primary1 text-white font-medium hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="px-5 py-2 rounded-lg bg-primary1 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSaving ? "Saving..." : "Save Changes"}
             </button>
