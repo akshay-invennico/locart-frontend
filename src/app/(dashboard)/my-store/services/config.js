@@ -87,7 +87,7 @@ export const cancelServiceConfig = {
   },
 };
 
-export const editServiceConfig =(categoryOptions = [])=>( {
+export const editServiceConfig = (categoryOptions = []) => ({
   formCss: {
     maxWidth: "500px",
     margin: "0 auto",
@@ -155,7 +155,6 @@ export const editServiceConfig =(categoryOptions = [])=>( {
     apply: {
       label: "Edit Service",
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
-      // onClick: (data) => console.log("Badge Added", data),
     },
   },
 });

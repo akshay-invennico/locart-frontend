@@ -252,8 +252,12 @@ const ecomSlice = createSlice({
     selectedProductLoading: false,
     selectedCategory: null,
     selectedCategoryLoading: false,
-
-
+    pagination: {
+      page: 1,
+      totalPages: 1,
+      total: 0,
+      limit: 10,
+    },
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -264,7 +268,26 @@ const ecomSlice = createSlice({
       })
       .addCase(fetchAllOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload?.data || [];
+        const { data, pagination } = action.payload || {};
+
+        state.orders = Array.isArray(data) ? data : [];
+
+        if (pagination) {
+          const { page, per_page, total } = pagination;
+          state.pagination = {
+            page: page || 1,
+            limit: per_page || 10,
+            total: total || 0,
+            totalPages: Math.ceil((total || 0) / (per_page || 10)) || 1
+          };
+        } else {
+          state.pagination = {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          };
+        }
       })
       .addCase(fetchAllOrders.rejected, (state, action) => {
         state.loading = false;
@@ -392,8 +415,9 @@ const ecomSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
+        const { data, page, limit, totalPages, total } = action.payload || {};
 
-        state.products = action.payload.data.map(item => ({
+        state.products = (Array.isArray(data) ? data : []).map(item => ({
           ...item,
           product: {
             name: item.productName,
@@ -403,6 +427,21 @@ const ecomSlice = createSlice({
           price: Number(item.price?.$numberDecimal ?? 0),
         }));
 
+        if (page !== undefined && total !== undefined) {
+          state.pagination = {
+            page: page || 1,
+            limit: limit || 10,
+            total: total || 0,
+            totalPages: totalPages || 1
+          };
+        } else {
+          state.pagination = {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          };
+        }
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
         state.loading = false;
@@ -415,13 +454,20 @@ const ecomSlice = createSlice({
       .addCase(fetchAllCategories.fulfilled, (state, action) => {
         state.loading = false;
 
-        const categoriesArray = action.payload?.data?.categories ?? [];
+        const { categories, total, page, limit } = action.payload?.data || {};
 
-        state.categories = categoriesArray.map(item => ({
+        state.pagination = {
+          page: page || 1,
+          limit: limit || 10,
+          total: total || 0,
+          totalPages: Math.ceil((total || 0) / (limit || 10)) || 1
+        };
+
+        state.categories = (categories || []).map(item => ({
           ...item,
           categoryName: item.categoryName,
           status: item.status,
-          productsCount: item.productsCount,
+          productsCount: item.itemsCount,
           createdAt: item.createdAt,
         }));
       })

@@ -125,6 +125,12 @@ const clientSlice = createSlice({
     error: null,
     total: 0,
     filters: {},
+    pagination: {
+      page: 1,
+      totalPages: 1,
+      total: 0,
+      limit: 10,
+    },
   },
   reducers: {
     setClientFilters: (state, action) => {
@@ -142,8 +148,28 @@ const clientSlice = createSlice({
       })
       .addCase(fetchClients.fulfilled, (state, action) => {
         state.loading = false;
-        state.clients = action.payload?.clients || [];
-        state.total = action.payload?.meta?.totalClients || 0;
+        const { clients, meta } = action.payload || {};
+
+        state.clients = Array.isArray(clients) ? clients : [];
+
+        if (meta) {
+          const { currentPage, totalPages, totalClients } = meta;
+          state.pagination = {
+            page: currentPage || 1,
+            limit: 10,
+            total: totalClients || 0,
+            totalPages: totalPages || 1
+          };
+          state.total = totalClients || 0;
+        } else {
+          state.pagination = {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          };
+          state.total = 0;
+        }
       })
       .addCase(fetchClients.rejected, (state, action) => {
         state.loading = false;

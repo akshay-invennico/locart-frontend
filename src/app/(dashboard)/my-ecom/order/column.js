@@ -90,31 +90,6 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
       },
     },
   },
-  // {
-  //   key: "status",
-  //   title: "Order Status",
-  //   component: {
-  //     type: "badge",
-  //     style: {
-  //       borderRadius: "4px",
-  //       padding: "6px 10px",
-  //     },
-  //     options: {
-  //       value: {
-  //         placed: "#E3B320",
-  //         shipped: "#02C8DE",
-  //         dispatched: "#F7630C",
-  //         delivered: "#097416",
-  //         cancelled: "#BC0D10",
-  //         returned: "#7B7B7B",
-  //       },
-  //       onClick: (value, row, e) => {
-  //       row.onOpenStatus(row, e);   // <-- you will add this
-  //     }
-  //     },
-  //   },
-  // },
-
   {
     key: "orderStatus",
     title: "Order Status",
@@ -156,7 +131,6 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
       type: "action",
       options: {
         actions: (row) => {
-          // row.status determines which actions to show
           if (row.status === "cancelled") {
             return [
               {
@@ -165,20 +139,6 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
                 type: "sidebar",
                 component: <DetailView config={orderDetailsConfig} />,
               },
-              // {
-              //   label: "Archive Booking",
-              //   iconUrl: "/icons/archiveClient.svg",
-              //   type: "popUp",
-              //   component: (
-              //     <PopupForm
-              //       config={archiveBookingConfig}
-              //       width="500px"
-              //       height="500px"
-              //       onApply={(data) => console.log("Archive applied:", data)}
-              //       onCancel={() => console.log("Cancelled")}
-              //     />
-              //   ),
-              // },
               {
                 label: "Download Invoice",
                 iconUrl: "/icons/downloadGray.svg",
@@ -204,7 +164,6 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
             ];
           }
 
-          // default actions for other statuses
           return [
             {
               label: "View Order",
@@ -212,12 +171,6 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
               type: "sidebar",
               onClick: (row) => handleViewOrder(row.id),
             },
-            // {
-            //   label: "Edit Order",
-            //   iconUrl: "/icons/editBooking.svg",
-            //   type: "sidebar",
-            //   component: <DynamicForm config={editBookingConfig} />,
-            // },
             {
               label: "Mark As Delivered",
               iconUrl: "/icons/markCompleted.svg",
@@ -245,7 +198,6 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
                     handleFlagOrders([row.order_id], reason.trim());
                   }}
 
-                // onCancel={(closePopup) => closePopup()}
                 />
               ),
             },
@@ -254,21 +206,6 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
               iconUrl: "/icons/downloadGray.svg",
               onClick: (data) => console.log("Download Invoice", data),
             },
-
-            // {
-            //   label: "Archive Order",
-            //   iconUrl: "/icons/archiveClient.svg",
-            //   type: "popUp",
-            //   component: (
-            //     <PopupForm
-            //       config={archiveOrderConfig}
-            //       width="500px"
-            //       height="500px"
-            //       onApply={(data) => console.log("Archive applied:", data)}
-            //       onCancel={() => console.log("Cancelled")}
-            //     />
-            //   ),
-            // },
             {
               label: "Cancel Order",
               iconUrl: "/icons/cancel.svg",

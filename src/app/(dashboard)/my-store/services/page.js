@@ -1,7 +1,7 @@
 "use client";
 import GridCommonComponent from "@/components/grid/gridCommonComponent";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createColumns } from "./column";
@@ -21,9 +21,11 @@ import { toast } from "sonner";
 
 const ServicesPage = () => {
   const [search, setSearch] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10;
 
   const dispatch = useDispatch();
-  const { services, loading, error } = useSelector((state) => state.salon);
+  const { services, loading, error, pagination } = useSelector((state) => state.salon);
   const { categories } = useSelector((state) => state.ecomOrders);
 
   const categoryOptions = categories.map((c) => ({
@@ -32,8 +34,8 @@ const ServicesPage = () => {
   }));
 
   useEffect(() => {
-    dispatch(fetchStoreServices());
-  }, [dispatch]);
+    dispatch(fetchStoreServices({ page: currentPage, limit: itemsPerPage }));
+  }, [dispatch, currentPage]);
 
   useEffect(() => {
     dispatch(fetchAllCategories());
@@ -50,7 +52,8 @@ const ServicesPage = () => {
   const debouncedSearch = React.useMemo(
     () =>
       debounce((value) => {
-        dispatch(fetchStoreServices({ search: value }));
+        setCurrentPage(1);
+        dispatch(fetchStoreServices({ search: value, page: 1, limit: itemsPerPage }));
       }, 500),
     [dispatch]
   );
@@ -113,11 +116,6 @@ const ServicesPage = () => {
         formData.append("category_id", data.category_id);
       }
 
-      console.log("FORM DATA SUBMITTED:");
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-
       dispatch(createService(formData))
         .unwrap()
         .then(() => {
@@ -135,7 +133,7 @@ const ServicesPage = () => {
     order: false,
   };
 
-  const columns = createColumns({ onDelete: handleDelete, onEdit: handleEdit , categoryOptions});
+  const columns = createColumns({ onDelete: handleDelete, onEdit: handleEdit, categoryOptions });
 
   if (loading)
     return (
@@ -199,11 +197,15 @@ const ServicesPage = () => {
           }))}
           options={options}
           columns={columns}
-          theme={{
-            border: "border-gray-300",
-            header: {
-              bg: "bg-gray-100",
-            },
+          header={{
+            bg: "bg-gray-100",
+          }}
+          pagination={{
+            currentPage: pagination?.page,
+            totalPages: pagination?.totalPages,
+            totalItems: pagination?.total,
+            itemsPerPage: pagination?.limit,
+            onPageChange: (page) => setCurrentPage(page),
           }}
         />
       </div>

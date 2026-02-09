@@ -45,13 +45,15 @@ const AppointmentPage = () => {
   const [search, setSearch] = useState("");
 
   const dispatch = useDispatch();
-  const { data, loading } = useSelector(
+  const { data, loading, pagination } = useSelector(
     (state) => state.appointment
   );
   const { services } = useSelector((state) => state.salon);
   const { stylists } = useSelector((state) => state.stylists);
   const user = useSelector((state) => state.auth?.user);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     dispatch(fetchStoreServices());
@@ -59,8 +61,9 @@ const AppointmentPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchAllAppointments());
-  }, [dispatch]);
+    dispatch(fetchAllAppointments({ page: currentPage, limit: itemsPerPage }));
+  }, [dispatch, currentPage]);
+
 
   const serviceOptions =
     services?.map((s) => ({
@@ -167,6 +170,14 @@ const AppointmentPage = () => {
     if (formData.service) {
       filters.service_ids = formData.service.map((s) => s.value).join(",");
     }
+
+    if (formData.service) {
+      filters.service_ids = formData.service.map((s) => s.value).join(",");
+    }
+
+    setCurrentPage(1);
+    filters.page = 1;
+    filters.limit = itemsPerPage;
 
     dispatch(fetchAllAppointments(filters));
   };
@@ -436,7 +447,9 @@ const AppointmentPage = () => {
             className="pl-10 h-10 w-full border border-gray-300 rounded-md"
             placeholder="Search here..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
           />
         </div>
 
@@ -521,6 +534,14 @@ const AppointmentPage = () => {
             }
             return col;
           })}
+          pagination={{
+            currentPage: pagination?.page || 1,
+            totalPages: pagination?.totalPages || 1,
+            totalItems: pagination?.total || 0,
+            itemsPerPage: pagination?.limit || 10,
+            onPageChange: (page) => setCurrentPage(page),
+          }}
+
           theme={{
             border: "border-gray-300",
             header: {

@@ -196,8 +196,6 @@ export const createOfferConfig = {
 };
 
 export const getOfferDetailsConfig = (offerData) => {
-  console.log("🔍 getOfferDetailsConfig called with:", offerData);
-
   const getDateRange = () => {
     if (offerData.DateRange?.from && offerData.DateRange?.to) {
       return {
@@ -281,10 +279,6 @@ export const getOfferDetailsConfig = (offerData) => {
     { type: "divider" },
   ];
 
-  console.log("🧩 Offer Condition:", offerData.OfferCondition);
-  console.log("🧩 Selected Items:", offerData.selectedDropdownItems);
-
-  //  Conditional Rendering Based on Offer Condition
   if (offerData.OfferCondition === "Product") {
     baseFields.push({
       type: "sectionHeader",
@@ -365,8 +359,6 @@ export const getOfferDetailsConfig = (offerData) => {
       whiteSpace: "pre-wrap",
     },
   });
-
-  console.log("✅ Final config fields:", baseFields);
 
   return {
     formCss: {
@@ -494,7 +486,7 @@ export const editOfferConfig = {
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
     },
   },
-  
+
 };
 
 export const DeleteOfferConfig = {

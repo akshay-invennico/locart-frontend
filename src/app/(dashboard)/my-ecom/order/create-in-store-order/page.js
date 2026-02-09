@@ -125,7 +125,7 @@ const CreateInStoreOrderPage = () => {
 
   const handleBack = () => router.back();
 
-    const downloadActions = [
+  const downloadActions = [
     {
       header: "Download List",
     },
@@ -185,11 +185,8 @@ const CreateInStoreOrderPage = () => {
             <DynamicForm
               config={config}
               onApply={(formData) => {
-                console.log("FORM SUBMITTED", formData);
                 handleAddOrder(formData);
               }}
-
-              // onChange={() => { }}
             />
           )}
         </div>

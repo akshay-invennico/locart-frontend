@@ -41,7 +41,7 @@ const ProductPage = () => {
   const [deletePopup, setDeletePopup] = useState({ show: false, row: null });
   const [sidebarContent, setSidebarContent] = useState(null);
 
-  const { categories, products } = useSelector(
+  const { categories, products, pagination } = useSelector(
     (state) => state.ecomOrders
   );
 
@@ -54,7 +54,7 @@ const ProductPage = () => {
     stockMin: "",
     stockMax: "",
     page: 1,
-    limit: 20,
+    limit: 10,
     type: "",
   });
 
@@ -374,6 +374,13 @@ const ProductPage = () => {
             }
             return col;
           })}
+          pagination={{
+            currentPage: pagination?.page || 1,
+            totalPages: pagination?.totalPages || 1,
+            totalItems: pagination?.total || 0,
+            itemsPerPage: pagination?.limit || 10,
+            onPageChange: (page) => setFilters((prev) => ({ ...prev, page })),
+          }}
           theme={{
             border: "border-gray-300",
             header: {

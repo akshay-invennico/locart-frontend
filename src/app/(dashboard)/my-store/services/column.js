@@ -13,9 +13,6 @@ import Spinner from "@/components/common/Spinner";
 
 const EditServiceLoader = ({ rowData, data, onEdit, categoryOptions = [] }) => {
   const current = rowData || data || {};
-
-  console.log("EditServiceLoader - Current row data:", current);
-
   const initialValues = {
     name: current.name || "",
     icon: current.icon || "",
@@ -28,8 +25,6 @@ const EditServiceLoader = ({ rowData, data, onEdit, categoryOptions = [] }) => {
     category_id: current.category_id || "",
   };
 
-  console.log("Initial values for form:", initialValues);
-
   return (
     <DynamicForm
       key={`edit-${current._id}`}
@@ -39,7 +34,6 @@ const EditServiceLoader = ({ rowData, data, onEdit, categoryOptions = [] }) => {
       isEdit={true}
       width="600px"
       onApply={(formData) => {
-        console.log("Submitting edit:", formData);
         onEdit(current._id, formData);
       }}
       onCancel={() => console.log("edit cancelled")}

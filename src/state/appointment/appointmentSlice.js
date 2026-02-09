@@ -101,6 +101,12 @@ const appointmentSlice = createSlice({
         loading: false,
         error: null,
         refundSummary: null,
+        pagination: {
+            page: 1,
+            totalPages: 1,
+            total: 0,
+            limit: 10,
+        },
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -110,9 +116,27 @@ const appointmentSlice = createSlice({
             })
             .addCase(fetchAllAppointments.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data = Array.isArray(action.payload)
-                    ? action.payload
-                    : action.payload?.data || [];
+                const { data, pagination } = action.payload || {};
+
+                const appointmentsList = Array.isArray(data) ? data : [];
+                state.data = appointmentsList;
+
+                if (pagination) {
+                    const { page, per_page, total } = pagination;
+                    state.pagination = {
+                        page: page || 1,
+                        limit: per_page || 10,
+                        total: total || 0,
+                        totalPages: Math.ceil((total || 0) / (per_page || 10)) || 1
+                    };
+                } else {
+                    state.pagination = {
+                        page: 1,
+                        limit: 10,
+                        total: 0,
+                        totalPages: 1
+                    };
+                }
             })
             .addCase(fetchAllAppointments.rejected, (state, action) => {
                 state.loading = false;

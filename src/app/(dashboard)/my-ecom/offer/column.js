@@ -88,16 +88,13 @@ export const getColumns = (handleDeleteOffer) => [
       type: "action",
       options: {
         actions: (row) => {
-          // console.log(row, "row");
-          // default actions for other statuses
           return [
             {
               label: "View Offer",
               iconUrl: "/icons/show.svg",
               type: "sidebar",
-              // component: <DetailView config={OfferDetailsConfig} />,
               component: () => (
-                <DetailView config={getOfferDetailsConfig(row)} /> // ✅ Dynamic data-driven config
+                <DetailView config={getOfferDetailsConfig(row)} />
               ),
             },
             {

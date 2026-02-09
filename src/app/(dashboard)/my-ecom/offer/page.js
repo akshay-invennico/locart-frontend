@@ -32,37 +32,37 @@ const OfferPage = () => {
   const [showBulkCannotDeletePopup, setShowBulkCannotDeletePopup] =
     useState(false);
   const [selectedBulkOffers, setSelectedBulkOffers] = useState([]);
-  
+
 
 
   const handleCreateOffer = (formData) => {
-  
 
-  // Standardize field names to match grid + detail view
-  const transformedOffer = {
-    id: Date.now(),
-    offerName: formData["offerName"] || "",
-    couponCode: formData["couponCode"] || "",
-    discount: formData["discount"] || "",
-    maxDiscount: formData["maxDiscount"] || "",
-    status: Array.isArray(formData["status"])
-      ? formData["status"][0]?.toLowerCase() 
-      : (formData["status"] || "inactive").toLowerCase(),
-    date: formData["DateRange_from"] || new Date().toISOString(),
-    usageStats: "0/100 Used", // default placeholder
-    OfferCondition: formData["Offer Condition"] || "",
-    DateRange: {
-      from: formData["DateRange_from"],
-      to: formData["DateRange_to"],
-    },
-    description: formData["description"] || "",
-    selectedDropdownItems: extractSelectedItems(formData),
-    cartValue: formData["Offer Condition_cartValue"] || "",
+
+    // Standardize field names to match grid + detail view
+    const transformedOffer = {
+      id: Date.now(),
+      offerName: formData["offerName"] || "",
+      couponCode: formData["couponCode"] || "",
+      discount: formData["discount"] || "",
+      maxDiscount: formData["maxDiscount"] || "",
+      status: Array.isArray(formData["status"])
+        ? formData["status"][0]?.toLowerCase()
+        : (formData["status"] || "inactive").toLowerCase(),
+      date: formData["DateRange_from"] || new Date().toISOString(),
+      usageStats: "0/100 Used", // default placeholder
+      OfferCondition: formData["Offer Condition"] || "",
+      DateRange: {
+        from: formData["DateRange_from"],
+        to: formData["DateRange_to"],
+      },
+      description: formData["description"] || "",
+      selectedDropdownItems: extractSelectedItems(formData),
+      cartValue: formData["Offer Condition_cartValue"] || "",
+    };
+
+
+    setCreatedOffers((prev) => [...prev, transformedOffer]);
   };
-
-  
-  setCreatedOffers((prev) => [...prev, transformedOffer]);
-};
 
 
   //  Helper function to extract selected dropdown items
@@ -103,7 +103,7 @@ const OfferPage = () => {
     setShowDeletePopup(true);
   };
 
-  
+
   const columns = getColumns(handleDeleteOffer);
 
   return (
@@ -145,10 +145,10 @@ const OfferPage = () => {
                       ...createOfferConfig,
                       footer: {
                         ...createOfferConfig.footer,
-                        apply: {  
+                        apply: {
                           ...createOfferConfig.footer.apply,
                           onClick: (formData) => {
-                           
+
                             handleCreateOffer(formData);
                           },
                         },
@@ -174,7 +174,7 @@ const OfferPage = () => {
 
       <div className="w-full">
         <GridCommonComponent
-          data={[...OrderData,...createdOffers]}
+          data={[...OrderData, ...createdOffers]}
           options={options}
           columns={columns?.map((col) => {
             if (col.key === "actions") {
@@ -208,17 +208,13 @@ const OfferPage = () => {
                   return;
                 }
 
-                // Debug each selected offer
-                console.log("Analyzing selected offers:");
                 selectedRows.forEach((offer, idx) => {
                   console.log(
-                    `  Row #${idx + 1}: ${
-                      offer?.offerName || "(missing offerName)"
+                    `  Row #${idx + 1}: ${offer?.offerName || "(missing offerName)"
                     }`
                   );
                 });
 
-                // Check for offers that exist in OrderData (cannot be deleted)
                 const undeletable = selectedRows.filter((selectedOffer) => {
                   const offerName = selectedOffer?.offerName
                     ?.trim()
@@ -251,7 +247,7 @@ const OfferPage = () => {
 
                 console.groupEnd();
               },
-              onCancel: () => {},
+              onCancel: () => { },
             },
           ]}
         />

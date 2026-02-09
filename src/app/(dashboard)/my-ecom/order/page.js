@@ -44,16 +44,17 @@ const OrderPage = () => {
   const [flagReason, setFlagReason] = useState("");
   const [sidebarContent, setSidebarContent] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const { orders } = useSelector(
-    (state) => state.ecomOrders
-  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const { orders, pagination } = useSelector((state) => state.ecomOrders);
 
   const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAllOrders());
-  }, [dispatch]);
+    dispatch(fetchAllOrders({ page: currentPage, limit: itemsPerPage }));
+  }, [dispatch, currentPage]);
 
   const handleStatusUpdate = (orderIds, newStatus) => {
     const payload = {
@@ -222,8 +223,11 @@ const OrderPage = () => {
         : "",
       amountMin: data.AmountRange_from || "",
       amountMax: data.AmountRange_to || "",
+      page: 1,
+      limit: itemsPerPage,
     };
 
+    setCurrentPage(1);
     dispatch(fetchAllOrders(filters));
   };
 
@@ -381,6 +385,13 @@ const OrderPage = () => {
             }
             return col;
           })}
+          pagination={{
+            currentPage: pagination?.page || 1,
+            totalPages: pagination?.totalPages || 1,
+            totalItems: pagination?.total || 0,
+            itemsPerPage: pagination?.limit || 10,
+            onPageChange: (page) => setCurrentPage(page),
+          }}
           theme={{
             border: "border-gray-300",
             header: {

@@ -12,26 +12,19 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
   const { isClientSidebarOpen, closeAll } = useSideBarStore();
   const isMobile = useIsMobile();
 
-  // const isActive = (url) => {
-  //   return pathname === url || pathname.startsWith(url + "/");
-  // };
-
   const isActive = (url) => {
     const normalizePath = (path) => path.replace(/\/$/, "");
     const normalizedUrl = normalizePath(url);
     const normalizedPath = normalizePath(pathname);
 
-    // Exact match
     if (normalizedPath === normalizedUrl) return true;
 
-    // Only highlight subpath if it matches fully and is the longest match
     return (
       normalizedPath.startsWith(normalizedUrl + "/") &&
       normalizedUrl !== "/my-store"
     );
   };
 
-  // Handle navigation click - use router for navigation on mobile
   const handleNavClick = (e, url) => {
     if (isMobile) {
       e.preventDefault();
@@ -42,7 +35,6 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
     }
   };
 
-  // Close both sidebars when clicking outside on mobile
   useEffect(() => {
     if (!isMobile || !isClientSidebarOpen) return;
 
@@ -51,7 +43,6 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
       const leftSidebar = document.querySelector(".left-sidebar");
       const hamburger = document.querySelector('[data-hamburger="true"]');
 
-      // Check if click is outside both sidebars and hamburger
       if (
         clientSidebar &&
         !clientSidebar.contains(e.target) &&
@@ -73,16 +64,8 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
     };
   }, [isMobile, isClientSidebarOpen, closeAll]);
 
-  // Debug: Log when sidebar is open
-  useEffect(() => {
-    if (isMobile) {
-      console.log("ClientSidebar isOpen:", isClientSidebarOpen);
-    }
-  }, [isClientSidebarOpen, isMobile]);
-
   return (
     <>
-      {/* Mobile Overlay - covers entire screen but BEHIND sidebar */}
       {isMobile && isClientSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-[45] md:hidden"
@@ -91,7 +74,6 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
         />
       )}
 
-      {/* Sidebar - ABOVE overlay */}
       <div
         className={`client-sidebar w-[220px] min-h-screen bg-white border-r border-gray-200 transition-all duration-500 ease-in-out
           ${isMobile ? "fixed top-0 z-[60] h-full" : "fixed left-[72px] top-16 h-[calc(100vh-64px)] z-40"}

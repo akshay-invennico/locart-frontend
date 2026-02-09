@@ -1,8 +1,14 @@
 import { api } from "@/lib/api";
 
-export const getAllStylists = async () => {
+export const getAllStylists = async (filters = {}) => {
   try {
-    const { data } = await api.get("/store/stylists");
+    const params = new URLSearchParams();
+
+    if (filters.search) params.append("search", filters.search);
+    if (filters.page) params.append("page", filters.page);
+    if (filters.limit) params.append("limit", filters.limit);
+
+    const { data } = await api.get(`/store/stylists?${params.toString()}`);
     return data;
   } catch (error) {
     const status = error?.response?.status;

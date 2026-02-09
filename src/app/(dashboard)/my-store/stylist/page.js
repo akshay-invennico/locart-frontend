@@ -23,15 +23,17 @@ import { exportGridCSV, exportGridPDF } from "@/lib/HelpFulFunction";
 
 const StylistPage = () => {
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const dispatch = useDispatch();
-  const stylistData = useSelector((state) => state.stylists.stylists);
+  const { stylists: stylistData, pagination } = useSelector((state) => state.stylists);
   const { services } = useSelector((state) => state.salon);
   const stylistColumns = useStylistColumns();
 
   useEffect(() => {
-    dispatch(fetchStylists());
-  }, [dispatch]);
+    dispatch(fetchStylists({ page: currentPage, limit: itemsPerPage }));
+  }, [dispatch, currentPage]);
 
   useEffect(() => {
     dispatch(fetchStoreServices());
@@ -68,6 +70,23 @@ const StylistPage = () => {
     select: true,
     order: false,
   };
+
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce((value) => {
+        setCurrentPage(1);
+        dispatch(fetchStylists({ search: value, page: 1, limit: itemsPerPage }));
+      }, 500),
+    [dispatch]
+  );
 
   const handleAddStylist = async (data) => {
     const statusRaw = data?.status;
@@ -107,7 +126,7 @@ const StylistPage = () => {
 
 
     await dispatch(addStylist(formData));
-    dispatch(fetchStylists());
+    dispatch(fetchStylists({ page: currentPage, limit: itemsPerPage }));
   };
 
   const handleUpdateStylist = async (data) => {
@@ -149,7 +168,7 @@ const StylistPage = () => {
 
 
     await dispatch(updateStylist({ id: data?.id, formData }));
-    dispatch(fetchStylists());
+    dispatch(fetchStylists({ page: currentPage, limit: itemsPerPage }));
   };
 
   return (
@@ -161,7 +180,10 @@ const StylistPage = () => {
             className="pl-10"
             placeholder="Search here..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
           />
         </div>
         <div className="flex gap-2">
@@ -209,6 +231,13 @@ const StylistPage = () => {
             header: {
               bg: "bg-gray-100",
             },
+          }}
+          pagination={{
+            currentPage: pagination?.page,
+            totalPages: pagination?.totalPages,
+            totalItems: pagination?.total,
+            itemsPerPage: pagination?.limit,
+            onPageChange: (page) => setCurrentPage(page),
           }}
           bulkActionsConfig={[
             {

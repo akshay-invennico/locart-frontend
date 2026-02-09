@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import GridCommonComponent from "@/components/grid/gridCommonComponent";
 import EditCategoryLoader, { getColumns } from "./column";
 import { Input } from "@/components/ui/input";
-import { Filter, Search } from "lucide-react"; // Import the search icon
+import { Filter, Search } from "lucide-react";
 import ActionComponent from "@/components/grid/actionComponent";
 import DynamicForm from "@/components/modules/DynamicFormRendering";
 import Image from "next/image";
@@ -38,9 +38,38 @@ const CategoryPage = () => {
   const [searchText, setSearchText] = useState("");
 
   const dispatch = useDispatch();
-  const { categories, loading, error } = useSelector(
+  const { categories, pagination } = useSelector(
     (state) => state.ecomOrders
   );
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce((value) => {
+        setCurrentPage(1);
+        dispatch(
+          fetchAllCategories({
+            search: value,
+            status: "active",
+            type: "product",
+            page: 1,
+            limit: itemsPerPage,
+          })
+        );
+      }, 500),
+    [dispatch]
+  );
+
 
   const handleDeleteCategory = (row) => {
     setDeletePopup({ show: true, row });
@@ -138,9 +167,16 @@ const CategoryPage = () => {
 
   useEffect(() => {
     dispatch(
-      fetchAllCategories({ search: "", status: "active", type: "product" })
+      fetchAllCategories({
+        search: searchText,
+        status: "active",
+        type: "product",
+        page: currentPage,
+        limit: itemsPerPage,
+      })
     );
-  }, [dispatch]);
+  }, [dispatch, currentPage]);
+
 
   const formattedCategories = (categories || []).map((cat) => ({
     ...cat,
@@ -174,6 +210,8 @@ const CategoryPage = () => {
         search: searchText,
         status: status.toLowerCase(),
         type: "product",
+        page: 1,
+        limit: itemsPerPage,
       })
     );
   };
@@ -188,7 +226,10 @@ const CategoryPage = () => {
             className="pl-10 h-10 w-full border border-gray-300 rounded-md"
             placeholder="Search here..."
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
           />
         </div>
 
@@ -264,6 +305,13 @@ const CategoryPage = () => {
             }
             return col;
           })}
+          pagination={{
+            currentPage: pagination?.page || 1,
+            totalPages: pagination?.totalPages || 1,
+            totalItems: pagination?.total || 0,
+            itemsPerPage: pagination?.limit || 10,
+            onPageChange: (page) => setCurrentPage(page),
+          }}
           theme={{
             border: "border-gray-300",
             header: {

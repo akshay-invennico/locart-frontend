@@ -72,7 +72,7 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
       type: "action",
       options: {
         actions: (row) => {
-          if (row.status === "Inactive") {
+          if (row.status.toLowerCase() === "inactive") {
             return [
               {
                 label: "View Product",
@@ -91,10 +91,7 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
                 iconUrl: "/icons/markCompleted.svg",
                 type: "button",
                 onClick: () =>
-                  handleProductStatusUpdate(
-                    row._id,
-                    row.status.toLowerCase() === "active" ? "inactive" : "active"
-                  ),
+                  handleProductStatusUpdate(row._id, "active"),
               },
               {
                 label: "Delete Product",
@@ -119,14 +116,11 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
               onClick: (row) => handleEditProduct(row._id),
             },
             {
-              label: "Mark As InActive",
+              label: "Mark As Inactive",
               iconUrl: "/icons/markCompleted.svg",
               type: "button",
               onClick: () =>
-                handleProductStatusUpdate(
-                  row._id,
-                  row.status.toLowerCase() === "active" ? "inactive" : "active"
-                ),
+                handleProductStatusUpdate(row._id, "inactive"),
             },
             {
               label: "Delete Product",

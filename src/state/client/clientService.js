@@ -84,7 +84,6 @@ export const updateClientById = async (id, payload) => {
 export const getClientBookings = async (clientId) => {
   try {
     const response = await api.get(`/client/${clientId}/bookings`);
-    console.log("Client bookings:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching client bookings:", error);

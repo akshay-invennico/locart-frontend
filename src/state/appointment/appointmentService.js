@@ -31,6 +31,9 @@ export const getAllAppointments = async (filters = {}) => {
       params.service_ids = filters.service.join(",");
     }
 
+    if (filters.page) params.page = filters.page;
+    if (filters.limit) params.limit = filters.limit;
+
     const response = await api.get("/appointment", { params });
     return response.data;
   } catch (error) {

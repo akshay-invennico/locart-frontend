@@ -9,6 +9,8 @@ export const getAllOrders = async (filters = {}) => {
     if (filters.dateTo) params.append("dateTo", filters.dateTo);
     if (filters.amountMin) params.append("amountMin", filters.amountMin);
     if (filters.amountMax) params.append("amountMax", filters.amountMax);
+    if (filters.page) params.append("page", filters.page);
+    if (filters.limit) params.append("limit", filters.limit);
 
     const response = await api.get(`ecom/orders?${params.toString()}`);
     return response.data;
@@ -146,6 +148,9 @@ export const getAllCategories = async (filters = {}) => {
     params.append("search", filters.search || "");
     params.append("status", filters.status !== undefined ? filters.status : "");
     params.append("type", filters.type || "service");
+
+    if (filters.page) params.append("page", filters.page);
+    if (filters.limit) params.append("limit", filters.limit);
 
     const res = await api.get(`ecom/category?${params.toString()}`);
     return res.data;

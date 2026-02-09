@@ -36,19 +36,49 @@ const options = {
 
 const CategoryPage = () => {
   const dispatch = useDispatch();
-  const { categories, loading, error } = useSelector(
+  const { categories, loading, error, pagination } = useSelector(
     (state) => state.ecomOrders
   );
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const [filters, setFilters] = useState({
+    status: "",
+    type: "service",
+  });
+
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce((value) => {
+        setCurrentPage(1);
+        dispatch(
+          fetchAllCategories({
+            search: value,
+            status: filters.status,
+            type: "service",
+            page: 1,
+            limit: itemsPerPage,
+          })
+        );
+      }, 500),
+    [dispatch, filters.status]
+  );
+
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showCannotDeletePopup, setShowCannotDeletePopup] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [sidebarContent, setSidebarContent] = useState(null);
-  const [filters, setFilters] = useState({
-    status: "",
-    type: "service",
-  });
 
   const handleCancelOrder = (row) => {
     setSelectedOrder(row);
@@ -60,17 +90,9 @@ const CategoryPage = () => {
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchValue(e.target.value);
 
-    dispatch(
-      fetchAllCategories({
-        search: e.target.value,
-        status: filters.status,
-        type: "service",
-      })
-    );
-  };
+
+
 
   const handleCreateCategory = async (data) => {
     const payload = {
@@ -89,6 +111,9 @@ const CategoryPage = () => {
           search: "",
           status: "",
           type: "service",
+          page: 1,
+          limit: itemsPerPage,
+
         })
       ).unwrap();
 
@@ -148,7 +173,7 @@ const CategoryPage = () => {
       await dispatch(updateCategory({ categoryId: id, payload })).unwrap();
 
       await dispatch(
-        fetchAllCategories({ search: "", status: "", type: "service" })
+        fetchAllCategories({ search: "", status: "", type: "service", page: currentPage, limit: itemsPerPage })
       ).unwrap();
 
       toast.success("Category updated successfully");
@@ -169,6 +194,9 @@ const CategoryPage = () => {
           search: searchValue,
           status: filters.status,
           type: "service",
+          page: currentPage,
+          limit: itemsPerPage,
+
         })
       ).unwrap();
 
@@ -184,12 +212,15 @@ const CategoryPage = () => {
   useEffect(() => {
     dispatch(
       fetchAllCategories({
-        search: "",
+        search: searchValue,
         status: filters.status,
         type: "service",
+        page: currentPage,
+        limit: itemsPerPage,
       })
     );
-  }, [dispatch, filters.status]);
+  }, [dispatch, filters.status, currentPage]);
+
 
   const handleApplyFilter = (data) => {
     const selectedStatuses = data.status || [];
@@ -214,6 +245,9 @@ const CategoryPage = () => {
         search: searchValue,
         status: mappedStatus,
         type: "service",
+        page: 1,
+        limit: itemsPerPage,
+
       })
     );
 
@@ -247,7 +281,10 @@ const CategoryPage = () => {
             className="pl-10 h-10 w-full border border-gray-300 rounded-md"
             placeholder="Search here..."
             value={searchValue}
-            onChange={handleSearch}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+              debouncedSearch(e.target.value);
+            }}
           />
         </div>
 
@@ -301,7 +338,6 @@ const CategoryPage = () => {
         <GridCommonComponent
           data={formattedCategories || []}
           options={options}
-          //  columns={columns}
           columns={columns?.map((col) => {
             if (col.key === "actions") {
               return {
@@ -310,13 +346,21 @@ const CategoryPage = () => {
                   ...col.component,
                   options: {
                     ...col.component.options,
-                    actions: (row) => col.component.options.actions(row), // pass row dynamically
+                    actions: (row) => col.component.options.actions(row),
                   },
                 },
               };
             }
             return col;
           })}
+          pagination={{
+            currentPage: pagination?.page || 1,
+            totalPages: pagination?.totalPages || 1,
+            totalItems: pagination?.total || 0,
+            itemsPerPage: pagination?.limit || 10,
+            onPageChange: (page) => setCurrentPage(page),
+          }}
+
           theme={{
             border: "border-gray-300",
             header: {

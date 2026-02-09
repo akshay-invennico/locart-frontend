@@ -177,8 +177,6 @@ const InvoiceDocument = ({ invoiceData }) => {
     deliveryDate
   } = invoiceData;
 
-  console.log(invoiceData, "invoice data");
-
   return (
     <Document>
       <Page size="A4" style={styles.page}>

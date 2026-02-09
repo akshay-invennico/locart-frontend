@@ -4,9 +4,9 @@ import { getAllStylists, getStylistsById, createStylist, deleteStylistById, upda
 
 export const fetchStylists = createAsyncThunk(
     "stylists/fetchStylists",
-    async (_, { rejectWithValue }) => {
+    async (params = {}, { rejectWithValue }) => {
         try {
-            const response = await getAllStylists();
+            const response = await getAllStylists(params);
             return response;
         } catch (error) {
             return rejectWithValue(
@@ -79,6 +79,12 @@ const stylistSlice = createSlice({
         stylist: null,
         loading: false,
         error: null,
+        pagination: {
+            page: 1,
+            totalPages: 1,
+            total: 0,
+            limit: 10,
+        },
     },
     reducers: {
         clearStylistError: (state) => {
@@ -94,6 +100,7 @@ const stylistSlice = createSlice({
             .addCase(fetchStylists.fulfilled, (state, action) => {
                 state.loading = false;
                 state.stylists = action.payload?.data?.stylists || [];
+                state.pagination = action.payload?.data?.pagination || state.pagination;
             })
             .addCase(fetchStylists.rejected, (state, action) => {
                 state.loading = false;

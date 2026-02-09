@@ -22,10 +22,9 @@ const PopupForm = ({
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-const handleApply = () => {
-  console.log("onApply triggered with:", onApply ? "yes" : "no");
-  if (onApply) onApply(formData, (config && config.rowData) || data || null);
-};
+  const handleApply = () => {
+    if (onApply) onApply(formData, (config && config.rowData) || data || null);
+  };
 
 
   const handleCancel = () => {
@@ -100,9 +99,8 @@ const handleApply = () => {
                 value={formData[field.name] || ""}
                 onChange={(e) => handleChange(e, field.name)}
                 placeholder={field.placeholder || ""}
-                className={`w-full border rounded px-2 py-2 ${
-                  isPassword ? "pl-10 pr-10" : "px-2"
-                }`}
+                className={`w-full border rounded px-2 py-2 ${isPassword ? "pl-10 pr-10" : "px-2"
+                  }`}
               />
 
               {/* Show/hide eye toggle */}
@@ -180,16 +178,15 @@ const handleApply = () => {
               <span className="text-gray-700 text-sm truncate text-left">
                 {selectedOptions.length > 0
                   ? selectedOptions
-                      .map(
-                        (v) => field.options.find((o) => o.value === v)?.label
-                      )
-                      .join(", ")
+                    .map(
+                      (v) => field.options.find((o) => o.value === v)?.label
+                    )
+                    .join(", ")
                   : "Select..."}
               </span>
               <svg
-                className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-                  isOpen ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -232,9 +229,8 @@ const handleApply = () => {
                         flex items-center justify-center"
                       />
                       <span
-                        className={`text-sm ${
-                          isChecked ? "text-[#02C8DE]" : "text-black"
-                        }`}
+                        className={`text-sm ${isChecked ? "text-[#02C8DE]" : "text-black"
+                          }`}
                       >
                         {opt.label}
                       </span>
@@ -267,32 +263,6 @@ const handleApply = () => {
           </div>
         );
       }
-
-      // case "statusOptions":
-      //   return (
-      //     <div className="flex flex-col gap-3">
-      //       {field.options.map((opt) => {
-      //         return (
-      //           <div
-      //             key={opt.value}
-      //             onClick={() => {
-      //               setFormData((prev) => ({
-      //                 ...prev,
-      //                 [field.name]: opt.value,
-      //               }));
-
-      //               onApply({ [field.name]: opt.value });
-      //             }}
-      //             className={`px-4 py-3 rounded cursor-pointer border text-center font-medium border-gray-300`}
-      //             style={{ backgroundColor: opt.bgColor, color: opt.textColor }}
-      //           >
-      //             {opt.label}
-      //           </div>
-      //         );
-      //       })}
-      //     </div>
-      //   );
-
       case "statusOptions":
         return (
           <div className="flex flex-col gap-3">
@@ -301,18 +271,12 @@ const handleApply = () => {
                 <div
                   key={opt.value}
                   onClick={() => {
-                    console.log("Selected option:", opt.value);
-
-                    // update local formData
                     setFormData((prev) => ({
                       ...prev,
                       [field.name]: opt.value,
                     }));
 
-                    // call parent immediately
                     if (onApply) onApply({ [field.name]: opt.value });
-
-                    // close popup
                     if (onCancel) onCancel();
                   }}
                   className="px-4 py-3 rounded cursor-pointer border text-center font-medium border-gray-300"
@@ -389,10 +353,9 @@ const handleApply = () => {
               onClick={handleApply}
               className={
                 config.footer.apply.className ||
-                `px-4 py-2 rounded flex-1 ${
-                  config.footer.apply.color === "red"
-                    ? "bg-[#BC0D10] text-white"
-                    : "bg-[#02C8DE] text-white"
+                `px-4 py-2 rounded flex-1 ${config.footer.apply.color === "red"
+                  ? "bg-[#BC0D10] text-white"
+                  : "bg-[#02C8DE] text-white"
                 }`
               }
             >

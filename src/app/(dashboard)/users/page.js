@@ -73,16 +73,25 @@ const Page = () => {
   const dispatch = useDispatch();
   const clients = useSelector((state) => state.client.clients);
   const filters = useSelector((state) => state.client.filters);
+  const pagination = useSelector((state) => state.client.pagination);
   const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
-    dispatch(fetchClients(filters));
+    dispatch(fetchClients({ ...filters, page: currentPage, limit: itemsPerPage }));
+  }, [currentPage]);
+
+  useEffect(() => {
+    dispatch(fetchClients({ ...filters, page: 1, limit: itemsPerPage }));
+    setCurrentPage(1);
   }, []);
 
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchText(value);
-    dispatch(fetchClients({ ...filters, search: value }));
+    setCurrentPage(1);
+    dispatch(fetchClients({ ...filters, search: value, page: 1, limit: itemsPerPage }));
   };
 
   const handleSuspendClients = (formData, rowsOrRow) => {
@@ -166,8 +175,11 @@ const Page = () => {
       joinedTo: data?.joinedDate_to ? new Date(data.joinedDate_to).toISOString() : "",
       minSpent: data?.spendAmount_from || "",
       maxSpent: data?.spendAmount_to || "",
+      page: 1,
+      limit: itemsPerPage,
     };
 
+    setCurrentPage(1);
     dispatch(setClientFilters(transformed));
     dispatch(fetchClients(transformed));
   };
@@ -257,6 +269,13 @@ const Page = () => {
             handleSuspendClients,
             handleReactivateClient
           )}
+          pagination={{
+            currentPage: pagination?.page || 1,
+            totalPages: pagination?.totalPages || 1,
+            totalItems: pagination?.total || 0,
+            itemsPerPage: pagination?.limit || 10,
+            onPageChange: (page) => setCurrentPage(page),
+          }}
           theme={{
             border: "border-gray-300",
             header: {

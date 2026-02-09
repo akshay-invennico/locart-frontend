@@ -8,6 +8,7 @@ import CurrencyComponent from "./currencyComponent";
 import BadgeComponent from "./badgeComponent";
 import ActionComponent from "./actionComponent";
 import TimeRangeCell from "../ui/timerangecell";
+import Pagination from "../common/Table/Pagination";
 
 const GridCommonComponent = ({
   data = [],
@@ -15,6 +16,7 @@ const GridCommonComponent = ({
   theme = {},
   columns,
   bulkActionsConfig = [],
+  pagination = null,
 }) => {
   const { select = false, order = false, sortable = false } = options;
   const [selectedRows, setSelectedRows] = useState([]);
@@ -621,6 +623,16 @@ const GridCommonComponent = ({
           </div>
         </div>
       )}
+
+      {pagination && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          itemsPerPage={10}
+          onPageChange={pagination.onPageChange}
+        />
+      )}
     </div>
   );
 };
@@ -666,6 +678,13 @@ GridCommonComponent.propTypes = {
       children: PropTypes.array,
     })
   ),
+  pagination: PropTypes.shape({
+    currentPage: PropTypes.number,
+    totalPages: PropTypes.number,
+    totalItems: PropTypes.number,
+    itemsPerPage: PropTypes.number,
+    onPageChange: PropTypes.func,
+  }),
 };
 
 export default GridCommonComponent;

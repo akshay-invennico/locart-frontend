@@ -116,8 +116,7 @@ export const getColumns = (handleDeleteCategory, handleCategoryStatusUpdate, han
       type: "action",
       options: {
         actions: (row) => {
-          // row.status determines which actions to show
-          if (row.status === "Inactive") {
+          if (row.status.toLowerCase() === "inactive") {
             return [
               {
                 label: "View Category",
@@ -149,12 +148,7 @@ export const getColumns = (handleDeleteCategory, handleCategoryStatusUpdate, han
                 iconUrl: "/icons/markCompleted.svg",
                 type: "button",
                 onClick: () =>
-                  handleCategoryStatusUpdate(
-                    row._id,
-                    row.status.toLowerCase() === "active"
-                      ? "inactive"
-                      : "active"
-                  ),
+                  handleCategoryStatusUpdate(row._id, "active"),
               },
 
               {
@@ -165,8 +159,6 @@ export const getColumns = (handleDeleteCategory, handleCategoryStatusUpdate, han
               },
             ];
           }
-
-          // default actions for other statuses
           return [
             {
               label: "View Category",
@@ -196,14 +188,11 @@ export const getColumns = (handleDeleteCategory, handleCategoryStatusUpdate, han
                 ),
             },
             {
-              label: "Mark As InActive",
+              label: "Mark As Inactive",
               iconUrl: "/icons/markCompleted.svg",
               type: "button",
               onClick: () =>
-                handleCategoryStatusUpdate(
-                  row._id,
-                  row.status.toLowerCase() === "active" ? "inactive" : "active"
-                ),
+                handleCategoryStatusUpdate(row._id, "inactive"),
             },
 
             {

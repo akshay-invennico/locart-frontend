@@ -15,7 +15,6 @@ const Pagination = ({
   onPageChange,
   className
 }) => {
-  if (totalPages <= 1) return null;
 
   const getPageNumbers = () => {
     const pages = [];
@@ -79,7 +78,7 @@ const Pagination = ({
                     ? "z-10 bg-primary1-50 border-primary1-500 text-primary1-600"
                     : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                 )}
-                style={currentPage === page ? { backgroundColor: '#eff6ff', borderColor: '#3b82f6', color: '#2563eb' } : {}}
+                style={currentPage === page ? { backgroundColor: '#eff6ff', borderColor: '#52c1ceff', color: '#02C8DE' } : {}}
               >
                 {page}
               </button>

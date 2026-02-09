@@ -35,7 +35,6 @@ const DynamicForm = ({
     const key = recordKey || "__default__";
     const alreadyHydratedForKey = hydratedKeyRef.current === key;
     if (isEdit && sourceInitials && !alreadyHydratedForKey) {
-      console.log("[DynamicForm] isEdit initial values:", sourceInitials);
       setFormData({ ...sourceInitials });
       hydratedKeyRef.current = key;
       if (Array.isArray(config.fields)) {
@@ -64,12 +63,6 @@ const DynamicForm = ({
     config?.fields,
     recordKey,
   ]);
-
-  useEffect(() => {
-    if (isEdit) {
-      console.log("[DynamicForm] formData after hydration:", formData);
-    }
-  }, [isEdit, formData]);
 
   const handleChange = React.useCallback((e, fieldName) => {
     const { value, type, checked } = e.target;
