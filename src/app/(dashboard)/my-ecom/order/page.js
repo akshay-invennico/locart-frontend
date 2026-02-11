@@ -53,8 +53,12 @@ const OrderPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAllOrders({ page: currentPage, limit: itemsPerPage }));
-  }, [dispatch, currentPage]);
+    dispatch(fetchAllOrders({
+      page: currentPage,
+      limit: itemsPerPage,
+      orderMode: isToggled ? "store" : "",
+    }));
+  }, [dispatch, currentPage, isToggled]);
 
   const handleStatusUpdate = (orderIds, newStatus) => {
     const payload = {
@@ -225,6 +229,7 @@ const OrderPage = () => {
       amountMax: data.AmountRange_to || "",
       page: 1,
       limit: itemsPerPage,
+      orderMode: isToggled ? "store" : "",
     };
 
     setCurrentPage(1);
@@ -301,7 +306,10 @@ const OrderPage = () => {
             Stores Pickup Orders
           </span>
           <button
-            onClick={() => setIsToggled(!isToggled)}
+            onClick={() => {
+              setIsToggled(!isToggled);
+              setCurrentPage(1);
+            }}
             className={`relative w-12 h-6 flex items-center rounded-full transition-colors duration-300 ${isToggled
               ? "bg-[#02C8DE] border border-[#02C8DE]"
               : "bg-gray-300 border border-[#7B7B7B]"

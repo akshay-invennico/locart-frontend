@@ -11,6 +11,7 @@ export const getAllOrders = async (filters = {}) => {
     if (filters.amountMax) params.append("amountMax", filters.amountMax);
     if (filters.page) params.append("page", filters.page);
     if (filters.limit) params.append("limit", filters.limit);
+    if (filters.orderMode) params.append("orderMode", filters.orderMode);
 
     const response = await api.get(`ecom/orders?${params.toString()}`);
     return response.data;

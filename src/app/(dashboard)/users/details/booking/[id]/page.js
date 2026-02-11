@@ -12,8 +12,11 @@ import DynamicForm from "@/components/modules/registry";
 import {
   fetchAppointmentDetails,
   updateAppointmentStatus,
+  updateAppointment,
 } from "@/state/appointment/appointmentSlice";
 import { toast } from "sonner";
+import { pdf } from "@react-pdf/renderer";
+import InvoiceDocument from "@/components/documents/InvoiceDocument";
 
 const bookingConfig = {
   formCss: {
@@ -129,15 +132,85 @@ export default function Page() {
   }, [id, dispatch]);
 
   const handleViewBooking = async (row) => {
-    setSelectedBooking(row);
-
     const res = await dispatch(fetchAppointmentDetails(row.booking_id));
 
     if (res?.payload?.data) {
       setSelectedBooking(res.payload.data);
     }
+  };
 
-    setOpenSidebar(true);
+  const handleEditBooking = async (formData, row) => {
+    try {
+      const payload = {};
+
+      if (formData.date) payload.date = formData.date;
+      if (formData.time) payload.time = formData.time;
+      if (formData.stylist_id) payload.stylist_id = formData.stylist_id;
+      if (formData.status) payload.status = formData.status;
+
+      await dispatch(
+        updateAppointment({
+          appointmentId: row.booking_id,
+          payload,
+        })
+      ).unwrap();
+
+      dispatch(fetchClientBookings(id));
+      toast.success("Booking updated successfully!");
+    } catch (err) {
+      console.error("Booking update failed:", err);
+      toast.error(err?.message || "Failed to update booking.");
+    }
+  };
+
+  const handleDownloadInvoice = async (row) => {
+    try {
+      const res = await dispatch(fetchAppointmentDetails(row.booking_id));
+      const bookingData = res?.payload?.data || res?.payload;
+
+      if (!bookingData) {
+        toast.error("Could not fetch booking details.");
+        return;
+      }
+
+      const invoiceData = {
+        invoiceNo: bookingData.invoice_id || bookingData.booking_id,
+        issueDate: bookingData.booked_on || bookingData.date,
+        dueDate: bookingData.date,
+        deliveryDate: bookingData.date,
+        client: {
+          name: bookingData.client?.name || "N/A",
+          address: bookingData.client?.address || "",
+          cityState: bookingData.client?.city || "",
+          country: bookingData.client?.country || "",
+        },
+        items: (bookingData.services || []).map((service) => ({
+          description: service.name || "Service",
+          quantity: 1,
+          price: service.price || 0,
+          discount: 0,
+          amount: service.price || 0,
+        })),
+        subtotal: bookingData.invoice?.service_charges || bookingData.amount_paid || 0,
+        tax: bookingData.invoice?.taxes || 0,
+        total: bookingData.invoice?.total_payable || bookingData.amount_paid || 0,
+      };
+
+      const blob = await pdf(<InvoiceDocument invoiceData={invoiceData} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `invoice-${invoiceData.invoiceNo}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success("Invoice downloaded successfully!");
+    } catch (err) {
+      console.error("Invoice download failed:", err);
+      toast.error("Failed to download invoice.");
+    }
   };
 
   const handleBulkStatusUpdate = async (rows, status, reason = null) => {
@@ -160,6 +233,8 @@ export default function Page() {
     handleViewBooking,
     selectedBooking,
     handleBulkStatusUpdate,
+    handleEditBooking,
+    handleDownloadInvoice,
   });
 
   const options = { select: false, order: false };

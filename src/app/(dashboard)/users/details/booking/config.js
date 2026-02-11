@@ -12,7 +12,7 @@ export const bookingDetailsConfig = (data = {}) => {
     payment = {},
     invoice = {},
   } = data || {};
-  
+
   return {
     formCss: {
       maxWidth: "600px",
@@ -234,69 +234,79 @@ export const cancelOrderConfig = {
   },
 };
 
-export const editBookingConfig = {
-  formCss: {
-    maxWidth: "500px",
-    margin: "0 auto",
-    fontFamily: "Arial, sans-serif",
-  },
-  fields: [
-    { type: "header", label: "Edit Booking" },
-    {
-      type: "subheader",
-      text: "Update booking details to reflect the latest information.",
+export const editBookingConfig = (data = {}) => {
+  return {
+    formCss: {
+      maxWidth: "500px",
+      margin: "0 auto",
+      fontFamily: "Arial, sans-serif",
     },
-    { type: "divider" },
-    { type: "Booking ID", text: "Booking ID" },
+    fields: [
+      { type: "header", label: "Edit Booking" },
+      {
+        type: "subheader",
+        text: "Update booking details to reflect the latest information.",
+      },
+      { type: "divider" },
+      {
+        type: "text",
+        name: "booking_id",
+        label: "Booking ID",
+        value: data?.booking_id || "",
+        disabled: true,
+      },
 
-    {
-      type: "date",
-      name: "booking_date",
-      label: "Booking Date",
-    },
-    {
-      type: "time",
-      name: "booking_time",
-      label: "Booking Time",
-    },
+      {
+        type: "date",
+        name: "date",
+        label: "Booking Date",
+        value: data?.date || "",
+      },
+      {
+        type: "time",
+        name: "time",
+        label: "Booking Time",
+        value: data?.time || "",
+      },
 
-    {
-      type: "selectCheckbox",
-      name: "stylist",
-      label: "Select Stylist",
-      options: [
-        { value: "AaliyahJohnson", label: "Aaliyah Johnson" },
-        { value: "BennyCarter", label: "Benny Carter" },
-        { value: "ChloeKim", label: "Chloe Kim" },
-        { value: "DavidLee", label: "David Lee" },
-        { value: "EvaMartinez", label: "Eva Martinez" },
-      ],
+      {
+        type: "select",
+        name: "stylist_id",
+        label: "Select Stylist",
+        value: data?.stylist?._id || data?.stylist_id || "",
+        options: [
+          { value: "AaliyahJohnson", label: "Aaliyah Johnson" },
+          { value: "BennyCarter", label: "Benny Carter" },
+          { value: "ChloeKim", label: "Chloe Kim" },
+          { value: "DavidLee", label: "David Lee" },
+          { value: "EvaMartinez", label: "Eva Martinez" },
+        ],
+      },
+      {
+        type: "select",
+        name: "status",
+        label: "Booking Status",
+        value: data?.status || "",
+        options: [
+          { value: "upcoming", label: "Upcoming" },
+          { value: "ongoing", label: "Ongoing" },
+          { value: "completed", label: "Completed" },
+          { value: "cancelled", label: "Cancelled" },
+        ],
+      },
+    ],
+    footer: {
+      cancel: {
+        label: "Cancel",
+        className:
+          "w-full border border-[#02C8DE] text-[#02C8DE] px-4 py-2 rounded",
+      },
+      apply: {
+        label: "Update Booking",
+        className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
+      },
     },
-    {
-      type: "selectCheckbox",
-      name: "booking_status",
-      label: "Booking Status",
-      options: [
-        { value: "Upcoming", label: "Upcoming" },
-        { value: "Ongoing", label: "Ongoing" },
-        { value: "Completed", label: "Completed" },
-        { value: "Cancelled", label: "Cancelled" },
-      ],
-    },
-  ],
-  footer: {
-    cancel: {
-      label: "Cancel",
-      className:
-        "w-full border border-[#02C8DE] text-[#02C8DE] px-4 py-2 rounded",
-      onClick: () => console.log("Cancelled"),
-    },
-    apply: {
-      label: "Update Booking",
-      className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
-      onClick: (data) => console.log("Saved", data),
-    },
-  },
+  };
 };
 
 export const flagBookingConfig = {

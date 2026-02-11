@@ -5,13 +5,11 @@ import { useSelector } from "react-redux";
 import DynamicForm from "@/components/modules/DynamicFormRendering";
 import { bookingDetailsConfig, flagBookingConfig } from "./config";
 import { editBookingConfig } from "./config";
-import ViewUser from "../../viewUser";
 import DetailView from "@/components/modules/DetailView";
-import { fetchAppointmentDetails } from "@/state/appointment/appointmentSlice";
 import Spinner from "@/components/common/Spinner";
 
 export default function ViewBookingDetails() {
-  const { appointmentDetails, loading } = useSelector(
+  const { selectedAppointment, loading } = useSelector(
     (state) => state.appointment
   );
 
@@ -19,13 +17,13 @@ export default function ViewBookingDetails() {
     <Spinner />
   </div>;
 
-  if (!appointmentDetails) return <p className="flex justify-center items-center h-[60vh]">No booking details found</p>;
+  if (!selectedAppointment) return <p className="flex justify-center items-center h-[60vh]">No booking details found</p>;
 
-  return <DetailView config={bookingDetailsConfig(appointmentDetails)} />;
+  return <DetailView config={bookingDetailsConfig(selectedAppointment)} />;
 }
 
 
-export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUpdate }) => [
+export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUpdate, handleEditBooking, handleDownloadInvoice }) => [
   {
     key: "booking_id",
     title: "Booking ID",
@@ -82,10 +80,10 @@ export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUp
       },
       options: {
         value: {
-          active: "#00A78E", // Green
-          pending: "#F59E0B", // Amber
-          completed: "#9CA3AF", // Gray
-          cancelled: "#EF4444", // Red
+          active: "#00A78E",
+          pending: "#F59E0B",
+          completed: "#9CA3AF",
+          cancelled: "#EF4444",
         },
       },
     },
@@ -102,13 +100,14 @@ export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUp
             iconUrl: "/icons/show.svg",
             type: "sidebar",
             onClick: (row) => handleViewBooking(row),
-            component: <DetailView config={bookingDetailsConfig(selectedBooking)} />
+            component: <ViewBookingDetails />
           },
           {
             label: "Edit Booking",
             iconUrl: "/icons/editBooking.svg",
             type: "sidebar",
-            component: <DynamicForm config={editBookingConfig} />,
+            component: <DynamicForm config={editBookingConfig(selectedBooking)} />,
+            onApply: (formData, row) => handleEditBooking(formData, row),
           },
           {
             label: "Mark As Completed",
@@ -135,8 +134,7 @@ export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUp
           {
             label: "Download Invoice",
             iconUrl: "/icons/downloadGray.svg",
-            // type: "popUp",
-            onClick: (data) => console.log("password Reset link send", data),
+            onClick: (row) => handleDownloadInvoice(row),
           },
         ],
       },

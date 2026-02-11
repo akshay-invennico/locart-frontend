@@ -52,7 +52,7 @@ export const stylistColumns = [
     },
   },
   {
-    key: "avgRating",
+    key: "avg_rating",
     title: "Avg Rating",
     sortable: true,
     render: (value) => (
@@ -62,7 +62,7 @@ export const stylistColumns = [
     ),
   },
   {
-    key: "revenueGenerated",
+    key: "revenue",
     title: "Revenue Generated",
     sortable: true,
     component: {
