@@ -1,45 +1,18 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { getAll, markAsRead } from "@/state/notification/notificationService";
 
-const Notification = ({ isOpen, heading, subHeading }) => {
+const Notification = ({
+  isOpen,
+  heading,
+  subHeading,
+  notifications = [],
+  loading = false,
+  onMarkAllAsRead
+}) => {
   const ref = useRef();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [readAll, setReadAll] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchNotifications();
-    }
-  }, [isOpen]);
-
-  const fetchNotifications = async () => {
-    setLoading(true);
-    try {
-      const data = await getAll();
-      setNotifications(data.notifications);
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    try {
-      await markAsRead();
-      setReadAll(true);
-      setNotifications((prev) =>
-        prev.map((n) => ({ ...n, read: true }))
-      );
-    } catch (error) {
-      console.error("Failed to mark notifications as read:", error);
-    }
-  };
 
   const renderIcon = (n) => {
     const baseStyle =
@@ -82,7 +55,11 @@ const Notification = ({ isOpen, heading, subHeading }) => {
           </div>
         );
       default:
-        return null;
+        return (
+          <div className={`${baseStyle} bg-gray-200`}>
+            <span className="text-[10px] text-gray-500">N/A</span>
+          </div>
+        );
     }
   };
 
@@ -104,7 +81,7 @@ const Notification = ({ isOpen, heading, subHeading }) => {
               </h3>
               <button
                 className={`text-xs ${notifications.length === 0 ? 'hidden' : 'flex text-primary1'} hover:underline`}
-                onClick={handleMarkAllAsRead}
+                onClick={onMarkAllAsRead}
               >
                 Mark all as Read
               </button>
@@ -138,13 +115,13 @@ const Notification = ({ isOpen, heading, subHeading }) => {
                       </p>
                       <div className="flex items-center gap-1">
                         <span
-                          className={`w-2 h-2 rounded-full ${readAll || n.read
-                              ? "bg-[var(--color-dull-text)]"
-                              : "bg-[var(--color-primary1)]"
+                          className={`w-2 h-2 rounded-full ${n.read
+                            ? "bg-[var(--color-dull-text)]"
+                            : "bg-[var(--color-primary1)]"
                             } transition-colors duration-300`}
                         ></span>
                         <p className="text-xs text-gray-400">
-                          {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {n.createdAt ? new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                         </p>
 
                       </div>
