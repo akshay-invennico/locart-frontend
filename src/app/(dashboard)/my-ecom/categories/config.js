@@ -270,7 +270,7 @@ export const getEditCategoryConfig = () => ({
     { type: "input", name: "name", label: "Category Name" },
 
     {
-      type: "selectCheckbox",
+      type: "selectCheckboxSingle",
       name: "status",
       label: "Category Status",
       options: [

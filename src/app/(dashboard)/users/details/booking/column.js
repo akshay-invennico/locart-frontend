@@ -94,28 +94,36 @@ export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUp
     component: {
       type: "action",
       options: {
-        actions: [
-          {
-            label: "View Booking",
-            iconUrl: "/icons/show.svg",
-            type: "sidebar",
-            onClick: (row) => handleViewBooking(row),
-            component: <ViewBookingDetails />
-          },
-          {
-            label: "Edit Booking",
-            iconUrl: "/icons/editBooking.svg",
-            type: "sidebar",
-            component: <DynamicForm config={editBookingConfig(selectedBooking)} />,
-            onApply: (formData, row) => handleEditBooking(formData, row),
-          },
-          {
-            label: "Mark As Completed",
-            iconUrl: "/icons/markCompleted.svg",
-            type: "action",
-            onClick: (row) => handleBulkStatusUpdate([row], "completed")
-          },
-          {
+        actions: (row) => {
+          const actions = [
+            {
+              label: "View Booking",
+              iconUrl: "/icons/show.svg",
+              type: "sidebar",
+              onClick: () => handleViewBooking(row),
+              component: <ViewBookingDetails />,
+            },
+            {
+              label: "Edit Booking",
+              iconUrl: "/icons/editBooking.svg",
+              type: "sidebar",
+              component: <DynamicForm config={editBookingConfig(row)} />,
+              onApply: (formData) => handleEditBooking(formData, row),
+            },
+          ];
+
+          // ✅ Only show if NOT completed
+          if (row.status !== "completed") {
+            actions.push({
+              label: "Mark As Completed",
+              iconUrl: "/icons/markCompleted.svg",
+              type: "action",
+              onClick: () => handleBulkStatusUpdate([row], "completed"),
+            });
+          }
+
+          // Flag (always visible)
+          actions.push({
             label: "Flag Booking",
             iconUrl: "/icons/flag.svg",
             type: "popUp",
@@ -123,20 +131,23 @@ export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUp
               <PopupForm
                 config={flagBookingConfig}
                 width="500px"
-                onApply={(formData, rows) =>
-                  handleBulkStatusUpdate([rows], "flagged", formData.reason)
+                onApply={(formData) =>
+                  handleBulkStatusUpdate([row], "flagged", formData.reason)
                 }
                 onCancel={() => console.log("Cancelled")}
               />
             ),
-          },
+          });
 
-          {
+          // Download (always visible)
+          actions.push({
             label: "Download Invoice",
             iconUrl: "/icons/downloadGray.svg",
-            onClick: (row) => handleDownloadInvoice(row),
-          },
-        ],
+            onClick: () => handleDownloadInvoice(row),
+          });
+
+          return actions;
+        },
       },
     },
   },

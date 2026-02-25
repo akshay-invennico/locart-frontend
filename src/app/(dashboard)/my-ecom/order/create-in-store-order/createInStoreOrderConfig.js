@@ -166,7 +166,7 @@ export const createInStoreOrderConfig = (productOptions = []) => ({
           placeholder: "$0",
         },
         {
-          type: "selectCheckbox",
+          type: "selectCheckboxSingle",
           name: "PaymentMethod",
           label: "Select Payment Method",
           options: [
@@ -187,7 +187,7 @@ export const createInStoreOrderConfig = (productOptions = []) => ({
       columns: 2,
       fields: [
         {
-          type: "selectCheckbox",
+          type: "selectCheckboxSingle",
           name: "PaymentStatus",
           label: "Select Payment Status",
           options: [
@@ -202,7 +202,7 @@ export const createInStoreOrderConfig = (productOptions = []) => ({
           ],
         },
         {
-          type: "selectCheckbox",
+          type: "selectCheckboxSingle",
           name: "OrderStatus",
           label: "Select Order Status",
           options: [

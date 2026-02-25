@@ -136,7 +136,7 @@ export const ViewCategoryDetailsConfig = {
       images: [
         {
           src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
+            Math.random() * 100,
           )}`,
           alt: "Product 1",
           onChange: (updatedImages) =>
@@ -204,7 +204,7 @@ export const editCategoryConfig = {
       images: [
         {
           src: `https://picsum.photos/512?random=${Math.floor(
-            Math.random() * 100
+            Math.random() * 100,
           )}`,
           alt: "Product 1",
           onChange: (updatedImages) =>
@@ -221,7 +221,7 @@ export const editCategoryConfig = {
     },
 
     {
-      type: "selectCheckbox",
+      type: "selectCheckboxSingle",
       name: "status",
       label: "Status",
       options: [
@@ -363,7 +363,11 @@ export const getViewCategoryDetailsConfig = (category) => ({
       columns: 2,
       items: [
         { label: "Category Name", value: category?.name || "N/A" },
-        { label: "Status", value: category?.status, valueStyle: { color: "#02C8DE" } },
+        {
+          label: "Status",
+          value: category?.status,
+          valueStyle: { color: "#02C8DE" },
+        },
         { label: "Attached Services", value: category?.services?.length || 0 },
       ],
     },
@@ -398,7 +402,7 @@ export const getEditCategoryConfig = () => ({
     { type: "input", name: "name", label: "Category Name" },
 
     {
-      type: "selectCheckbox",
+      type: "selectCheckboxSingle",
       name: "status",
       label: "Category Status",
       options: [
