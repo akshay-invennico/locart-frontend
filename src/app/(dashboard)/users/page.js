@@ -79,7 +79,9 @@ const Page = () => {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    dispatch(fetchClients({ ...filters, page: currentPage, limit: itemsPerPage }));
+    dispatch(
+      fetchClients({ ...filters, page: currentPage, limit: itemsPerPage }),
+    );
   }, [currentPage]);
 
   useEffect(() => {
@@ -91,7 +93,9 @@ const Page = () => {
     const value = e.target.value;
     setSearchText(value);
     setCurrentPage(1);
-    dispatch(fetchClients({ ...filters, search: value, page: 1, limit: itemsPerPage }));
+    dispatch(
+      fetchClients({ ...filters, search: value, page: 1, limit: itemsPerPage }),
+    );
   };
 
   const handleSuspendClients = (formData, rowsOrRow) => {
@@ -113,7 +117,7 @@ const Page = () => {
       suspendClientsByIds({
         clientIds,
         reason,
-      })
+      }),
     )
       .unwrap()
       .then(() => {
@@ -171,8 +175,12 @@ const Page = () => {
     const transformed = {
       status: statusObj.includes("all") ? "" : statusObj.join(","),
       clientType: clientTypeObj.includes("all") ? "" : clientTypeObj.join(","),
-      joinedFrom: data?.joinedDate_from ? new Date(data.joinedDate_from).toISOString() : "",
-      joinedTo: data?.joinedDate_to ? new Date(data.joinedDate_to).toISOString() : "",
+      joinedFrom: data?.joinedDate_from
+        ? new Date(data.joinedDate_from).toISOString()
+        : "",
+      joinedTo: data?.joinedDate_to
+        ? new Date(data.joinedDate_to).toISOString()
+        : "",
       minSpent: data?.spendAmount_from || "",
       maxSpent: data?.spendAmount_to || "",
       page: 1,
@@ -267,7 +275,7 @@ const Page = () => {
           columns={columns(
             handleSendResetPasswordLink,
             handleSuspendClients,
-            handleReactivateClient
+            handleReactivateClient,
           )}
           pagination={{
             currentPage: pagination?.page || 1,
@@ -294,38 +302,6 @@ const Page = () => {
                   onCancel={() => console.log("Cancelled")}
                 />
               ),
-            },
-            {
-              label: "Export Selection",
-              iconUrl: "/icons/download.svg",
-              children: [
-                { header: "Download List" },
-                {
-                  label: "Download PDF",
-                  icon: <BsFilePdf className="w-4 h-4 text-[#7B7B7B]" />,
-                  onClick: (selectedRows) => {
-                    exportGridPDF({
-                      rows: selectedRows,
-                      columns: columns(null),
-                      filename: "selected_clients.pdf",
-                      title: "Selected Clients",
-                    });
-                  },
-                },
-                {
-                  label: "Download CSV",
-                  icon: (
-                    <BsFileSpreadsheet className="w-4 h-4 text-[#7B7B7B]" />
-                  ),
-                  onClick: (selectedRows) => {
-                    exportGridCSV({
-                      rows: selectedRows,
-                      columns: columns(null),
-                      filename: "selected_clients.csv",
-                    });
-                  },
-                },
-              ],
             },
           ]}
         />
