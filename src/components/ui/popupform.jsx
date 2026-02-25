@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { LuLock, LuEye, LuEyeOff } from "react-icons/lu";
+import ReactDOM from "react-dom";
 
 const PopupForm = ({
   config,
@@ -13,7 +14,9 @@ const PopupForm = ({
   data,
 }) => {
   const [formData, setFormData] = useState({});
-  const [dropdownStates, setDropdownStates] = useState({}); // track open/close for each dropdown
+  const [dropdownStates, setDropdownStates] = useState({});
+  const [dropdownPositions, setDropdownPositions] = useState({});
+  const dropdownRefs = useRef({});
 
   const handleChange = (e, name) => {
     const { value, type, checked } = e.target;
@@ -22,21 +25,52 @@ const PopupForm = ({
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
   const handleApply = () => {
     if (onApply) onApply(formData, (config && config.rowData) || data || null);
   };
-
 
   const handleCancel = () => {
     if (onCancel) onCancel();
   };
 
   const toggleDropdown = (name) => {
-    setDropdownStates((prev) => ({
-      ...prev,
-      [name]: !prev[name],
-    }));
+    setDropdownStates((prev) => {
+      const isOpening = !prev[name];
+      if (isOpening && dropdownRefs.current[name]) {
+        const rect = dropdownRefs.current[name].getBoundingClientRect();
+        setDropdownPositions((pos) => ({
+          ...pos,
+          [name]: {
+            top: rect.bottom + window.scrollY,
+            left: rect.left + window.scrollX,
+            width: rect.width,
+          },
+        }));
+      }
+      return { ...prev, [name]: !prev[name] };
+    });
   };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const openKeys = Object.keys(dropdownStates).filter(
+        (k) => dropdownStates[k]
+      );
+      openKeys.forEach((name) => {
+        const ref = dropdownRefs.current[name];
+        if (ref && !ref.contains(e.target)) {
+          // Check if click is inside the portal dropdown
+          const portalEl = document.getElementById(`dropdown-portal-${name}`);
+          if (portalEl && portalEl.contains(e.target)) return;
+          setDropdownStates((prev) => ({ ...prev, [name]: false }));
+        }
+      });
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dropdownStates]);
 
   const renderField = (field) => {
     switch (field.type) {
@@ -63,7 +97,7 @@ const PopupForm = ({
           </p>
         );
 
-      case "input":
+      case "input": {
         const isPassword = field.inputType === "password";
         const [showPassword, setShowPassword] = useState(false);
 
@@ -77,9 +111,7 @@ const PopupForm = ({
                 {field.label}
               </label>
             )}
-
             <div className="relative">
-              {/* Lock icon */}
               {isPassword && (
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <Image
@@ -90,7 +122,6 @@ const PopupForm = ({
                   />
                 </span>
               )}
-
               <input
                 type={
                   isPassword ? (showPassword ? "text" : "password") : "text"
@@ -99,11 +130,10 @@ const PopupForm = ({
                 value={formData[field.name] || ""}
                 onChange={(e) => handleChange(e, field.name)}
                 placeholder={field.placeholder || ""}
-                className={`w-full border rounded px-2 py-2 ${isPassword ? "pl-10 pr-10" : "px-2"
-                  }`}
+                className={`w-full border rounded px-2 py-2 ${
+                  isPassword ? "pl-10 pr-10" : "px-2"
+                }`}
               />
-
-              {/* Show/hide eye toggle */}
               {isPassword && (
                 <button
                   type="button"
@@ -111,10 +141,7 @@ const PopupForm = ({
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                 >
                   {showPassword ? (
-                    <LuEyeOff
-                      size={18}
-                      className="cursor-pointer text-gray-400"
-                    />
+                    <LuEyeOff size={18} className="cursor-pointer text-gray-400" />
                   ) : (
                     <LuEye size={18} className="cursor-pointer text-gray-400" />
                   )}
@@ -123,9 +150,9 @@ const PopupForm = ({
             </div>
           </div>
         );
+      }
 
-      case "infoGrid":
-        const columns = field.columns || 3; // desktop columns
+      case "infoGrid": {
         return (
           <div className="mb-4 grid gap-5 grid-cols-1 sm:grid-cols-3">
             {field.items.map((item, idx) => (
@@ -144,6 +171,7 @@ const PopupForm = ({
             ))}
           </div>
         );
+      }
 
       case "textarea":
         return (
@@ -161,47 +189,25 @@ const PopupForm = ({
             />
           </div>
         );
+
       case "selectCheckbox": {
         const selectedOptions = formData[field.name] || [];
         const isOpen = dropdownStates[field.name] || false;
+        const pos = dropdownPositions[field.name];
 
-        return (
-          <div className="mb-2 relative">
-            <label className="block text-sm font-medium mb-1">
-              {field.label}
-            </label>
-
-            <div
-              className="w-full border px-2 py-1 rounded cursor-pointer flex justify-between items-center"
-              onClick={() => toggleDropdown(field.name)}
-            >
-              <span className="text-gray-700 text-sm truncate text-left">
-                {selectedOptions.length > 0
-                  ? selectedOptions
-                    .map(
-                      (v) => field.options.find((o) => o.value === v)?.label
-                    )
-                    .join(", ")
-                  : "Select..."}
-              </span>
-              <svg
-                className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        const dropdownMenu = isOpen && pos
+          ? ReactDOM.createPortal(
+              <div
+                id={`dropdown-portal-${field.name}`}
+                style={{
+                  position: "fixed",
+                  top: pos.top,
+                  left: pos.left,
+                  width: pos.width,
+                  zIndex: 9999,
+                }}
+                className="max-h-60 overflow-auto border rounded bg-white shadow-lg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-
-            {isOpen && (
-              <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto border rounded bg-white shadow-lg">
                 {field.options.map((opt) => {
                   const isChecked = selectedOptions.includes(opt.value);
                   return (
@@ -229,16 +235,60 @@ const PopupForm = ({
                         flex items-center justify-center"
                       />
                       <span
-                        className={`text-sm ${isChecked ? "text-[#02C8DE]" : "text-black"
-                          }`}
+                        className={`text-sm ${
+                          isChecked ? "text-[#02C8DE]" : "text-black"
+                        }`}
                       >
                         {opt.label}
                       </span>
                     </label>
                   );
                 })}
-              </div>
-            )}
+              </div>,
+              document.body
+            )
+          : null;
+
+        return (
+          <div className="mb-2">
+            <label className="block text-sm font-medium mb-1">
+              {field.label}
+            </label>
+
+            {/* Trigger button */}
+            <div
+              ref={(el) => (dropdownRefs.current[field.name] = el)}
+              className="w-full border px-2 py-1 rounded cursor-pointer flex justify-between items-center"
+              onClick={() => toggleDropdown(field.name)}
+            >
+              <span className="text-gray-700 text-sm truncate text-left">
+                {selectedOptions.length > 0
+                  ? selectedOptions
+                      .map(
+                        (v) => field.options.find((o) => o.value === v)?.label
+                      )
+                      .join(", ")
+                  : "Select..."}
+              </span>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                  isOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+
+            {/* Portal dropdown renders here */}
+            {dropdownMenu}
 
             {selectedOptions.includes("Other") && field.showTextarea && (
               <div className="mt-2">
@@ -263,32 +313,27 @@ const PopupForm = ({
           </div>
         );
       }
+
       case "statusOptions":
         return (
           <div className="flex flex-col gap-3">
-            {field.options.map((opt) => {
-              return (
-                <div
-                  key={opt.value}
-                  onClick={() => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      [field.name]: opt.value,
-                    }));
-
-                    if (onApply) onApply({ [field.name]: opt.value });
-                    if (onCancel) onCancel();
-                  }}
-                  className="px-4 py-3 rounded cursor-pointer border text-center font-medium border-gray-300"
-                  style={{
-                    backgroundColor: opt.bgColor,
-                    color: opt.textColor,
-                  }}
-                >
-                  {opt.label}
-                </div>
-              );
-            })}
+            {field.options.map((opt) => (
+              <div
+                key={opt.value}
+                onClick={() => {
+                  setFormData((prev) => ({ ...prev, [field.name]: opt.value }));
+                  if (onApply) onApply({ [field.name]: opt.value });
+                  if (onCancel) onCancel();
+                }}
+                className="px-4 py-3 rounded cursor-pointer border text-center font-medium border-gray-300"
+                style={{
+                  backgroundColor: opt.bgColor,
+                  color: opt.textColor,
+                }}
+              >
+                {opt.label}
+              </div>
+            ))}
           </div>
         );
 
@@ -301,7 +346,8 @@ const PopupForm = ({
     <div
       className="bg-white p-4 flex flex-col
                w-full max-w-[500px] sm:w-full sm:max-w-[500px]
-               h-auto max-h-[90vh] overflow-hidden rounded-lg "
+               h-auto max-h-[90vh] rounded-lg"
+      // ✅ Removed overflow-hidden so the portal dropdown isn't clipped
     >
       <div className="flex-1 overflow-y-auto">
         {config?.title && (
@@ -317,14 +363,10 @@ const PopupForm = ({
               </h2>
             )}
             {field?.type === "subheader" && (
-              <>
-                <p className="text-sm text-gray-700 mb-2 leading-relaxed text-left">
-                  {field?.text}
-                </p>
-                {/* <div className="border-b border-gray-300 mb-6"></div> */}
-              </>
+              <p className="text-sm text-gray-700 mb-2 leading-relaxed text-left">
+                {field?.text}
+              </p>
             )}
-            {/* render other field types normally */}
             {field?.type !== "header" &&
               field?.type !== "subheader" &&
               renderField(field)}
@@ -353,9 +395,10 @@ const PopupForm = ({
               onClick={handleApply}
               className={
                 config.footer.apply.className ||
-                `px-4 py-2 rounded flex-1 ${config.footer.apply.color === "red"
-                  ? "bg-[#BC0D10] text-white"
-                  : "bg-[#02C8DE] text-white"
+                `px-4 py-2 rounded flex-1 ${
+                  config.footer.apply.color === "red"
+                    ? "bg-[#BC0D10] text-white"
+                    : "bg-[#02C8DE] text-white"
                 }`
               }
             >
