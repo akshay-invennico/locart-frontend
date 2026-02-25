@@ -36,7 +36,7 @@ import { toast } from "sonner"; // Assuming sonner is used for toasts based on p
 const routeMap = {
   "/": "Dashboard",
   "/users": "Clients",
-  "/users/details": "Client Details",
+  "/users/details/overview": "Client Overview",
   "/users/details/booking": "Bookings",
   "/users/details/product-orders": "Product Orders",
   "/users/details/loyalty-rewards": "Loyalty Rewards",
