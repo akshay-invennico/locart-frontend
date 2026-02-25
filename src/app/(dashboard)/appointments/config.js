@@ -183,13 +183,13 @@ export const AddAppointmentConfig = {
     },
 
     {
-      type: "selectCheckbox",
+      type: "selectCheckboxSingle",
       name: "bookingstatus",
       label: "Booking Status",
       placeholder: "Select Status",
       options: [
         { value: "Upcoming", label: "Upcoming" },
-        { value: "Ongoing", label: "Ongoing" },
+        { value: "Ongoing", label: "No-Show" },
         { value: "Pending", label: "Pending" },
         { value: "Completed", label: "Completed" },
         { value: "Cancelled", label: "Cancelled" },
@@ -610,16 +610,17 @@ export const editBookingConfig = {
         { value: "paid", label: "Paid" },
       ],
     },
-    {
-      type: "select",
-      name: "booking_status",
+  {
+      type: "selectCheckboxSingle",
+      name: "bookingstatus",
       label: "Booking Status",
+      placeholder: "Select Status",
       options: [
-        { value: "upcoming", label: "Upcoming" },
-        { value: "ongoing", label: "Ongoing" },
-        { value: "pending", label: "Pending" },
-        { value: "completed", label: "Completed" },
-        { value: "cancelled", label: "Cancelled" },
+        { value: "Upcoming", label: "Upcoming" },
+        { value: "Ongoing", label: "No-Show" },
+        { value: "Pending", label: "Pending" },
+        { value: "Completed", label: "Completed" },
+        { value: "Cancelled", label: "Cancelled" },
       ],
     },
     {
