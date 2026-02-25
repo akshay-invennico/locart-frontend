@@ -3,6 +3,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+
 html,
 body {
   -webkit-overflow-scrolling: touch;
@@ -163,6 +165,61 @@ button {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Print styles for invoice */
+@media print {
+  /* Hide all elements except invoice content */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Show only the invoice preview container and its children */
+  .lg\:w-\[40\%\], 
+  .lg\:w-\[40\%\] * {
+    visibility: visible;
+  }
+  
+  /* Position invoice to take full page */
+  .lg\:w-\[40\%\] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: none !important;
+  }
+  
+  /* Hide print buttons and unnecessary elements */
+  button, .flex.items-center.justify-between {
+    visibility: hidden;
+  }
+  
+  /* Ensure proper spacing for print */
+  .border.rounded-md.p-4 {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 20px !important;
+  }
+  
+  /* Remove background colors for cleaner print */
+  .bg-gray-50 {
+    background: white !important;
+  }
+  
+  /* Ensure text is black for print */
+  * {
+    color: black !important;
+  }
+  
+  /* Hide scrollbars and overflow */
+  body {
+    overflow: visible !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .space-y-4 > * {
+    page-break-inside: avoid;
   }
 }
 

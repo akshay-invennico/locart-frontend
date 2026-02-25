@@ -172,6 +172,7 @@ const CreateInStoreOrderPage = () => {
             <DynamicForm
               config={config}
               onApply={(formData) => {
+                handleFormSubmit(formData);
                 handleAddOrder(formData);
               }}
             />
@@ -190,7 +191,11 @@ const CreateInStoreOrderPage = () => {
               />
 
               <button
-                onClick={() => window.print()}
+                onClick={() => {
+                  setTimeout(() => {
+                    window.print();
+                  }, 100);
+                }}
                 className="flex items-center justify-center w-10 h-10 sm:w-auto sm:px-3 sm:py-2 border border-[var(--color-primary1)] bg-white rounded-md shadow-sm hover:bg-gray-50"
               >
                 <Printer className="w-4 h-4 text-[#02C8DE]" />
