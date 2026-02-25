@@ -204,8 +204,9 @@ const DynamicForm = ({
                             [field.name]: {},
                           }));
                         }}
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? "border-[#02C8DE]" : "border-gray-400"
-                          }`}
+                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                          isSelected ? "border-[#02C8DE]" : "border-gray-400"
+                        }`}
                       >
                         {isSelected && (
                           <div className="w-2.5 h-2.5 bg-[#02C8DE] rounded-full" />
@@ -254,8 +255,9 @@ const DynamicForm = ({
                               : `Select ${opt.label} Options`}
                           </span>
                           <ChevronDown
-                            className={`transition-transform duration-200 ${optShowDropdown ? "rotate-180" : ""
-                              }`}
+                            className={`transition-transform duration-200 ${
+                              optShowDropdown ? "rotate-180" : ""
+                            }`}
                             size={18}
                           />
                         </div>
@@ -307,10 +309,11 @@ const DynamicForm = ({
                                   )}
 
                                   <span
-                                    className={`text-sm font-medium ${isChecked
-                                      ? "text-[#02C8DE]"
-                                      : "text-[#7B7B7B]"
-                                      }`}
+                                    className={`text-sm font-medium ${
+                                      isChecked
+                                        ? "text-[#02C8DE]"
+                                        : "text-[#7B7B7B]"
+                                    }`}
                                   >
                                     {option.label}
                                   </span>
@@ -402,8 +405,9 @@ const DynamicForm = ({
           <div
             className={`grid gap-4`}
             style={{
-              gridTemplateColumns: `repeat(${field.columns || 1
-                }, minmax(0, 1fr))`,
+              gridTemplateColumns: `repeat(${
+                field.columns || 1
+              }, minmax(0, 1fr))`,
             }}
           >
             {field.fields?.map((childField, index) => (
@@ -588,8 +592,9 @@ const DynamicForm = ({
                 </span>
               </div>
               <ChevronDown
-                className={`transition-transform duration-200 ${showSelectDropdown ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform duration-200 ${
+                  showSelectDropdown ? "rotate-180" : ""
+                }`}
                 size={18}
               />
             </div>
@@ -611,8 +616,9 @@ const DynamicForm = ({
                           [field.name]: false,
                         }));
                       }}
-                      className={`flex items-center justify-between gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100 ${isSelected ? "bg-[#E5FCFF]" : ""
-                        }`}
+                      className={`flex items-center justify-between gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100 ${
+                        isSelected ? "bg-[#E5FCFF]" : ""
+                      }`}
                     >
                       <div className="flex items-center gap-2">
                         {option.icon && (
@@ -625,8 +631,9 @@ const DynamicForm = ({
                           />
                         )}
                         <span
-                          className={`text-sm font-medium ${isSelected ? "text-[#02C8DE]" : "text-[#7B7B7B]"
-                            }`}
+                          className={`text-sm font-medium ${
+                            isSelected ? "text-[#02C8DE]" : "text-[#7B7B7B]"
+                          }`}
                         >
                           {option.label}
                         </span>
@@ -648,8 +655,9 @@ const DynamicForm = ({
       case "inputGroup":
         return (
           <div
-            className={`grid grid-cols-${field.columns || field.fields.length
-              } gap-4`}
+            className={`grid grid-cols-${
+              field.columns || field.fields.length
+            } gap-4`}
           >
             {field.fields.map((sub, i) => (
               <div key={i}>{renderField(sub)}</div>
@@ -683,8 +691,9 @@ const DynamicForm = ({
               </span>
               <ChevronDown
                 size={16}
-                className={`transition-transform text-[#7B7B7B] ${state.show ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform text-[#7B7B7B] ${
+                  state.show ? "rotate-180" : ""
+                }`}
               />
             </div>
 
@@ -820,8 +829,9 @@ const DynamicForm = ({
               </span>
               <ChevronDown
                 size={18}
-                className={`transition-transform duration-200 ${showSingleTime ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform duration-200 ${
+                  showSingleTime ? "rotate-180" : ""
+                }`}
               />
             </div>
             {showSingleTime && (
@@ -837,10 +847,11 @@ const DynamicForm = ({
                           [field.name]: period,
                         }))
                       }
-                      className={`px-2 py-1 text-sm rounded border ml-1 ${selectedPeriod === period
-                        ? "bg-[#02C8DE] text-white border-[#02C8DE]"
-                        : "bg-white text-black border-gray-300"
-                        }`}
+                      className={`px-2 py-1 text-sm rounded border ml-1 ${
+                        selectedPeriod === period
+                          ? "bg-[#02C8DE] text-white border-[#02C8DE]"
+                          : "bg-white text-black border-gray-300"
+                      }`}
                     >
                       {period}
                     </button>
@@ -858,10 +869,11 @@ const DynamicForm = ({
                           [`${field.name}_time`]: false,
                         }));
                       }}
-                      className={`text-sm p-2 text-center border rounded cursor-pointer hover:bg-[#02C8DE] hover:text-white ${formData[field.name] === time
-                        ? "bg-[#02C8DE] text-white"
-                        : ""
-                        }`}
+                      className={`text-sm p-2 text-center border rounded cursor-pointer hover:bg-[#02C8DE] hover:text-white ${
+                        formData[field.name] === time
+                          ? "bg-[#02C8DE] text-white"
+                          : ""
+                      }`}
                     >
                       {time}
                     </div>
@@ -882,7 +894,7 @@ const DynamicForm = ({
         const filteredOptions = field.options.filter(
           (opt) =>
             opt.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            opt.email.toLowerCase().includes(searchTerm.toLowerCase())
+            opt.email.toLowerCase().includes(searchTerm.toLowerCase()),
         );
 
         return (
@@ -904,8 +916,9 @@ const DynamicForm = ({
                 {selectedClient ? selectedClient.label : field.placeholder}
               </span>
               <ChevronDown
-                className={`transition-transform duration-200 ${showClientDropdown ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform duration-200 ${
+                  showClientDropdown ? "rotate-180" : ""
+                }`}
                 size={18}
               />
             </div>
@@ -1070,19 +1083,20 @@ const DynamicForm = ({
                 <span>
                   {selectedRadioOption.length
                     ? selectedRadioOption
-                      .map(
-                        (v) =>
-                          field.selectCheckbox.options.find(
-                            (o) => o.value === v
-                          )?.label
-                      )
-                      .join(", ")
+                        .map(
+                          (v) =>
+                            field.selectCheckbox.options.find(
+                              (o) => o.value === v,
+                            )?.label,
+                        )
+                        .join(", ")
                     : "Select Options"}
                 </span>
                 <ChevronDown
                   size={16}
-                  className={`transition-transform ${showDropdowns ? "rotate-180" : ""
-                    }`}
+                  className={`transition-transform ${
+                    showDropdowns ? "rotate-180" : ""
+                  }`}
                 />
               </div>
 
@@ -1090,7 +1104,7 @@ const DynamicForm = ({
                 <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg max-h-60 overflow-auto p-2">
                   {field.selectCheckbox.options.map((option) => {
                     const isChecked = selectedRadioOption.includes(
-                      option.value
+                      option.value,
                     );
                     return (
                       <label
@@ -1148,16 +1162,17 @@ const DynamicForm = ({
               <span className="text-sm">
                 {selectedOptions.length > 0
                   ? selectedOptions
-                    .map(
-                      (v) => field.options.find((o) => o.value === v)?.label
-                    )
-                    .filter(Boolean)
-                    .join(", ")
+                      .map(
+                        (v) => field.options.find((o) => o.value === v)?.label,
+                      )
+                      .filter(Boolean)
+                      .join(", ")
                   : field.placeholder || field.label}
               </span>
               <ChevronDown
-                className={`transition-transform duration-200 ${showCheckboxDropdown ? "rotate-180" : ""
-                  }`}
+                className={`transition-transform duration-200 ${
+                  showCheckboxDropdown ? "rotate-180" : ""
+                }`}
                 size={18}
               />
             </div>
@@ -1165,7 +1180,9 @@ const DynamicForm = ({
             {showCheckboxDropdown && (
               <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto border rounded bg-white shadow-lg">
                 {field.options.map((option) => {
-                  const selectedArray = Array.isArray(selectedOptions) ? selectedOptions : [];
+                  const selectedArray = Array.isArray(selectedOptions)
+                    ? selectedOptions
+                    : [];
                   const isChecked = selectedArray.includes(option.value);
 
                   return (
@@ -1183,7 +1200,7 @@ const DynamicForm = ({
                               return {
                                 ...prev,
                                 [field.name]: current.filter(
-                                  (v) => v !== option.value
+                                  (v) => v !== option.value,
                                 ),
                               };
                             } else {
@@ -1217,8 +1234,9 @@ const DynamicForm = ({
                           <span>{option.icon}</span>
                         ))}
                       <span
-                        className={`text-sm font-medium ${isChecked ? "text-[#02C8DE]" : "text-[#7B7B7B]"
-                          }`}
+                        className={`text-sm font-medium ${
+                          isChecked ? "text-[#02C8DE]" : "text-[#7B7B7B]"
+                        }`}
                       >
                         {option.label}
                       </span>
@@ -1232,7 +1250,7 @@ const DynamicForm = ({
               <div className="flex flex-wrap gap-2 mt-2">
                 {selectedOptions.map((value) => {
                   const label = field.options.find(
-                    (o) => o.value === value
+                    (o) => o.value === value,
                   )?.label;
                   return (
                     <div
@@ -1247,7 +1265,7 @@ const DynamicForm = ({
                           setFormData((prev) => ({
                             ...prev,
                             [field.name]: (prev[field.name] || []).filter(
-                              (v) => v !== value
+                              (v) => v !== value,
                             ),
                           }));
                         }}
@@ -1258,6 +1276,127 @@ const DynamicForm = ({
                     </div>
                   );
                 })}
+              </div>
+            )}
+          </div>
+        );
+
+      case "selectCheckboxSingle":
+        const selectedSingleOption = formData[field.name] || "";
+        const showSingleCheckboxDropdown = showDropdowns[field.name] || false;
+
+        return (
+          <div className="w-full relative mb-4">
+            <label className="block text-sm font-medium mb-2 text-[#7B7B7B]">
+              {field.label}
+            </label>
+
+            <div
+              className="flex justify-between items-center w-full border border-gray-300  px-3 py-2 rounded-sm bg-white text-[#7B7B7B] cursor-pointer min-h-[41px]"
+              onClick={() =>
+                setShowDropdowns((prev) => ({
+                  ...prev,
+                  [field.name]: !showSingleCheckboxDropdown,
+                }))
+              }
+            >
+              <span className="text-sm">
+                {selectedSingleOption
+                  ? field.options.find((o) => o.value === selectedSingleOption)
+                      ?.label
+                  : field.placeholder || field.label}
+              </span>
+              <ChevronDown
+                className={`transition-transform duration-200 ${
+                  showSingleCheckboxDropdown ? "rotate-180" : ""
+                }`}
+                size={18}
+              />
+            </div>
+
+            {showSingleCheckboxDropdown && (
+              <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto border rounded bg-white shadow-lg">
+                {field.options.map((option) => {
+                  const isChecked = selectedSingleOption === option.value;
+
+                  return (
+                    <label
+                      key={option.value}
+                      className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name={`radio-${field.name}`}
+                        checked={isChecked}
+                        onChange={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            [field.name]: option.value,
+                          }));
+                          setShowDropdowns((prev) => ({
+                            ...prev,
+                            [field.name]: false,
+                          }));
+                        }}
+                        className="w-4 h-4 rounded border border-gray-300
+  bg-white
+  checked:bg-[#02C8DE] 
+  relative cursor-pointer
+  before:content-['✔'] before:absolute before:text-[#7B7B7B]
+  checked:before:text-white before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2
+  appearance-none
+  flex items-center justify-center"
+                      />
+
+                      {option.icon &&
+                        (typeof option.icon === "string" ? (
+                          <Image
+                            src={option.icon}
+                            alt={option.label}
+                            width={20}
+                            height={20}
+                            className="object-cover rounded"
+                          />
+                        ) : (
+                          <span>{option.icon}</span>
+                        ))}
+                      <span
+                        className={`text-sm font-medium ${
+                          isChecked ? "text-[#02C8DE]" : "text-[#7B7B7B]"
+                        }`}
+                      >
+                        {option.label}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+
+            {selectedSingleOption && field.showLabel !== false && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex items-center gap-1 bg-[#E5FCFF] text-[#02C8DE] px-2 py-1 rounded text-sm">
+                  <span>
+                    {
+                      field.options.find(
+                        (o) => o.value === selectedSingleOption,
+                      )?.label
+                    }
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        [field.name]: "",
+                      }));
+                    }}
+                    className="text-gray-500 hover:text-red-500 font-bold"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -1290,8 +1429,9 @@ const DynamicForm = ({
                   placeholder="From"
                   value={
                     formData[`${field.name}_from`]
-                      ? `${formData[`${field.name}_from`]} ${timePeriods[`${field.name}_from`] || "AM"
-                      }`
+                      ? `${formData[`${field.name}_from`]} ${
+                          timePeriods[`${field.name}_from`] || "AM"
+                        }`
                       : ""
                   }
                   onClick={() =>
@@ -1304,8 +1444,9 @@ const DynamicForm = ({
                 />
                 <ChevronDown
                   size={18}
-                  className={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-transform duration-200 ${showFromTimes ? "rotate-180" : ""
-                    }`}
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-transform duration-200 ${
+                    showFromTimes ? "rotate-180" : ""
+                  }`}
                 />
 
                 {showFromTimes && (
@@ -1321,11 +1462,12 @@ const DynamicForm = ({
                               [`${field.name}_from`]: period,
                             }))
                           }
-                          className={`px-2 py-1 text-sm rounded border ml-1 ${(timePeriods[`${field.name}_from`] || "AM") ===
+                          className={`px-2 py-1 text-sm rounded border ml-1 ${
+                            (timePeriods[`${field.name}_from`] || "AM") ===
                             period
-                            ? "bg-[#02C8DE] text-white border-[#02C8DE]"
-                            : "bg-white text-black border-gray-300"
-                            }`}
+                              ? "bg-[#02C8DE] text-white border-[#02C8DE]"
+                              : "bg-white text-black border-gray-300"
+                          }`}
                         >
                           {period}
                         </button>
@@ -1346,10 +1488,11 @@ const DynamicForm = ({
                               [`${field.name}_from`]: false,
                             }));
                           }}
-                          className={`text-sm p-2 text-center border rounded cursor-pointer hover:bg-[#02C8DE] hover:text-white ${formData[`${field.name}_from`] === time
-                            ? "bg-[#02C8DE] text-white"
-                            : ""
-                            }`}
+                          className={`text-sm p-2 text-center border rounded cursor-pointer hover:bg-[#02C8DE] hover:text-white ${
+                            formData[`${field.name}_from`] === time
+                              ? "bg-[#02C8DE] text-white"
+                              : ""
+                          }`}
                         >
                           {time}
                         </div>
@@ -1366,8 +1509,9 @@ const DynamicForm = ({
                   placeholder="To"
                   value={
                     formData[`${field.name}_to`]
-                      ? `${formData[`${field.name}_to`]} ${timePeriods[`${field.name}_to`] || "AM"
-                      }`
+                      ? `${formData[`${field.name}_to`]} ${
+                          timePeriods[`${field.name}_to`] || "AM"
+                        }`
                       : ""
                   }
                   onClick={() =>
@@ -1380,8 +1524,9 @@ const DynamicForm = ({
                 />
                 <ChevronDown
                   size={18}
-                  className={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-transform duration-200 ${showToTimes ? "rotate-180" : ""
-                    }`}
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-transform duration-200 ${
+                    showToTimes ? "rotate-180" : ""
+                  }`}
                 />
 
                 {showToTimes && (
@@ -1397,10 +1542,11 @@ const DynamicForm = ({
                               [`${field.name}_to`]: period,
                             }))
                           }
-                          className={`px-2 py-1 text-sm rounded border ml-1 ${(timePeriods[`${field.name}_to`] || "AM") === period
-                            ? "bg-[#02C8DE] text-white border-[#02C8DE]"
-                            : "bg-white text-black border-gray-300"
-                            }`}
+                          className={`px-2 py-1 text-sm rounded border ml-1 ${
+                            (timePeriods[`${field.name}_to`] || "AM") === period
+                              ? "bg-[#02C8DE] text-white border-[#02C8DE]"
+                              : "bg-white text-black border-gray-300"
+                          }`}
                         >
                           {period}
                         </button>
@@ -1421,10 +1567,11 @@ const DynamicForm = ({
                               [`${field.name}_to`]: false,
                             }));
                           }}
-                          className={`text-sm p-2 text-center border rounded cursor-pointer hover:bg-[#02C8DE] hover:text-white ${formData[`${field.name}_to`] === time
-                            ? "bg-[#02C8DE] text-white"
-                            : ""
-                            }`}
+                          className={`text-sm p-2 text-center border rounded cursor-pointer hover:bg-[#02C8DE] hover:text-white ${
+                            formData[`${field.name}_to`] === time
+                              ? "bg-[#02C8DE] text-white"
+                              : ""
+                          }`}
                         >
                           {time}
                         </div>
@@ -1483,13 +1630,24 @@ const DynamicForm = ({
               {currentImages.length > 0 ? (
                 currentImages.map((imgUrl, idx) => (
                   <div key={idx} className="relative w-20 h-20 border rounded">
-                    <Image src={imgUrl} width={80} height={80} alt="Product Image" className="rounded object-cover w-full h-full" />
+                    <Image
+                      src={imgUrl}
+                      width={80}
+                      height={80}
+                      alt="Product Image"
+                      className="rounded object-cover w-full h-full"
+                    />
                     <button
                       type="button"
                       className="absolute -top-2 -right-2 bg-gray-800 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md z-10"
                       onClick={() => {
-                        const newImages = currentImages.filter((_, i) => i !== idx);
-                        setFormData(prev => ({ ...prev, [field.name]: newImages }));
+                        const newImages = currentImages.filter(
+                          (_, i) => i !== idx,
+                        );
+                        setFormData((prev) => ({
+                          ...prev,
+                          [field.name]: newImages,
+                        }));
                       }}
                     >
                       <X size={12} />

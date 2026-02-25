@@ -53,19 +53,6 @@ const CreateInStoreOrderPage = () => {
     }
   }, [products]);
 
-  const handleCreateOrder = (data) => {
-    dispatch(createOrder(data))
-      .unwrap()
-      .then(() => {
-        dispatch(fetchAllOrders());
-        dispatch(fetchAllProducts());
-        router.push("/my-ecom/order");
-      })
-      .catch((err) => {
-        console.error("Order create failed:", err);
-      });
-  };
-
   const handleFormSubmit = (formData) => {
     const hasProducts = formData?.products?.length > 0;
     if (hasProducts) {
