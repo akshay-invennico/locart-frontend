@@ -190,7 +190,7 @@ export const AddAppointmentConfig = {
       options: [
         { value: "Upcoming", label: "Upcoming" },
         { value: "Ongoing", label: "No-Show" },
-        { value: "Pending", label: "Pending" },
+        { value: "Refunded", label: "Refunded" },
         { value: "Completed", label: "Completed" },
         { value: "Cancelled", label: "Cancelled" },
       ],
@@ -298,7 +298,7 @@ export const getAppointmentFilterConfig = (isLoctitan = false) => {
 
 export const getBookingDetailsConfig = (
   isLoctitan = false,
-  paymentStatus = "Refunded"
+  paymentStatus = "Refunded",
 ) => {
   const paymentColor = paymentStatus === "Paid" ? "#02C8DE" : "#EF4444";
 
@@ -375,59 +375,59 @@ export const getBookingDetailsConfig = (
 
       ...(paymentStatus === "Refunded"
         ? [
-          {
-            type: "infoGrid",
-            name: "refund_reason",
-            columns: 1,
-            items: [
-              {
-                label: "Refund Reason",
-                value: "Service was cancelled by Client.",
-                valueStyle: { color: "#000000" },
-              },
-            ],
-          },
-        ]
+            {
+              type: "infoGrid",
+              name: "refund_reason",
+              columns: 1,
+              items: [
+                {
+                  label: "Refund Reason",
+                  value: "Service was cancelled by Client.",
+                  valueStyle: { color: "#000000" },
+                },
+              ],
+            },
+          ]
         : []),
 
       ...(!isLoctitan
         ? [
-          {
-            type: "sectionHeader",
-            label: "Invoice Details",
-            css: {
-              fontWeight: "600",
-              fontSize: "16px",
-              marginTop: "24px",
-              marginBottom: "12px",
-            },
-            action: {
-              icon: "download",
-              color: "#02C8DE",
-            },
-          },
-          {
-            type: "invoiceSummary",
-            name: "invoice",
-            invoiceId: "#BK10231024561A5258",
-            items: [
-              { label: "Service Charges", value: "$120.00" },
-              { label: "Taxes", value: "$2.00" },
-              { label: "Total", value: "$1602.00" },
-              {
-                label: "Loyalty Points Discount",
-                value: "-$2.00",
-                color: "#EF4444",
+            {
+              type: "sectionHeader",
+              label: "Invoice Details",
+              css: {
+                fontWeight: "600",
+                fontSize: "16px",
+                marginTop: "24px",
+                marginBottom: "12px",
               },
-              {
-                label: "Total Payable Amount",
-                value: "$1600.00",
-                bold: true,
-                valueStyle: { color: "#000000" },
+              action: {
+                icon: "download",
+                color: "#02C8DE",
               },
-            ],
-          },
-        ]
+            },
+            {
+              type: "invoiceSummary",
+              name: "invoice",
+              invoiceId: "#BK10231024561A5258",
+              items: [
+                { label: "Service Charges", value: "$120.00" },
+                { label: "Taxes", value: "$2.00" },
+                { label: "Total", value: "$1602.00" },
+                {
+                  label: "Loyalty Points Discount",
+                  value: "-$2.00",
+                  color: "#EF4444",
+                },
+                {
+                  label: "Total Payable Amount",
+                  value: "$1600.00",
+                  bold: true,
+                  valueStyle: { color: "#000000" },
+                },
+              ],
+            },
+          ]
         : []),
     ],
   };
@@ -610,7 +610,7 @@ export const editBookingConfig = {
         { value: "paid", label: "Paid" },
       ],
     },
-  {
+    {
       type: "selectCheckboxSingle",
       name: "bookingstatus",
       label: "Booking Status",
@@ -618,7 +618,7 @@ export const editBookingConfig = {
       options: [
         { value: "Upcoming", label: "Upcoming" },
         { value: "Ongoing", label: "No-Show" },
-        { value: "Pending", label: "Pending" },
+        { value: "Refunded", label: "Refunded" },
         { value: "Completed", label: "Completed" },
         { value: "Cancelled", label: "Cancelled" },
       ],
@@ -770,8 +770,8 @@ export const refundDetailsConfig = (apiResponse) => {
             label: "Services",
             value: Array.isArray(booking.services)
               ? booking.services
-                .map((s) => (typeof s === "string" ? s : s.name || "-"))
-                .join(", ")
+                  .map((s) => (typeof s === "string" ? s : s.name || "-"))
+                  .join(", ")
               : "-",
           },
           {
