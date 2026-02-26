@@ -10,6 +10,7 @@ import { columns } from "../column";
 import ActionComponent from "@/components/grid/actionComponent";
 import DynamicForm from "@/components/modules/registry";
 import { fetchClientOrders } from "@/state/client/clientSlice";
+import { generateInvoicePDF } from "@/lib/HelpFulFunction";
 
 export default function Page() {
   const options = { select: false, order: false };
@@ -44,7 +45,7 @@ export default function Page() {
 
   useEffect(() => {
     dispatch(
-      fetchClientOrders({ clientId, params: convertFiltersToParams(filters) })
+      fetchClientOrders({ clientId, params: convertFiltersToParams(filters) }),
     );
   }, [filters]);
 
@@ -126,6 +127,49 @@ export default function Page() {
     },
   };
 
+  const handleDownloadInvoice = (row) => {
+    try {
+      const invoiceData = {
+        invoiceNo: row.booking_number || "000",
+        issueDate: row.date || new Date().toLocaleDateString(),
+        dueDate: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000,
+        ).toLocaleDateString(),
+        deliveryDate: row.date,
+        client: {
+          name: row.clientName?.name || "N/A",
+          address: "Sarabhai Campus, K10 Grand",
+          cityState: "390012 Vadodara Gujarat",
+          country: "India",
+        },
+        items: [
+          {
+            description: row.serviceNames || "Service",
+            quantity: "1 hours",
+            price: row.amount || 0,
+            discount: row.discount || 0,
+            amount: (row.amount || 0) - (row.discount || 0),
+          },
+        ],
+        subtotal: (row.amount || 0) - (row.discount || 0),
+        tax: ((row.amount || 0) * 0.08).toFixed(2),
+        total: (
+          (row.amount || 0) -
+          (row.discount || 0) +
+          (row.amount || 0) * 0.08
+        ).toFixed(2),
+      };
+
+      generateInvoicePDF(invoiceData);
+      toast.success("Invoice downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating invoice:", error);
+      toast.error("Failed to generate invoice");
+    }
+  };
+
+  const getColumn = columns(handleDownloadInvoice);
+
   return (
     <div className="w-full">
       {/* Top Controls */}
@@ -157,7 +201,7 @@ export default function Page() {
       <GridCommonComponent
         data={filteredOrders}
         options={options}
-        columns={columns}
+        columns={getColumn}
         theme={{
           border: "border-gray-300",
           header: { bg: "bg-gray-100" },

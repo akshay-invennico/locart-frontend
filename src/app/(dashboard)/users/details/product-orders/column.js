@@ -9,7 +9,7 @@ import {
   orderDetailsConfig,
 } from "./config";
 
-export const columns = [
+export const columns = (handleDownloadInvoice) => [
   {
     key: "product",
     title: "Product",
@@ -116,8 +116,12 @@ export const columns = [
           {
             label: "Download Invoice",
             iconUrl: "/icons/downloadGray.svg",
-            type: "popUp",
-            component: <ViewUser />,
+            type: "action",
+            onClick: (row) => {
+              if (handleDownloadInvoice) {
+                handleDownloadInvoice(row);
+              }
+            },
           },
           {
             label: "Cancel Order",
