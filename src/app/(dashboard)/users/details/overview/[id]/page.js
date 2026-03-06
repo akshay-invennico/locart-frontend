@@ -11,7 +11,7 @@ import Spinner from "@/components/common/Spinner";
 import { fallbackStats } from "./data";
 import StatCard from "./StatCard";
 import { HelpCircle } from "lucide-react";
-import { sendForgotPassword } from "@/state/auth/authSlice";
+import { suspendClientsByIds, reactivateClientById } from "@/state/client/clientSlice";
 import { toast } from "sonner";
 
 const ClientDetails = () => {
@@ -35,29 +35,50 @@ const ClientDetails = () => {
 
   const handleBack = () => router.back();
 
-  const handleSendResetPasswordLink = (client) => {
-    const email = client?.email;
+  const handleSuspendClient = (data, row) => {
+    const id = row?._id || row?.id;
+    const reason = data?.suspend_reason || "";
 
-    if (!email) {
-      toast.error("Email not found for this client");
+    if (!id) {
+      toast.error("Client ID not found");
       return;
     }
 
-    dispatch(sendForgotPassword(email))
+    dispatch(suspendClientsByIds({ clientIds: [id], reason }))
       .unwrap()
       .then(() => {
-        toast.success("Reset password link sent successfully");
+        toast.success("Client suspended successfully");
+        dispatch(fetchClientById(id));
       })
       .catch((err) => {
-        console.error("Failed to send reset password link:", err);
-        toast.error("Failed to send reset password link");
+        console.error("Failed to suspend client:", err);
+        toast.error("Failed to suspend client");
       });
   };
 
-  // Memoize the columns with the handler
+  const handleReactivateClient = (row) => {
+    const id = row?._id || row?.id;
+
+    if (!id) {
+      toast.error("Client ID not found");
+      return;
+    }
+
+    dispatch(reactivateClientById(id))
+      .unwrap()
+      .then(() => {
+        toast.success("Client reactivated successfully");
+        dispatch(fetchClientById(id));
+      })
+      .catch((err) => {
+        console.error("Failed to reactivate client:", err);
+        toast.error("Failed to reactivate client");
+      });
+  };
+
   const columnsWithHandler = useMemo(
-    () => columns(handleSendResetPasswordLink),
-    [handleSendResetPasswordLink]
+    () => columns(handleSuspendClient, handleReactivateClient),
+    []
   );
 
   const mappedStats = useMemo(() => {

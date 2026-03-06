@@ -35,5 +35,36 @@ export const reactivateClientConfig = {
     apply: { label: "Confirm Reactivate Client" },
   },
 };
+export const suspendClientConfig = {
+  title: "",
+  fields: [
+    { type: "header", label: "Suspend Client" },
+    {
+      type: "subheader",
+      text: "Select reason for suspension and optionally add notes.",
+    },
+    {
+      type: "selectCheckbox",
+      name: "suspend_reason",
+      label: "Select Reason",
+      showTextarea: true,
+      textareaLabel: "Note",
+      textareaName: "note",
+      textareaPlaceholder: "Add note if 'Other' selected",
+      options: [
+        { label: "Inappropriate behavior", value: "Inappropriate behavior" },
+        { label: "Multiple no-shows", value: "Payment-related issues" },
+        { label: "Spam or fake account", value: "Spam or fake account" },
+        { label: "Client request", value: "Client request" },
+        { label: "Missing essential Client details.", value: "Missing essential Client details." },
+        { label: "Other", value: "Other" },
+      ],
+    },
+  ],
+  footer: {
+    cancel: { label: "Cancel" },
+    apply: { label: "Suspend Client", color: "red" },
+  },
+};
 
 

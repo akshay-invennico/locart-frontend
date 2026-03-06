@@ -9,7 +9,7 @@ import {
   orderDetailsConfig,
 } from "./config";
 
-export const columns = [
+export const columns = ({ handleDownloadInvoice } = {}) => [
   {
     key: "product",
     title: "Product",
@@ -73,10 +73,10 @@ export const columns = [
       },
       options: {
         value: {
-          active: "#00A78E", // Green
-          pending: "#F59E0B", // Amber
-          completed: "#9CA3AF", // Gray
-          cancelled: "#EF4444", // Red
+          active: "#00A78E",
+          pending: "#F59E0B",
+          completed: "#9CA3AF",
+          cancelled: "#EF4444",
         },
       },
     },
@@ -87,7 +87,7 @@ export const columns = [
     component: {
       type: "action",
       options: {
-        actions: [
+        actions: (row) => [
           {
             label: "View Order",
             iconUrl: "/icons/show.svg",
@@ -116,8 +116,7 @@ export const columns = [
           {
             label: "Download Invoice",
             iconUrl: "/icons/downloadGray.svg",
-            type: "popUp",
-            component: <ViewUser />,
+            onClick: () => handleDownloadInvoice && handleDownloadInvoice(row),
           },
           {
             label: "Cancel Order",

@@ -51,15 +51,15 @@ const filterConfig = {
   ],
   footer: {
     cancel: {
-      label: "Cancel",
+      label: "Reset",
       className:
         "w-full border border-[#02C8DE] text-[#02C8DE] px-4 py-2 rounded",
-      onClick: () => console.log("Cancelled"),
+      onClick: () => handleResetFilters(),
     },
     apply: {
       label: "Apply Filters",
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
-      onClick: (data) => console.log("Applied Filters", data),
+      onClick: (data) => applyFilters(data),
     },
   },
 };
@@ -76,6 +76,8 @@ const Page = () => {
   const pagination = useSelector((state) => state.client.pagination);
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterFormValues, setFilterFormValues] = useState({});
+  const [filterKey, setFilterKey] = useState(0);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -163,6 +165,8 @@ const Page = () => {
   };
 
   const applyFilters = (data) => {
+    setFilterFormValues(data);
+
     const getCheckboxValues = (prefix) => {
       return Object.keys(data)
         .filter((k) => k.startsWith(`${prefix}_`) && data[k])
@@ -252,12 +256,24 @@ const Page = () => {
                       ...filterConfig,
                       footer: {
                         ...filterConfig.footer,
+                        cancel: {
+                          ...filterConfig.footer.cancel,
+                          onClick: () => {
+                            setFilterFormValues({});
+                            setFilterKey((k) => k + 1);
+                            dispatch(fetchClients({ page: 1, limit: itemsPerPage }));
+                            dispatch(setClientFilters({}));
+                          },
+                        },
                         apply: {
                           ...filterConfig.footer.apply,
                           onClick: applyFilters,
                         },
                       },
                     }}
+                    key={filterKey}
+                    initialValues={filterFormValues}
+                    isEdit={Object.keys(filterFormValues).length > 0}
                   />
                 ),
               },

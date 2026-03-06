@@ -1,16 +1,14 @@
 export const bookingDetailsConfig = (data = {}) => {
   const {
-    booking_id = "",
     date = "",
     time = "",
     booked_on = "",
     status = "",
-    booking_mode = "",
-    client = {},
     stylist = {},
     services = [],
     payment = {},
     invoice = {},
+    booking_number = "",
   } = data || {};
 
   return {
@@ -45,7 +43,7 @@ export const bookingDetailsConfig = (data = {}) => {
         items: [
           {
             label: "Booking ID",
-            value: booking_id ? `${booking_id}` : "N/A",
+            value: booking_number ? `${booking_number}` : "N/A",
             valueStyle: { color: "#02C8DE" },
           },
           {
@@ -249,50 +247,49 @@ export const editBookingConfig = (data = {}) => {
       },
       { type: "divider" },
       {
-        type: "text",
-        name: "booking_id",
+        type: "input",
+        name: "booking_number",
         label: "Booking ID",
-        value: data?.booking_id || "",
-        disabled: true,
-      },
-
-      {
-        type: "date",
-        name: "date",
-        label: "Booking Date",
-        value: data?.date || "",
+        readonly: true,
       },
       {
-        type: "time",
-        name: "time",
-        label: "Booking Time",
-        value: data?.time || "",
-      },
-
-      {
-        type: "select",
-        name: "stylist_id",
-        label: "Select Stylist",
-        value: data?.stylist?._id || data?.stylist_id || "",
-        options: [
-          { value: "AaliyahJohnson", label: "Aaliyah Johnson" },
-          { value: "BennyCarter", label: "Benny Carter" },
-          { value: "ChloeKim", label: "Chloe Kim" },
-          { value: "DavidLee", label: "David Lee" },
-          { value: "EvaMartinez", label: "Eva Martinez" },
-        ],
+        type: "input",
+        name: "time_slot",
+        label: "Booking Time (HH:mm)",
+        placeholder: "e.g. 14:30",
       },
       {
         type: "select",
-        name: "status",
+        name: "booking_status",
         label: "Booking Status",
-        value: data?.status || "",
         options: [
           { value: "upcoming", label: "Upcoming" },
           { value: "ongoing", label: "Ongoing" },
           { value: "completed", label: "Completed" },
           { value: "cancelled", label: "Cancelled" },
         ],
+      },
+      {
+        type: "select",
+        name: "payment_status",
+        label: "Payment Status",
+        options: [
+          { value: "unpaid", label: "Unpaid" },
+          { value: "partial_paid", label: "Partial Paid" },
+          { value: "paid", label: "Paid" },
+        ],
+      },
+      {
+        type: "input",
+        name: "paid_amount",
+        label: "Paid Amount",
+        placeholder: "e.g. 50",
+      },
+      {
+        type: "textarea",
+        name: "booking_note",
+        label: "Booking Note",
+        rows: 3,
       },
     ],
     footer: {

@@ -15,8 +15,7 @@ import {
   updateAppointment,
 } from "@/state/appointment/appointmentSlice";
 import { toast } from "sonner";
-import { pdf } from "@react-pdf/renderer";
-import InvoiceDocument from "@/components/documents/InvoiceDocument";
+import { generateInvoicePDF } from "@/lib/HelpFulFunction";
 
 const bookingConfig = {
   formCss: {
@@ -173,39 +172,47 @@ export default function Page() {
         return;
       }
 
+      const services = bookingData.services || [];
+      const amount = bookingData.amount_paid || bookingData.amount || 0;
+      const discount = bookingData.discount || 0;
+      const subtotal = bookingData.invoice?.service_charges ?? (amount - discount);
+      const tax = bookingData.invoice?.taxes ?? (amount * 0.08);
+      const total = bookingData.invoice?.total_payable ?? (subtotal + tax);
+
       const invoiceData = {
-        invoiceNo: bookingData.invoice_id || bookingData.booking_id,
-        issueDate: bookingData.booked_on || bookingData.date,
-        dueDate: bookingData.date,
+        invoiceNo: bookingData.booking_number || bookingData.invoice_id || bookingData.booking_id || "000",
+        issueDate: bookingData.booked_on || bookingData.date || new Date().toLocaleDateString(),
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         deliveryDate: bookingData.date,
         client: {
           name: bookingData.client?.name || "N/A",
-          address: bookingData.client?.address || "",
-          cityState: bookingData.client?.city || "",
-          country: bookingData.client?.country || "",
+          address: bookingData.client?.address || "Sarabhai Campus, K10 Grand",
+          cityState: bookingData.client?.city || "390012 Vadodara Gujarat",
+          country: bookingData.client?.country || "India",
         },
-        items: (bookingData.services || []).map((service) => ({
-          description: service.name || "Service",
-          quantity: 1,
-          price: service.price || 0,
-          discount: 0,
-          amount: service.price || 0,
-        })),
-        subtotal: bookingData.invoice?.service_charges || bookingData.amount_paid || 0,
-        tax: bookingData.invoice?.taxes || 0,
-        total: bookingData.invoice?.total_payable || bookingData.amount_paid || 0,
+        items: services.length > 0
+          ? services.map((service) => ({
+            description: service.name || "Service",
+            quantity: "1 hours",
+            price: service.price || 0,
+            discount: 0,
+            amount: service.price || 0,
+          }))
+          : [
+            {
+              description: bookingData.service?.name || "Service",
+              quantity: "1 hours",
+              price: amount,
+              discount: discount,
+              amount: amount - discount,
+            },
+          ],
+        subtotal: Number(subtotal).toFixed(2),
+        tax: Number(tax).toFixed(2),
+        total: Number(total).toFixed(2),
       };
 
-      const blob = await pdf(<InvoiceDocument invoiceData={invoiceData} />).toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `invoice-${invoiceData.invoiceNo}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
+      generateInvoicePDF(invoiceData);
       toast.success("Invoice downloaded successfully!");
     } catch (err) {
       console.error("Invoice download failed:", err);

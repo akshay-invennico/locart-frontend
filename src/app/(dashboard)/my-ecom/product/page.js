@@ -40,6 +40,8 @@ const options = {
 const ProductPage = () => {
   const [deletePopup, setDeletePopup] = useState({ show: false, row: null });
   const [sidebarContent, setSidebarContent] = useState(null);
+  const [filterFormValues, setFilterFormValues] = useState({});
+  const [filterKey, setFilterKey] = useState(0);
 
   const { categories, products, pagination } = useSelector(
     (state) => state.ecomOrders
@@ -313,10 +315,42 @@ const ProductPage = () => {
                 type: "sidebar",
                 component: (
                   <DynamicForm
-                    config={ProductFilterConfig}
-                    onApply={(data) =>
-                      setFilters((prev) => ({ ...prev, ...data }))
-                    }
+                    config={{
+                      ...ProductFilterConfig,
+                      footer: {
+                        ...ProductFilterConfig.footer,
+                        cancel: {
+                          ...ProductFilterConfig.footer?.cancel,
+                          label: "Reset Filters",
+                          onClick: () => {
+                            setFilterFormValues({});
+                            setFilterKey((k) => k + 1);
+                            setFilters((prev) => ({
+                              search: prev.search,
+                              category: [],
+                              status: "",
+                              priceMin: "",
+                              priceMax: "",
+                              stockMin: "",
+                              stockMax: "",
+                              page: 1,
+                              limit: 10,
+                              type: "",
+                            }));
+                          },
+                        },
+                        apply: {
+                          ...ProductFilterConfig.footer?.apply,
+                          onClick: (data) => {
+                            setFilterFormValues(data);
+                            setFilters((prev) => ({ ...prev, ...data }));
+                          },
+                        },
+                      },
+                    }}
+                    key={filterKey}
+                    initialValues={filterFormValues}
+                    isEdit={Object.keys(filterFormValues).length > 0}
                   />
                 ),
               },

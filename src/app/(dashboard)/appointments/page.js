@@ -53,6 +53,8 @@ const AppointmentPage = () => {
   const user = useSelector((state) => state.auth?.user);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterFormValues, setFilterFormValues] = useState({});
+  const [filterKey, setFilterKey] = useState(0);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -133,6 +135,8 @@ const AppointmentPage = () => {
   };
 
   const handleApplyFilters = (formData) => {
+    setFilterFormValues(formData);
+
     const filters = {};
 
     // Status
@@ -171,15 +175,18 @@ const AppointmentPage = () => {
       filters.service_ids = formData.service.map((s) => s.value).join(",");
     }
 
-    if (formData.service) {
-      filters.service_ids = formData.service.map((s) => s.value).join(",");
-    }
-
     setCurrentPage(1);
     filters.page = 1;
     filters.limit = itemsPerPage;
 
     dispatch(fetchAllAppointments(filters));
+  };
+
+  const handleResetFilters = () => {
+    setFilterFormValues({});
+    setFilterKey((k) => k + 1);
+    setCurrentPage(1);
+    dispatch(fetchAllAppointments({ page: 1, limit: itemsPerPage }));
   };
 
   const handleViewBooking = (row) => {
@@ -469,8 +476,24 @@ const AppointmentPage = () => {
                 type: "sidebar",
                 component: (
                   <DynamicForm
-                    config={AppointmentFilterConfig}
-                    onApply={handleApplyFilters}
+                    key={filterKey}
+                    config={{
+                      ...AppointmentFilterConfig,
+                      footer: {
+                        ...AppointmentFilterConfig.footer,
+                        cancel: {
+                          ...AppointmentFilterConfig.footer?.cancel,
+                          label: "Reset Filters",
+                          onClick: handleResetFilters,
+                        },
+                        apply: {
+                          ...AppointmentFilterConfig.footer?.apply,
+                          onClick: handleApplyFilters,
+                        },
+                      },
+                    }}
+                    initialValues={filterFormValues}
+                    isEdit={Object.keys(filterFormValues).length > 0}
                   />
                 ),
               },

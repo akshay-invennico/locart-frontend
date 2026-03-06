@@ -18,7 +18,7 @@ import { bookingDetailsConfig } from "../../appointments/config";
 import ActionComponent from "@/components/grid/actionComponent";
 import OrderStatus from "./OrderStatus";
 
-export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrders, handleViewOrder) => [
+export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrders, handleViewOrder, handleDownloadInvoice) => [
   {
     key: "order_id",
     title: "Order ID",
@@ -142,7 +142,7 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
               {
                 label: "Download Invoice",
                 iconUrl: "/icons/downloadGray.svg",
-                onClick: (data) => console.log("Download Invoice", data),
+                onClick: () => handleDownloadInvoice(row),
               },
 
               {
@@ -204,7 +204,7 @@ export const getColumns = (handleCancelOrder, handleStatusUpdate, handleFlagOrde
             {
               label: "Download Invoice",
               iconUrl: "/icons/downloadGray.svg",
-              onClick: (data) => console.log("Download Invoice", data),
+              onClick: () => handleDownloadInvoice(row),
             },
             {
               label: "Cancel Order",

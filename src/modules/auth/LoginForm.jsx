@@ -22,7 +22,7 @@ const LoginForm = ({
 }) => {
   return (
     <>
-      <h3 className="font-semibold text-[#000000] mb-2 whitespace-nowrap text-left text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+      <h3 className="font-semibold text-black mb-2 whitespace-nowrap text-left text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
         Welcome Back, Creator of Calm
       </h3>
       <p className="text-[#7B7B7B] text-xs sm:text-sm md:text-base text-left leading-relaxed mb-6">
@@ -38,7 +38,7 @@ const LoginForm = ({
         <div className="flex flex-col gap-1">
           <Label
             htmlFor="email"
-            className="text-xs sm:text-sm font-medium text-[#000000]"
+            className="text-xs sm:text-sm font-medium text-black"
           >
             Email
           </Label>
@@ -65,7 +65,7 @@ const LoginForm = ({
         <div className="flex flex-col gap-1">
           <Label
             htmlFor="password"
-            className="text-xs sm:text-sm font-medium text-[#000000]"
+            className="text-xs sm:text-sm font-medium text-black"
           >
             Password
           </Label>

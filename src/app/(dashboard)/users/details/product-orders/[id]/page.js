@@ -10,6 +10,9 @@ import { columns } from "../column";
 import ActionComponent from "@/components/grid/actionComponent";
 import DynamicForm from "@/components/modules/registry";
 import { fetchClientOrders } from "@/state/client/clientSlice";
+import { fetchOrderById } from "@/state/ecom/ecomSlice";
+import { generateInvoicePDF } from "@/lib/HelpFulFunction";
+import { toast } from "sonner";
 
 export default function Page() {
   const options = { select: false, order: false };
@@ -60,6 +63,66 @@ export default function Page() {
       );
     });
   }, [orders, searchText]);
+
+  const handleDownloadInvoice = async (row) => {
+    try {
+      const order = await dispatch(fetchOrderById(row.order_id)).unwrap();
+
+      if (!order) {
+        toast.error("Could not fetch order details.");
+        return;
+      }
+
+      const products = order.products || [];
+      const itemTotal = order.invoice?.itemTotal ?? order.totalAmount ?? row.amount_paid ?? 0;
+      const taxes = order.invoice?.taxes ?? (Number(itemTotal) * 0.08);
+      const loyaltyDiscount = order.invoice?.loyaltyDiscount ?? 0;
+      const total = order.invoice?.totalPayable ?? (Number(itemTotal) + Number(taxes) - Number(loyaltyDiscount));
+
+      const shipping = order.shippingDetails || order.shippingAddress || {};
+      const addressLine = [shipping.address_line_1, shipping.address_line_2].filter(Boolean).join(", ");
+      const cityState = [shipping.city, shipping.state, shipping.postal_code].filter(Boolean).join(" ");
+
+      const invoiceData = {
+        invoiceNo: order.invoice?.invoiceId || order.order_id || row.order_id || "000",
+        issueDate: order.date ? new Date(order.date).toLocaleDateString() : (row.order_date ? new Date(row.order_date).toLocaleDateString() : new Date().toLocaleDateString()),
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        deliveryDate: order.date ? new Date(order.date).toLocaleDateString() : "",
+        client: {
+          name: order.customerName || order.client?.name || "N/A",
+          address: addressLine || "N/A",
+          cityState: cityState || "N/A",
+          country: shipping.country || "N/A",
+        },
+        items: products.length > 0
+          ? products.map((p) => ({
+            description: p.name || p.product?.name || "Product",
+            quantity: p.quantity || 1,
+            price: p.price ?? p.unitPrice ?? 0,
+            discount: p.discount ?? 0,
+            amount: p.subtotal ?? ((p.price ?? 0) * (p.quantity ?? 1)),
+          }))
+          : [
+            {
+              description: row.product?.name || "Product Order #" + (row.order_id || ""),
+              quantity: 1,
+              price: Number(itemTotal),
+              discount: Number(loyaltyDiscount),
+              amount: Number(itemTotal) - Number(loyaltyDiscount),
+            },
+          ],
+        subtotal: Number(itemTotal).toFixed(2),
+        tax: Number(taxes).toFixed(2),
+        total: Number(total).toFixed(2),
+      };
+
+      generateInvoicePDF(invoiceData);
+      toast.success("Invoice downloaded successfully!");
+    } catch (err) {
+      console.error("Invoice download failed:", err);
+      toast.error("Failed to download invoice.");
+    }
+  };
 
   const productConfig = {
     formCss: {
@@ -157,7 +220,7 @@ export default function Page() {
       <GridCommonComponent
         data={filteredOrders}
         options={options}
-        columns={columns}
+        columns={columns({ handleDownloadInvoice })}
         theme={{
           border: "border-gray-300",
           header: { bg: "bg-gray-100" },

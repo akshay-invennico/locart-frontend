@@ -9,7 +9,7 @@ const LoyaltySidebar = ({ activeTab, onTabChange }) => {
   ];
 
   return (
-    <div className="w-[220px] bg-white border-r border-gray-200 min-h-screen pr-4 flex flex-col gap-6">
+    <div className="w-[220px] bg-white border-r border-gray-200 min-h-screen pr-4 flex flex-col gap-6 z-10">
       <div>
         <h2 className="text-[12px] font-medium text-[#7B7B7B] tracking-wider mb-4">
           Loyalty & Rewards

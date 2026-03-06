@@ -36,6 +36,8 @@ const CategoryPage = () => {
   const [deletePopup, setDeletePopup] = useState({ show: false, row: null });
   const [sidebarContent, setSidebarContent] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [filterFormValues, setFilterFormValues] = useState({});
+  const [filterKey, setFilterKey] = useState(0);
 
   const dispatch = useDispatch();
   const { categories, pagination } = useSelector(
@@ -196,6 +198,8 @@ const CategoryPage = () => {
   );
 
   const applyFilters = (data) => {
+    setFilterFormValues(data);
+
     const getCheckboxValues = (prefix) => {
       return Object.keys(data)
         .filter((k) => k.startsWith(`${prefix}_`) && data[k])
@@ -209,6 +213,20 @@ const CategoryPage = () => {
       fetchAllCategories({
         search: searchText,
         status: status.toLowerCase(),
+        type: "product",
+        page: 1,
+        limit: itemsPerPage,
+      })
+    );
+  };
+
+  const handleResetFilters = () => {
+    setFilterFormValues({});
+    setFilterKey((k) => k + 1);
+    dispatch(
+      fetchAllCategories({
+        search: searchText,
+        status: "",
         type: "product",
         page: 1,
         limit: itemsPerPage,
@@ -241,16 +259,24 @@ const CategoryPage = () => {
                 type: "sidebar",
                 component: (
                   <DynamicForm
+                    key={filterKey}
                     config={{
                       ...CategoryFilterConfig,
                       footer: {
                         ...CategoryFilterConfig.footer,
+                        cancel: {
+                          ...CategoryFilterConfig.footer?.cancel,
+                          label: "Reset Filters",
+                          onClick: handleResetFilters,
+                        },
                         apply: {
-                          ...CategoryFilterConfig.footer.apply,
+                          ...CategoryFilterConfig.footer?.apply,
                           onClick: applyFilters,
                         },
                       },
                     }}
+                    initialValues={filterFormValues}
+                    isEdit={Object.keys(filterFormValues).length > 0}
                   />
                 ),
               },

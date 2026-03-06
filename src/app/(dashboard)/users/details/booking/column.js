@@ -2,11 +2,10 @@
 
 import PopupForm from "@/components/ui/popupform";
 import { useSelector } from "react-redux";
-import DynamicForm from "@/components/modules/DynamicFormRendering";
 import { bookingDetailsConfig, flagBookingConfig } from "./config";
-import { editBookingConfig } from "./config";
 import DetailView from "@/components/modules/DetailView";
 import Spinner from "@/components/common/Spinner";
+import EditBookingForm from "./EditBookingForm";
 
 export default function ViewBookingDetails() {
   const { selectedAppointment, loading } = useSelector(
@@ -25,7 +24,7 @@ export default function ViewBookingDetails() {
 
 export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUpdate, handleEditBooking, handleDownloadInvoice }) => [
   {
-    key: "booking_id",
+    key: "booking_number",
     title: "Booking ID",
     component: {
       type: "phone",
@@ -107,8 +106,7 @@ export const columns = ({ handleViewBooking, selectedBooking, handleBulkStatusUp
               label: "Edit Booking",
               iconUrl: "/icons/editBooking.svg",
               type: "sidebar",
-              component: <DynamicForm config={editBookingConfig(row)} />,
-              onApply: (formData) => handleEditBooking(formData, row),
+              component: <EditBookingForm row={row} onApply={(formData) => handleEditBooking(formData, row)} />,
             },
           ];
 

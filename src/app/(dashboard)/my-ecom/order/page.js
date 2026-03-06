@@ -26,7 +26,7 @@ import {
 } from "@/state/ecom/ecomSlice";
 import { useEffect } from "react";
 import DetailView from "@/components/modules/DetailView";
-import { exportGridCSV, exportGridPDF } from "@/lib/HelpFulFunction";
+import { exportGridCSV, exportGridPDF, generateInvoicePDF } from "@/lib/HelpFulFunction";
 import { toast } from "sonner";
 
 const options = {
@@ -45,6 +45,8 @@ const OrderPage = () => {
   const [sidebarContent, setSidebarContent] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterFormValues, setFilterFormValues] = useState({});
+  const [filterKey, setFilterKey] = useState(0);
   const itemsPerPage = 10;
 
   const { orders, pagination } = useSelector((state) => state.ecomOrders);
@@ -183,6 +185,69 @@ const OrderPage = () => {
     paymentStatus: item.paymentStatus?.toLowerCase(),
   }));
 
+  const handleDownloadInvoice = async (row) => {
+    try {
+      const order = await dispatch(fetchOrderById(row.order_id)).unwrap();
+
+      if (!order) {
+        toast.error("Could not fetch order details.");
+        return;
+      }
+
+      const products = order.products || [];
+      const itemTotal = order.invoice?.itemTotal ?? order.totalAmount ?? 0;
+      const taxes = order.invoice?.taxes ?? (Number(itemTotal) * 0.08);
+      const loyaltyDiscount = order.invoice?.loyaltyDiscount ?? 0;
+      const total = order.invoice?.totalPayable ?? (Number(itemTotal) + Number(taxes) - Number(loyaltyDiscount));
+
+      const shipping = order.shippingDetails || order.shippingAddress || {};
+      const addressLine = [
+        shipping.address_line_1,
+        shipping.address_line_2,
+      ].filter(Boolean).join(", ");
+      const cityState = [shipping.city, shipping.state, shipping.postal_code].filter(Boolean).join(" ");
+
+      const invoiceData = {
+        invoiceNo: order.invoice?.invoiceId || order.order_id || "000",
+        issueDate: order.date ? new Date(order.date).toLocaleDateString() : new Date().toLocaleDateString(),
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        deliveryDate: order.date ? new Date(order.date).toLocaleDateString() : "",
+        client: {
+          name: order.customerName || order.client?.name || "N/A",
+          address: addressLine || "N/A",
+          cityState: cityState || "N/A",
+          country: shipping.country || "N/A",
+        },
+        items: products.length > 0
+          ? products.map((p) => ({
+            description: p.name || p.product?.name || "Product",
+            quantity: p.quantity || 1,
+            price: p.price ?? p.unitPrice ?? 0,
+            discount: p.discount ?? 0,
+            amount: p.subtotal ?? ((p.price ?? 0) * (p.quantity ?? 1)),
+          }))
+          : [
+            {
+              description: "Order #" + (order.order_id || ""),
+              quantity: order.totalItems || 1,
+              price: Number(itemTotal),
+              discount: Number(loyaltyDiscount),
+              amount: Number(itemTotal) - Number(loyaltyDiscount),
+            },
+          ],
+        subtotal: Number(itemTotal).toFixed(2),
+        tax: Number(taxes).toFixed(2),
+        total: Number(total).toFixed(2),
+      };
+
+      generateInvoicePDF(invoiceData);
+      toast.success("Invoice downloaded successfully!");
+    } catch (err) {
+      console.error("Invoice download failed:", err);
+      toast.error("Failed to download invoice.");
+    }
+  };
+
   const handleCancelOrder = (row) => {
     setSelectedOrder(row);
     setShowCancelPopup(true);
@@ -205,6 +270,8 @@ const OrderPage = () => {
   };
 
   const applyFilters = (data) => {
+    setFilterFormValues(data);
+
     const getCheckboxValues = (prefix) => {
       return Object.keys(data)
         .filter((k) => k.startsWith(`${prefix}_`) && data[k])
@@ -236,11 +303,19 @@ const OrderPage = () => {
     dispatch(fetchAllOrders(filters));
   };
 
+  const handleResetFilters = () => {
+    setFilterFormValues({});
+    setFilterKey((k) => k + 1);
+    setCurrentPage(1);
+    dispatch(fetchAllOrders({ page: 1, limit: itemsPerPage, orderMode: isToggled ? "store" : "" }));
+  };
+
   const columns = getColumns(
     handleCancelOrder,
     handleStatusUpdate,
     handleFlagOrders,
-    handleViewOrder
+    handleViewOrder,
+    handleDownloadInvoice
   );
 
   const filteredOrders = formattedOrders?.filter((order) => {
@@ -339,16 +414,24 @@ const OrderPage = () => {
                 type: "sidebar",
                 component: (
                   <DynamicForm
+                    key={filterKey}
                     config={{
                       ...orderFilterConfig,
                       footer: {
                         ...orderFilterConfig.footer,
+                        cancel: {
+                          ...orderFilterConfig.footer?.cancel,
+                          label: "Reset Filters",
+                          onClick: handleResetFilters,
+                        },
                         apply: {
                           ...orderFilterConfig.footer.apply,
                           onClick: applyFilters,
                         },
                       },
                     }}
+                    initialValues={filterFormValues}
+                    isEdit={Object.keys(filterFormValues).length > 0}
                   />
                 ),
               },
