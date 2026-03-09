@@ -270,18 +270,8 @@ const storeSlice = createSlice({
 
         if (!updated?._id) return;
 
-        const mapped = {
-          _id: updated._id,
-          serviceName: updated.name,
-          iconUrl: updated.icon,
-          basePrice: updated.base_price,
-          duration: updated.duration,
-          serviceStatus:
-            updated.status?.charAt(0).toUpperCase() + updated.status.slice(1),
-        };
-
         state.services = state.services.map((service) =>
-          service._id === mapped._id ? { ...service, ...mapped } : service
+          service._id === updated._id ? { ...service, ...updated } : service
         );
       })
       .addCase(editService.rejected, (state, action) => {
@@ -294,7 +284,8 @@ const storeSlice = createSlice({
       })
       .addCase(createService.fulfilled, (state, action) => {
         state.loading = false;
-        state.services.push(action.payload);
+        const newService = action.payload?.data || action.payload;
+        if (newService) state.services.push(newService);
       })
       .addCase(createService.rejected, (state, action) => {
         state.loading = false;

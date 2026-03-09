@@ -75,14 +75,32 @@ const ServicesPage = () => {
 
   const handleEdit = useCallback(
     (id, data) => {
+      if (!data?.name?.trim()) {
+        toast.error("Service name is required.");
+        return;
+      }
+      if (!data?.base_price || isNaN(Number(data?.base_price)) || Number(data?.base_price) <= 0) {
+        toast.error("Please enter a valid base price greater than 0.");
+        return;
+      }
+      if (!data?.duration || isNaN(Number(data?.duration)) || Number(data?.duration) <= 0) {
+        toast.error("Please enter a valid duration greater than 0.");
+        return;
+      }
+      if (!data?.category_id) {
+        toast.error("Please select a category.");
+        return;
+      }
+
       const payload = {
         name: data?.name?.trim() || "",
-        icon: data?.icon || "",
         description: data?.description || "",
         duration: parseInt(data?.duration, 10) || 0,
         base_price: parseFloat(data?.base_price) || 0,
         status: data?.status?.toLowerCase() || "inactive",
-        category_id: data?.category_id || "",
+        category_id: data?.category_id?._id || "",
+        services: data?.services || [],
+        images_to_delete: data?.images_to_delete || [],
       };
 
       dispatch(editService({ id, data: payload }))
@@ -99,11 +117,33 @@ const ServicesPage = () => {
 
   const handleAddService = useCallback(
     (data) => {
+      if (!data?.name?.trim()) {
+        toast.error("Service name is required.");
+        return;
+      }
+      if (!data?.base_price || isNaN(Number(data?.base_price)) || Number(data?.base_price) <= 0) {
+        toast.error("Please enter a valid base price greater than 0.");
+        return;
+      }
+      if (!data?.duration || isNaN(Number(data?.duration)) || Number(data?.duration) <= 0) {
+        toast.error("Please enter a valid duration greater than 0.");
+        return;
+      }
+      if (!data?.category_id) {
+        toast.error("Please select a category.");
+        return;
+      }
+
       const formData = new FormData();
 
-      if (data.icon) {
-        const file = Array.isArray(data.icon) ? data.icon[0] : data.icon;
-        formData.append("icon", file);
+      if (data.services) {
+        const files = Array.isArray(data.services)
+          ? data.services
+          : [data.services];
+
+        files.forEach((file) => {
+          formData.append("services", file);
+        });
       }
 
       formData.append("name", data?.name?.trim() || "");
@@ -192,7 +232,7 @@ const ServicesPage = () => {
             ...service,
             serviceName: {
               name: service.name || "",
-              profile: service.icon || "",
+              profile: service.images?.[0] || "",
             },
           }))}
           options={options}

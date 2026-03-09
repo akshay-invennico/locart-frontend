@@ -221,6 +221,7 @@ export const getViewCategoryDetailsConfig = (category) => ({
     {
       type: "thumbnailList",
       label: "Category Icon",
+      readonly: true,
       images: [
         {
           src: category?.image || "/no-image.png",

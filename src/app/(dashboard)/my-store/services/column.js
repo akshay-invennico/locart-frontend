@@ -13,9 +13,10 @@ import Spinner from "@/components/common/Spinner";
 
 const EditServiceLoader = ({ rowData, data, onEdit, categoryOptions = [] }) => {
   const current = rowData || data || {};
+  const existingImages = Array.isArray(current.images) ? current.images : [];
   const initialValues = {
     name: current.name || "",
-    icon: current.icon || "",
+    services: existingImages,
     description: current.description || "",
     duration: current.duration ? String(current.duration) : "",
     base_price: current.base_price ? String(current.base_price) : "",

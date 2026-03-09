@@ -105,35 +105,32 @@ export const getServiceById = async (id) => {
 
 export const updateService = async (id, data) => {
   try {
-    const isFile = data.icon instanceof File;
+    const formData = new FormData();
 
-    if (isFile) {
-      const formData = new FormData();
+    if (data.name) formData.append("name", data.name.trim());
+    if (data.description) formData.append("description", data.description);
+    if (data.duration) formData.append("duration", Number(data.duration));
+    if (data.base_price) formData.append("base_price", Number(data.base_price));
+    if (data.status) formData.append("status", data.status.toLowerCase());
+    if (data.category_id) formData.append("category_id", data.category_id);
 
-      formData.append("name", data.name?.trim() || "");
-      formData.append("description", data.description || "");
-      formData.append("duration", Number(data.duration) || 0);
-      formData.append("base_price", Number(data.base_price || data.basePrice) || 0);
-      formData.append("status", data.status?.toLowerCase() || "active");
-      formData.append("icon", data.icon);
-
-      const response = await api.patch(`/services/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+    if (data.services) {
+      const files = Array.isArray(data.services) ? data.services : [data.services];
+      files.forEach((file) => {
+        if (file instanceof File) formData.append("services", file);
       });
-
-      return response.data;
     }
 
-    const payload = {
-      name: data.name?.trim() || "",
-      icon: data.icon || data.iconUrl || "",
-      description: data.description || "",
-      duration: Number(data.duration) || 0,
-      base_price: Number(data.base_price || data.basePrice) || 0,
-      status: data.status?.toLowerCase() || "active",
-    };
+    if (data.images_to_delete && data.images_to_delete.length > 0) {
+      data.images_to_delete.forEach((img) =>
+        formData.append("images_to_delete[]", img)
+      );
+    }
 
-    const response = await api.patch(`/services/${id}`, payload);
+    const response = await api.patch(`/services/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
     return response.data;
   } catch (error) {
     console.error("Error updating service:", error);

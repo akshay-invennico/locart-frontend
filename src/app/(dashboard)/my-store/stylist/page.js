@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import GridCommonComponent from "@/components/grid/gridCommonComponent";
 import { exportGridCSV, exportGridPDF } from "@/lib/HelpFulFunction";
+import { toast } from "sonner";
 
 const StylistPage = () => {
   const [search, setSearch] = useState("");
@@ -89,6 +90,12 @@ const StylistPage = () => {
   );
 
   const handleAddStylist = async (data) => {
+    if (!data?.fullName?.trim()) return toast.error("Full Name is required.");
+    if (!data?.email?.trim()) return toast.error("Email is required.");
+    if (!data?.phoneNumber?.trim()) return toast.error("Phone Number is required.");
+    if (!data?.services || data?.services?.length === 0) return toast.error("Please select at least one service.");
+    if (!data?.workingDays || data?.workingDays?.length === 0) return toast.error("Please select at least one working day.");
+
     const statusRaw = data?.status;
     const status = Array.isArray(statusRaw)
       ? statusRaw[0]?.toLowerCase() || "active"
@@ -130,6 +137,12 @@ const StylistPage = () => {
   };
 
   const handleUpdateStylist = async (data) => {
+    if (!data?.fullName?.trim()) return toast.error("Full Name is required.");
+    if (!data?.email?.trim()) return toast.error("Email is required.");
+    if (!data?.phoneNumber?.trim()) return toast.error("Phone Number is required.");
+    if (!data?.services || data?.services?.length === 0) return toast.error("Please select at least one service.");
+    if (!data?.workingDays || data?.workingDays?.length === 0) return toast.error("Please select at least one working day.");
+
     const statusRaw = data?.status;
     const status = Array.isArray(statusRaw)
       ? statusRaw[0]?.toLowerCase() || "active"
@@ -251,11 +264,6 @@ const StylistPage = () => {
                   onCancel={() => console.log("Cancelled")}
                 />
               ),
-            },
-            {
-              type: "file",
-              label: "Stylist Profile Photo",
-              name: "profile_photo",
             },
             {
               label: "Export Selection",

@@ -1,5 +1,3 @@
-const { BsFilePdf, BsFileSpreadsheet } = require("react-icons/bs");
-
 export const ProductFilterConfig = {
   formCss: {
     maxWidth: "500px",
@@ -451,6 +449,7 @@ export const getProductDetailsConfig = (product) => ({
     {
       type: "thumbnailList",
       label: "Product Photos",
+      readonly: true,
       images: product?.images?.length
         ? product.images.map((img) => ({
           src: img,

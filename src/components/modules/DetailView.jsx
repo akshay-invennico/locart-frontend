@@ -1,4 +1,4 @@
- "use client";
+"use client";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { X, Check } from "lucide-react";
@@ -43,7 +43,7 @@ const DetailView = ({
       case "header":
         return (
           <h2
-            className="text-base sm:text-lg font-bold break-words"
+            className="text-base sm:text-lg font-bold wrap-break-word"
             style={field.css}
           >
             {field.label}
@@ -53,7 +53,7 @@ const DetailView = ({
       case "subheader":
         return (
           <p
-            className="text-xs sm:text-sm text-gray-600 break-words leading-relaxed whitespace-pre-wrap"
+            className="text-xs sm:text-sm text-gray-600 wrap-break-word leading-relaxed whitespace-pre-wrap"
             style={field.css}
           >
             {field.text}
@@ -77,7 +77,7 @@ const DetailView = ({
               )}
             </div>
             <div className="flex-1">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 break-words">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 wrap-break-word">
                 {field.name}
               </h3>
               <p className="text-xs sm:text-sm text-[#02C8DE] break-all">
@@ -103,7 +103,7 @@ const DetailView = ({
 
       case "textBlock":
         return (
-          <p className="text-xs sm:text-sm break-words" style={field.css}>
+          <p className="text-xs sm:text-sm wrap-break-word" style={field.css}>
             {field.content}
           </p>
         );
@@ -114,7 +114,7 @@ const DetailView = ({
             className="flex justify-between items-center gap-2"
             style={field.css}
           >
-            <h3 className="font-semibold text-sm sm:text-base break-words flex-1">
+            <h3 className="font-semibold text-sm sm:text-base wrap-break-word flex-1">
               {field.label}
             </h3>
           </div>
@@ -136,28 +136,26 @@ const DetailView = ({
               return (
                 <div
                   key={idx}
-                  className={`flex flex-col min-w-0 ${
-                    isRating ? "cursor-pointer" : ""
-                  }`}
+                  className={`flex flex-col min-w-0 ${isRating ? "cursor-pointer" : ""
+                    }`}
                   onClick={() => {
                     if (isRating) setShowReviews(true);
                   }}
                 >
-                  <span className="text-xs text-gray-500 mb-1 break-words">
+                  <span className="text-xs text-gray-500 mb-1 wrap-break-word">
                     {item.label}
                   </span>
                   <span
-                    className="text-xs sm:text-sm font-medium break-words flex items-center gap-1"
+                    className="text-xs sm:text-sm font-medium wrap-break-word flex items-center gap-1"
                     style={item.valueStyle || {}}
                   >
                     {isRating && (
                       <>
                         <svg
-                          className={`w-5 h-5 ${
-                            item.rating >= 1
-                              ? "text-yellow-400"
-                              : "text-gray-300"
-                          }`}
+                          className={`w-5 h-5 ${item.rating >= 1
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                            }`}
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -191,17 +189,16 @@ const DetailView = ({
                 className="flex items-center gap-2 text-xs sm:text-sm"
               >
                 <div
-                  className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${
-                    service.checked
-                      ? "bg-[#02C8DE] text-white"
-                      : "bg-gray-200 text-gray-400"
-                  }`}
+                  className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${service.checked
+                    ? "bg-[#02C8DE] text-white"
+                    : "bg-gray-200 text-gray-400"
+                    }`}
                 >
                   {service.checked && (
                     <Check className="w-3 h-3" strokeWidth={3} />
                   )}
                 </div>
-                <span className="text-black break-words">{service.name}</span>
+                <span className="text-black wrap-break-word">{service.name}</span>
               </div>
             ))}
           </div>
@@ -228,7 +225,7 @@ const DetailView = ({
               <p className="text-xs text-gray-500 font-semibold mb-1">
                 {field.remarkLabel || "Remark"}
               </p>
-              <p className="text-xs sm:text-sm text-gray-700 break-words">
+              <p className="text-xs sm:text-sm text-gray-700 wrap-break-word">
                 {field.text}
               </p>
             </div>
@@ -238,7 +235,7 @@ const DetailView = ({
       case "keyValue":
         return (
           <div className="flex justify-between items-center py-2 gap-2">
-            <span className="text-xs sm:text-sm text-gray-600 break-words flex-1">
+            <span className="text-xs sm:text-sm text-gray-600 wrap-break-word flex-1">
               {field.label}
             </span>
             <span
@@ -281,13 +278,15 @@ const DetailView = ({
                   alt={img.alt || `image-${idx}`}
                   className="w-full h-full object-cover"
                 />
-                <button
-                  onClick={() => handleRemove(idx)}
-                  className="absolute top-1 right-1 bg-gray-500 text-white text-xs rounded-full p-1 hover:bg-red-600"
-                  title="Remove"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+                {!field.readonly && (
+                  <button
+                    onClick={() => handleRemove(idx)}
+                    className="absolute top-1 right-1 bg-gray-500 text-white text-xs rounded-full p-1 hover:bg-red-600"
+                    title="Remove"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -375,7 +374,7 @@ const DetailView = ({
           <div className="border rounded-lg p-3 sm:p-4 bg-gray-50 space-y-2">
             {field.invoiceId && (
               <div className="flex justify-between items-center pb-3 border-b border-dashed border-gray-300 gap-2">
-                <span className="text-xs text-gray-500 font-medium break-words">
+                <span className="text-xs text-gray-500 font-medium wrap-break-word">
                   Invoice ID
                 </span>
                 <span
@@ -391,26 +390,22 @@ const DetailView = ({
               {field.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className={`flex justify-between items-center gap-2 pb-2 ${
-                    item.divider !== false && idx !== field.items.length - 1
-                      ? "border-b border-dashed border-gray-300"
-                      : ""
-                  }`}
+                  className={`flex justify-between items-center gap-2 pb-2 ${item.divider !== false && idx !== field.items.length - 1
+                    ? "border-b border-dashed border-gray-300"
+                    : ""
+                    }`}
                 >
                   <span
-                    className={`text-xs sm:text-sm ${
-                      item.bold ? "font-semibold" : ""
-                    } break-words flex-1`}
+                    className={`text-xs sm:text-sm ${item.bold ? "font-semibold" : ""
+                      } wrap-break-word flex-1`}
                     style={{ color: item.color || "#374151" }}
                   >
                     {item.label}
                   </span>
                   <span
-                    className={`text-xs sm:text-sm ${
-                      item.bold ? "font-bold" : ""
-                    } ${
-                      item.large ? "text-sm sm:text-base" : ""
-                    } break-all flex-shrink-0`}
+                    className={`text-xs sm:text-sm ${item.bold ? "font-bold" : ""
+                      } ${item.large ? "text-sm sm:text-base" : ""
+                      } break-all flex-shrink-0`}
                     style={{ color: item.color || "#111111" }}
                   >
                     {item.value}
@@ -429,7 +424,7 @@ const DetailView = ({
                 key={idx}
                 className=" rounded-lg p-3 flex flex-col items-center bg-white hover:shadow-md transition-shadow"
               >
-                <span className="bg-[#E5FCFF] text-sm text-center font-medium text-[#02C8DE] break-words">
+                <span className="bg-[#E5FCFF] text-sm text-center font-medium text-[#02C8DE] wrap-break-word">
                   {product.label}
                 </span>
               </div>
@@ -484,7 +479,7 @@ const DetailView = ({
                     className="bg-white rounded-lg border border-gray-200 shadow-md p-6 mb-4 mx-auto w-full max-w-md overflow-hidden"
                     style={{ minHeight: "250px" }}
                   >
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4 break-words whitespace-normal">
+                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4 wrap-break-word whitespace-normal">
                       {review.description}
                     </p>
 
@@ -495,7 +490,7 @@ const DetailView = ({
                         className="w-12 h-12 rounded-full object-cover border border-gray-200 flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <span className="text-sm sm:text-base font-semibold text-gray-900 break-words">
+                        <span className="text-sm sm:text-base font-semibold text-gray-900 wrap-break-word">
                           {review.name}
                         </span>
                         <div className="flex gap-0.5 mt-1">
@@ -504,9 +499,8 @@ const DetailView = ({
                             return (
                               <svg
                                 key={starIdx}
-                                className={`w-4 h-4 ${
-                                  filled ? "text-yellow-400" : "text-gray-300"
-                                }`}
+                                className={`w-4 h-4 ${filled ? "text-yellow-400" : "text-gray-300"
+                                  }`}
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -531,9 +525,8 @@ const DetailView = ({
 
       {/* Main Content */}
       <div
-        className={`flex flex-col h-full bg-white transition-all duration-300 ${
-          showReviews ? "w-[60%]" : "w-full"
-        }`}
+        className={`flex flex-col h-full bg-white transition-all duration-300 ${showReviews ? "w-[60%]" : "w-full"
+          }`}
       >
         <div className="flex-1 overflow-y-auto px-6 py-6">
           {displayConfig?.title && (
@@ -549,9 +542,8 @@ const DetailView = ({
             {displayConfig?.fields?.map((field, index) => (
               <div
                 key={field.name || `${field.type}-${index}`}
-                className={`detail-section ${
-                  field.type === "divider" ? "-mx-4 sm:-mx-6" : ""
-                }`}
+                className={`detail-section ${field.type === "divider" ? "-mx-4 sm:-mx-6" : ""
+                  }`}
                 style={field.containerCss || {}}
               >
                 {renderField(field)}

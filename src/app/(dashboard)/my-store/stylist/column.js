@@ -205,7 +205,7 @@ const EditStylistSidebar = ({ row, handleUpdateStylist }) => {
       }
     };
     fetchDetails();
-  }, [row, dispatch]);
+  }, [row?._id, dispatch]);
 
   const serviceOptions =
     services?.map((s) => ({
@@ -243,41 +243,31 @@ const EditStylistSidebar = ({ row, handleUpdateStylist }) => {
 
 const ViewStylistAction = ({ row, onCancel }) => {
   const dispatch = useDispatch();
-  const user = useUserContext();
-  const [component, setComponent] = useState(null);
+  const [stylistData, setStylistData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const loadComponent = async () => {
       try {
-
-        if (!row?._id) {
-          console.error("Missing stylist ID", row);
-          setComponent(<div>No stylist ID found</div>);
-          return;
-        }
+        if (!row?._id) return;
 
         setIsLoading(true);
-        const stylistData = await dispatch(fetchStylistsById(row._id)).unwrap();
+        const result = await dispatch(fetchStylistsById(row._id)).unwrap();
 
-        setComponent(
-          <DetailView
-            config={getStylistDetailsConfig(stylistData?.stylist)}
-            loading={false}
-            data={stylistData?.stylist || {}}
-            onClose={onCancel}
-          />
-        );
+        if (isMounted) {
+          setStylistData(result?.data?.stylist || result?.stylist || {});
+        }
       } catch (error) {
         console.error("Error loading stylist details:", error);
-        setComponent(<div>Error loading stylist details</div>);
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
 
     loadComponent();
-  }, [row._id, dispatch, user?.roles, onCancel]);
+    return () => { isMounted = false; };
+  }, [row?._id, dispatch]);
 
   if (isLoading) {
     return (
@@ -287,7 +277,18 @@ const ViewStylistAction = ({ row, onCancel }) => {
     );
   }
 
-  return component;
+  if (!stylistData) {
+    return <div>Error loading stylist details</div>;
+  }
+
+  return (
+    <DetailView
+      config={getStylistDetailsConfig(stylistData)}
+      loading={false}
+      data={stylistData}
+      onClose={onCancel}
+    />
+  );
 };
 
 export default ViewStylistAction;

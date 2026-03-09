@@ -12,7 +12,7 @@ export const addServiceConfig = (onSubmit, categoryOptions) => ({
     },
     { type: "divider" },
 
-    { type: "file", name: "icon", label: "Service Icon", acceptUrl: true },
+    { type: "file", name: "services", label: "Service Images", acceptUrl: true, multiple: true },
 
     { type: "textBlock", label: "Service Name" },
     { type: "input", name: "name", placeholder: "e.g, Loc Retwist" },
@@ -101,13 +101,10 @@ export const editServiceConfig = (categoryOptions = []) => ({
     },
     { type: "divider" },
     {
-      type: "textBlock",
-      label: "Service Icon",
-    },
-    {
       type: "file",
-      label: "Service Icon",
-      name: "icon",
+      label: "Service Images",
+      name: "services",
+      multiple: true,
     },
     {
       type: "textBlock",
