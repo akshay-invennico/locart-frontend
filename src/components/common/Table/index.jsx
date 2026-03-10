@@ -68,11 +68,11 @@ const Table = ({
   };
 
   const handleDownloadCSV = () => {
-    downloadCSV(filteredData, columns, title.replace(/\s+/g, '-').toLowerCase());
+    downloadCSV(data, columns, title.replace(/\s+/g, '-').toLowerCase());
   };
 
   const handleDownloadPDF = () => {
-    downloadPDF(filteredData, columns, title, title.replace(/\s+/g, '-').toLowerCase());
+    downloadPDF(data, columns, title, title.replace(/\s+/g, '-').toLowerCase());
   };
 
   return (

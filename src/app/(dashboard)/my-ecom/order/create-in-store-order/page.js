@@ -3,38 +3,25 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import DynamicForm from "@/components/modules/DynamicFormRendering";
-import DetailView from "@/components/modules/DetailView";
-import ActionComponent from "@/components/grid/actionComponent";
 import { useDispatch } from "react-redux";
 import {
   createOrder,
-  fetchAllOrders,
   fetchAllProducts,
 } from "@/state/ecom/ecomSlice";
 
-import { invoicePreviewConfig } from "./invoicePreviewConfig";
 import { createInStoreOrderConfig } from "./createInStoreOrderConfig";
-import { Download, Printer } from "lucide-react";
 import { useSelector } from "react-redux";
 import Spinner from "@/components/common/Spinner";
 import { useCallback } from "react";
-import { BsFilePdf, BsFileSpreadsheet } from "react-icons/bs";
-import { exportGridCSV, exportGridPDF } from "@/lib/HelpFulFunction";
 import { toast } from "sonner";
 
 
 const CreateInStoreOrderPage = () => {
-
-
   const dispatch = useDispatch();
   const router = useRouter();
-  const [invoiceData, setInvoiceData] = useState(null);
-
   const { products } = useSelector((state) => state.ecomOrders);
-  const { orders, loading, selectedOrder, selectedOrderLoading } = useSelector(
-    (state) => state.ecomOrders
-  );
   const [config, setConfig] = useState(null);
+  const [formKey, setFormKey] = useState(0);
 
   useEffect(() => {
     dispatch(fetchAllProducts({}));
@@ -54,28 +41,89 @@ const CreateInStoreOrderPage = () => {
   }, [products]);
 
   const handleFormSubmit = (formData) => {
-    const hasProducts = formData?.products?.length > 0;
-    if (hasProducts) {
-      setInvoiceData({
-        ...formData,
-        invoiceDate: new Date().toLocaleDateString(),
-        invoiceId: "#BK1023102456145258",
-        taxes: 2,
-        delivery: 0,
-        discount: 20,
-        total: 4602,
-        payable: 4582,
-      });
-    } else {
-      setInvoiceData(null);
+    const selectedProducts = formData?.products || [];
+    if (!selectedProducts.length) {
+      return;
     }
+
+    const items = selectedProducts.map((productId) => {
+      const product = products.find((p) => p._id === productId);
+      const quantity = Number(formData[`${productId}_qty`] || 1);
+      const rawPrice = product?.price?.$numberDecimal ?? product?.price;
+      const price = Number(rawPrice || 0);
+      const discount = 0;
+      const amount = Number((price * quantity - discount).toFixed(2));
+
+      return {
+        description: product?.productName || product?.name || "Product",
+        quantity,
+        price,
+        discount,
+        amount,
+      };
+    });
+
+    const subtotal = Number(
+      items.reduce((sum, item) => sum + item.amount, 0).toFixed(2)
+    );
+    const tax = Number((subtotal * 0.08).toFixed(2));
+    const total = Number((subtotal + tax).toFixed(2));
+
+    const issueDate = new Date();
+    const dueDate = new Date(issueDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const addressLine = [formData.addressLine1, formData.addressLine2]
+      .filter(Boolean)
+      .join(", ");
+    const cityState = [formData.pin, formData.city, formData.state]
+      .filter(Boolean)
+      .join(" ");
   };
 
   const handleAddOrder = useCallback(
-    (formData) => {
+    async (formData) => {
+      const normalizePaymentStatus = (status) => {
+        const value = String(status || "").toLowerCase();
+        if (value === "paid") return "paid";
+        if (value === "pending") return "pending";
+        if (value === "failed") return "failed";
+        return "pending";
+      };
+
+      const normalizePaymentMethod = (method) => {
+        const value = String(method || "").toLowerCase();
+        if (value === "cash") return "cash";
+        if (value === "online") return "online";
+        return "online";
+      };
+
+      const normalizeOrderStatus = (status) => {
+        const value = String(status || "").toLowerCase();
+        if (
+          [
+            "pending",
+            "dispatched",
+            "confirmed",
+            "shipped",
+            "delivered",
+            "cancelled",
+            "returned",
+          ].includes(value)
+        ) {
+          return value;
+        }
+        if (value === "scheduled") return "pending";
+        return "pending";
+      };
+
+      const selectedProducts = formData.products || [];
+      if (!selectedProducts.length) {
+        toast.error("Please select at least one product.");
+        return;
+      }
+
       const payload = {
         customerType: "new",
-
         customerDetails: {
           name: formData.name || "",
           email: formData.email || "",
@@ -89,57 +137,30 @@ const CreateInStoreOrderPage = () => {
             ? formData.country[0] || ""
             : formData.country || "",
         },
-
-        products: (formData.products || []).map((productId) => ({
+        products: selectedProducts.map((productId) => ({
           productId,
           quantity: Number(formData[`${productId}_qty`] || 1),
         })),
-
         payment: {
           totalAmount: Number(formData.PayableAmount) || 0,
-          paymentMethod: formData.PaymentMethod?.[0]?.toLowerCase() || "online",
-          paymentStatus:
-            formData.PaymentStatus?.[0]?.toLowerCase() || "pending",
+          paymentMethod: normalizePaymentMethod(formData.PaymentMethod),
+          paymentStatus: normalizePaymentStatus(formData.PaymentStatus),
         },
-
-        orderStatus: formData.OrderStatus?.[0]?.toLowerCase() || "scheduled",
+        orderStatus: normalizeOrderStatus(formData.OrderStatus),
       };
 
-      dispatch(createOrder(payload));
+      try {
+        const res = await dispatch(createOrder(payload)).unwrap();
+        toast.success(res?.message || "Order placed successfully");
+        setFormKey((k) => k + 1);
+      } catch (err) {
+        toast.error(err?.message || "Failed to create order");
+      }
     },
     [dispatch]
   );
 
   const handleBack = () => router.back();
-
-  const downloadActions = [
-    {
-      header: "Download List",
-    },
-    {
-      label: "Download PDF",
-      icon: <BsFilePdf className="w-4 h-4 text-[#7B7B7B]" />,
-      onClick: () => {
-        exportGridPDF({
-          rows: orders,
-          columns: columns,
-          filename: `orders.pdf`,
-          title: "Orders Details",
-        });
-      },
-    },
-    {
-      label: "Download CSV",
-      icon: <BsFileSpreadsheet className="w-4 h-4  text-[#7B7B7B]" />,
-      onClick: () => {
-        exportGridCSV({
-          rows: orders,
-          columns: columns,
-          filename: `orders.csv`,
-        });
-      },
-    },
-  ];
 
   return (
     <div className="bg-white flex flex-col gap-4 ">
@@ -159,7 +180,7 @@ const CreateInStoreOrderPage = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 w-full ">
-        <div className="w-full lg:w-[60%] border rounded-md p-4 relative flex flex-col">
+        <div className="w-full border rounded-md p-4 relative flex flex-col">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold mb-3">New In-Store Orders</h2>
           </div>
@@ -170,45 +191,13 @@ const CreateInStoreOrderPage = () => {
             </div>
           ) : (
             <DynamicForm
+              key={formKey}
               config={config}
-              onApply={(formData) => {
+              onApply={async (formData) => {
                 handleFormSubmit(formData);
-                handleAddOrder(formData);
+                await handleAddOrder(formData);
               }}
             />
-          )}
-        </div>
-
-        <div className="w-full lg:w-[40%] border rounded-md p-4 relative flex flex-col max-h-[calc(100vh-200px)] overflow-hidden">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Invoice Preview</h2>
-
-            <div className="flex items-center gap-2">
-              <ActionComponent
-                actions={downloadActions}
-                icon={<Download className="w-4 h-4 text-[#02C8DE]" />}
-                buttonClassName="flex items-center justify-center w-10 h-10 sm:w-auto sm:px-3 sm:py-2 border border-[var(--color-primary1)] bg-white rounded-md shadow-sm hover:bg-gray-50"
-              />
-
-              <button
-                onClick={() => {
-                  setTimeout(() => {
-                    window.print();
-                  }, 100);
-                }}
-                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:px-3 sm:py-2 border border-[var(--color-primary1)] bg-white rounded-md shadow-sm hover:bg-gray-50"
-              >
-                <Printer className="w-4 h-4 text-[#02C8DE]" />
-              </button>
-            </div>
-          </div>
-
-          {invoiceData ? (
-            <DetailView config={invoicePreviewConfig} data={invoiceData} />
-          ) : (
-            <div className="flex  items-center justify-center text-gray-400">
-              No data available
-            </div>
           )}
         </div>
       </div>

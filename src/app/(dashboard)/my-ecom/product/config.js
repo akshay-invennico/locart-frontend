@@ -132,7 +132,20 @@ export const createProductConfig = (onSubmit, categoryOptions) => ({
   },
 });
 
-export const getEditProductConfig = (product, onSubmit, onCancel, categoryOptions) => ({
+export const getEditProductConfig = (product, onSubmit, onCancel, categoryOptions) => {
+  const categoryIds = Array.isArray(product?.category_id)
+    ? product.category_id
+    : product?.category_id
+      ? [product.category_id]
+      : Array.isArray(product?.category)
+        ? product.category
+          .map((c) => c?._id || c?.id || c?.category_id)
+          .filter(Boolean)
+        : product?.category?._id || product?.category?.id || product?.category?.category_id
+          ? [product?.category?._id || product?.category?.id || product?.category?.category_id]
+          : [];
+
+  return ({
   formCss: {
     maxWidth: "600px",
     width: "100%",
@@ -141,7 +154,7 @@ export const getEditProductConfig = (product, onSubmit, onCancel, categoryOption
   },
   initialValues: {
     name: product?.name || product?.productName,
-    category_id: product?.category_id || product?.category?.[0]?._id,
+    category_id: categoryIds,
     unit_price: product?.unit_price || product?.price?.$numberDecimal || product?.price,
     stock_quantity: product?.stock_quantity || product?.stock,
     description: product?.description,
@@ -216,6 +229,7 @@ export const getEditProductConfig = (product, onSubmit, onCancel, categoryOption
     },
   },
 });
+};
 
 export const flagOrderConfig = {
   title: "",

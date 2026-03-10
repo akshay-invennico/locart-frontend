@@ -188,7 +188,14 @@ const ProductPage = () => {
     if (data.description) formData.append("description", data.description);
     if (data.unit_price) formData.append("unit_price", data.unit_price);
     if (data.stock_quantity) formData.append("stock_quantity", data.stock_quantity);
-    if (data.category_id) formData.append("category_id", data.category_id);
+    if (data.category_id) {
+      const categoryIds = Array.isArray(data.category_id)
+        ? data.category_id
+        : [data.category_id];
+      categoryIds.forEach((catId) => {
+        if (catId) formData.append("category_id[]", catId);
+      });
+    }
 
     if (data.new_images && data.new_images.length > 0) {
       if (typeof data.new_images === 'string') {

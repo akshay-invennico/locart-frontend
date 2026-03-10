@@ -1,15 +1,29 @@
 "use client"
 import React from "react";
 import { useRouter } from "next/navigation";
+import { MoreVertical } from "lucide-react";
 
-export default function PortfolioCard({ data }) {
+export default function PortfolioCard({ data, onOpenMenu }) {
   const router = useRouter();
 
   const handleClick = () => {
     router.push(`/my-store/portfolio/${data.id}`);
   };
   return (
-    <div onClick={handleClick} className="border rounded-xl shadow-sm hover:shadow-md transition p-3 bg-white cursor-pointer">
+    <div onClick={handleClick} className="border rounded-xl shadow-sm hover:shadow-md transition p-3 bg-white cursor-pointer relative">
+      {onOpenMenu && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenMenu(data);
+          }}
+          className="absolute top-2 right-2 inline-flex items-center justify-center rounded-md bg-white/90 p-1.5 text-gray-600 border border-gray-200 hover:bg-gray-50"
+          aria-label="Album options"
+        >
+          <MoreVertical className="w-4 h-4" />
+        </button>
+      )}
       <div className="grid grid-cols-2 gap-2 h-40 overflow-hidden rounded-lg">
         {data.images.slice(0, 4).map((img, i) => (
           <img

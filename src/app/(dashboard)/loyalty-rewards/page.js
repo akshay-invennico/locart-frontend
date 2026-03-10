@@ -54,13 +54,16 @@ const Page = () => {
     {
       header: "Loyalty Points",
       accessor: "loyalty_points",
+      render: (row) => (
+        <span>{row.loyalty_points !== null && row.loyalty_points !== undefined ? row.loyalty_points : '-'}</span>
+      )
     },
     {
       header: "Lifetime Points",
       accessor: "lifetime_points_value",
       render: (row) => (
         <span className="text-primary1 font-bold">
-          ${row.lifetime_points_value}
+          ${row.lifetime_points_value !== null && row.lifetime_points_value !== undefined ? row.lifetime_points_value : '0'}
         </span>
       ),
     },

@@ -224,7 +224,7 @@ export const createInStoreOrderConfig = (productOptions = []) => ({
     apply: {
       label: "Confirm Order",
       // isSubmit:true,
-      className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
+      className: "bg-[#02C8DE] text-white px-4 py-2 rounded",
       onClick: null
     },
   },

@@ -187,7 +187,7 @@ const OrderPage = () => {
 
   const handleDownloadInvoice = async (row) => {
     try {
-      const order = await dispatch(fetchOrderById(row.order_id)).unwrap();
+      const order = await dispatch(fetchOrderById(row.id)).unwrap();
 
       if (!order) {
         toast.error("Could not fetch order details.");

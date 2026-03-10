@@ -33,6 +33,7 @@ export const leftSidebarItems = [
   {
     title: "My Ecom",
     url: "/my-ecom/order",
+    matchPrefixes: ["/my-ecom"],
     icon: <PiShoppingCartLight size={21} />,
   },
   {

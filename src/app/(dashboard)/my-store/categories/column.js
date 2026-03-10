@@ -30,7 +30,7 @@ const EditCategoryLoader = ({ rowData, children }) => {
           name: d.name || "",
           description: d.description || "",
           image: d.image || "",
-          status: d.status ? [d.status.toLowerCase()] : ["inactive"],
+          status: d.status ? d.status.toLowerCase() : "inactive",
         };
 
         if (mounted) setInitialValues(mapped);

@@ -48,8 +48,15 @@ const LeftSidebar = () => {
     if (isMobile) closeAll();
   };
 
-  const isActive = (url) =>
-    pathname === url || pathname.startsWith(url + "/");
+  const isActive = (item) => {
+    if (Array.isArray(item.matchPrefixes)) {
+      const matched = item.matchPrefixes.some(
+        (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
+      );
+      if (matched) return true;
+    }
+    return pathname === item.url || pathname.startsWith(item.url + "/");
+  };
 
   const renderMenuItem = (item, index) => (
     <SidebarMenuItem key={index}>
@@ -57,9 +64,9 @@ const LeftSidebar = () => {
         <TooltipTrigger asChild>
           <SidebarMenuButton
             asChild
-            className={`w-8 h-8 p-0 flex items-center justify-center border rounded-[6px] transition-colors duration-200 ${isActive(item.url)
-              ? "bg-[var(--color-primary1)] text-white border-[var(--color-secondary1)]"
-              : "border-[var(--border-admin)] text-black hover:bg-[var(--color-primary1)] hover:text-white hover:border-[var(--color-secondary1)]"
+            className={`w-8 h-8 p-0 flex items-center justify-center border rounded-[6px] transition-colors duration-200 ${isActive(item)
+              ? "bg-(--color-primary1) text-white border-(--color-secondary1)"
+              : "border-(--border-admin) text-black hover:bg-(--color-primary1) hover:text-white hover:border-(--color-secondary1)"
               }`}
           >
             <Link
@@ -95,7 +102,7 @@ const LeftSidebar = () => {
         </SidebarGroupLabel>
 
         {/* Single Divider */}
-        <hr className="w-8 h-[0.5px] border border-[var(--border-admin)]" />
+        <hr className="w-8 h-[0.5px] border border-(--border-admin)" />
 
         {/* Menu Items */}
         <SidebarGroupContent className="w-full">

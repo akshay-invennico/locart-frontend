@@ -14,16 +14,20 @@ export const downloadCSV = (data, columns, fileName = 'table-data') => {
 
   const rows = data.map(row =>
     columns.map(col => {
-      let cellData = row[col.accessor];
+      let cellData = col.accessor ? row[col.accessor] : '';
 
-      if (col.accessor.includes('.')) {
+      if (col.accessor && col.accessor.includes('.')) {
         cellData = col.accessor.split('.').reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : '', row);
+      }
+
+      if (cellData === null || cellData === undefined || cellData === '') {
+        cellData = '-';
       }
 
       if (typeof cellData === 'object' && cellData !== null) {
         return `"${JSON.stringify(cellData).replace(/"/g, '""')}"`;
       }
-      return `"${String(cellData || '').replace(/"/g, '""')}"`;
+      return `"${String(cellData).replace(/"/g, '""')}"`;
     }).join(',')
   );
 
@@ -48,11 +52,16 @@ export const downloadPDF = (data, columns, title = 'Table Data', fileName = 'tab
 
   data.forEach(row => {
     const rowData = columns.map(col => {
-      let cellData = row[col.accessor];
-      if (col.accessor.includes('.')) {
+      let cellData = col.accessor ? row[col.accessor] : '';
+      if (col.accessor && col.accessor.includes('.')) {
         cellData = col.accessor.split('.').reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : '', row);
       }
-      return cellData || '';
+
+      if (cellData === null || cellData === undefined || cellData === '') {
+        cellData = '-';
+      }
+
+      return String(cellData);
     });
     tableRows.push(rowData);
   });

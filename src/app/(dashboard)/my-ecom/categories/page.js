@@ -115,9 +115,13 @@ const CategoryPage = () => {
   };
 
   const handleCreateCategory = async (data) => {
+    if (!data?.name?.trim()) {
+      toast.error("Category name is required.");
+      return;
+    }
     const payload = {
-      name: data.name,
-      description: data.description,
+      name: data.name.trim(),
+      description: data.description?.trim() || "",
       type: "product",
       status: "active",
       category_photo: data.category_photo,
@@ -143,10 +147,24 @@ const CategoryPage = () => {
   };
 
   const handleUpdateCategory = async (id, data) => {
+    if (!data?.name?.trim()) {
+      toast.error("Category name is required.");
+      return;
+    }
+    const normalizedStatus = Array.isArray(data.status)
+      ? data.status[0]
+      : data.status;
+    if (!normalizedStatus) {
+      toast.error("Please select a category status.");
+      return;
+    }
+
     const payload = {
       ...data,
+      name: data.name.trim(),
+      description: data.description?.trim() || "",
       type: "product",
-      status: Array.isArray(data.status) ? data.status[0] : data.status,
+      status: normalizedStatus,
     };
 
     if (payload.image) {

@@ -39,3 +39,14 @@ export const getPortfolioById = async (id) => {
   }
 };
 
+export const deletePortfolio = async (id) => {
+  try {
+    const response = await api.delete(`/album/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to delete album"
+    );
+  }
+};
+

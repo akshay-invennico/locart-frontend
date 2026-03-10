@@ -1697,11 +1697,8 @@ const DynamicForm = ({
               type="button"
               onClick={() => {
                 if (config.footer.apply.onClick) {
-                  // Call custom onClick handler first
                   config.footer.apply.onClick(formData);
                 }
-                // Always call handleApply to ensure form closes
-                // Pass formData to maintain consistency
                 handleApply(formData);
               }}
               className={
