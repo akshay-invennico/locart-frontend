@@ -75,12 +75,12 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   invoiceLabel: {
-    width: 80,
+    width: 100,
     fontWeight: "bold",
     color: "#444",
   },
   invoiceValue: {
-    width: 80,
+    width: 130,
     textAlign: "right",
     fontWeight: "bold",
   },
@@ -164,6 +164,17 @@ const styles = StyleSheet.create({
 });
 
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return "N/A";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
 const InvoiceDocument = ({ invoiceData }) => {
   const {
     invoiceNo,
@@ -230,15 +241,15 @@ const InvoiceDocument = ({ invoiceData }) => {
             </View>
             <View style={styles.invoiceRow}>
               <Text style={styles.invoiceLabel}>Issue date:</Text>
-              <Text style={styles.invoiceValue}>{issueDate}</Text>
+              <Text style={styles.invoiceValue}>{formatDate(issueDate)}</Text>
             </View>
             <View style={styles.invoiceRow}>
               <Text style={styles.invoiceLabel}>Due date:</Text>
-              <Text style={styles.invoiceValue}>{dueDate}</Text>
+              <Text style={styles.invoiceValue}>{formatDate(dueDate)}</Text>
             </View>
             <View style={{ ...styles.invoiceRow, marginTop: 10 }}>
               <Text style={styles.invoiceLabel}>Delivery date:</Text>
-              <Text style={styles.invoiceValue}>{deliveryDate || issueDate}</Text>
+              <Text style={styles.invoiceValue}>{formatDate(deliveryDate || issueDate)}</Text>
             </View>
           </View>
         </View>

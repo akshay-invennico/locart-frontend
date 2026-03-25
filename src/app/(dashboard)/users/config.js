@@ -78,7 +78,7 @@ export const suspendClientConfig = {
 
       options: [
         { label: "Inappropriate behavior", value: "Inappropriate  behavior" },
-        { label: "Multiple no-shows", value: "Payment-related issues" },
+        { label: "Multiple no-shows", value: "Multiple no-shows" },
         { label: "Spam or fake account", value: "Spam or fake account" },
         { label: "Client request", value: "Client request" },
         {
@@ -122,7 +122,7 @@ export const suspendClientConfigAll = {
 
       options: [
         { label: "Inappropriate behavior", value: "Inappropriate  behavior" },
-        { label: "Multiple no-shows", value: "Payment-related issues" },
+        { label: "Multiple no-shows", value: "Multiple no-shows" },
         { label: "Spam or fake account", value: "Spam or fake account" },
         { label: "Client request", value: "Client request" },
         {

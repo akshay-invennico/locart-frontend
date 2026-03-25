@@ -41,45 +41,30 @@ export const ProductRowProfile = ({ image, productName }) => {
   );
 };
 
+const STATUS_BASE = "px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px] text-center";
+
+const STATUS_STYLES = {
+  active:    `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
+  inactive:  `bg-[#EEEEEE] text-[#7B7B7B] ${STATUS_BASE}`,
+  suspended: `bg-[#FFF0F1] text-[#BC0D10] ${STATUS_BASE}`,
+  upcoming:  `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
+  completed: `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
+  cancelled: `bg-[#FFF0F0] text-[#BC0D10] ${STATUS_BASE}`,
+  pending:   `bg-[#FFF6E8] text-[#FF9800] ${STATUS_BASE}`,
+  shipped:   `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
+  returned:  `bg-[#F0F0F0] text-[#7B7B7B] ${STATUS_BASE}`,
+  delivered: `bg-[#FFF0F0] text-[#BC0D10] ${STATUS_BASE}`,
+  paid:      `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
+  inprocess: `bg-[#FFFAE9] text-[#FF9800] ${STATUS_BASE}`,
+  expired:   `bg-[#FFF0F0] text-[#BC0D10] ${STATUS_BASE}`,
+  open:      `bg-[#EEEEEE] text-[#7B7B7B] ${STATUS_BASE}`,
+  resolved:  `bg-[#EAFFED] text-[#097415] ${STATUS_BASE}`,
+  checking:  `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
+};
+
 export const GetStatusBadge = ({ status }) => {
   return (
-    <Badge
-      className={
-        status === "active"
-          ? "bg-[#EAFFED] text-[#097416] px-[8px] py-[12px] w-[75px] h-[31px] rounded-[4px]  text-center "
-          : status === "inactive"
-            ? "bg-[#EEEEEE] text-[#7B7B7B``] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-            : status === "suspended"
-              ? "bg-[#FFF0F1 ] text-[#BC0D10] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-              : status === "upcoming"
-                ? "bg-[#E5FCFF] text-[#02C8DE] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                : status === "completed"
-                  ? "bg-[#EAFFED] text-[#097416] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                  : status === "cancelled"
-                    ? "bg-[#FFF0F0] text-[#BC0D10] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                    : status === "pending"
-                      ? "bg-[#FFF6E8] text-[#FF9800] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                      : status === "shipped"
-                        ? "bg-[#E5FCFF] text-[#02C8DE] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                        : status === "returned"
-                          ? "bg-[#F0F0F0] text-[#7B7B7B] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                          : status === "delivered"
-                            ? "bg-[#FFF0F0] text-[#BC0D10] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                            : status === "paid"
-                              ? "bg-[#EAFFED ] text-[#097416] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                              : status === "inprocess"
-                                ? "bg-[#FFFAE9] text-[#FF9800] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                                : status === "expired"
-                                  ? "bg-[#FFF0F0] text-[#BC0D10] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                                  : status === "open"
-                                    ? "bg-[#EEEEEE] text-[#7B7B7B] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                                    : status === "resolved"
-                                      ? "bg-[#EAFFED] text-[#097415] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                                      : status === "checking"
-                                        ? "bg-[#E5FCFF] text-[#02C8DE] px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px]  text-center"
-                                        : ""
-      }
-    >
+    <Badge className={STATUS_STYLES[status] || ""}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </Badge>
   );

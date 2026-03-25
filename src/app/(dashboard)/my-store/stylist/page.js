@@ -90,11 +90,11 @@ const StylistPage = () => {
   );
 
   const handleAddStylist = async (data) => {
-    if (!data?.fullName?.trim()) return toast.error("Full Name is required.");
-    if (!data?.email?.trim()) return toast.error("Email is required.");
-    if (!data?.phoneNumber?.trim()) return toast.error("Phone Number is required.");
-    if (!data?.services || data?.services?.length === 0) return toast.error("Please select at least one service.");
-    if (!data?.workingDays || data?.workingDays?.length === 0) return toast.error("Please select at least one working day.");
+    if (!data?.fullName?.trim()) { toast.error("Full Name is required."); return false; }
+    if (!data?.email?.trim()) { toast.error("Email is required."); return false; }
+    if (!data?.phoneNumber?.trim()) { toast.error("Phone Number is required."); return false; }
+    if (!data?.services || data?.services?.length === 0) { toast.error("Please select at least one service."); return false; }
+    if (!data?.workingDays || data?.workingDays?.length === 0) { toast.error("Please select at least one working day."); return false; }
 
     const statusRaw = data?.status;
     const status = Array.isArray(statusRaw)
@@ -109,7 +109,7 @@ const StylistPage = () => {
     formData.append("phoneNumber", data?.phoneNumber?.trim() || "");
     formData.append("experience", Number(data?.experience_years || 0));
     formData.append("status", status);
-    formData.append("about", data?.textarea || "");
+    formData.append("about", data?.about || "");
     formData.append("specialization", data?.specialization || "");
 
     if (Array.isArray(data?.services)) {
@@ -137,11 +137,11 @@ const StylistPage = () => {
   };
 
   const handleUpdateStylist = async (data) => {
-    if (!data?.fullName?.trim()) return toast.error("Full Name is required.");
-    if (!data?.email?.trim()) return toast.error("Email is required.");
-    if (!data?.phoneNumber?.trim()) return toast.error("Phone Number is required.");
-    if (!data?.services || data?.services?.length === 0) return toast.error("Please select at least one service.");
-    if (!data?.workingDays || data?.workingDays?.length === 0) return toast.error("Please select at least one working day.");
+    if (!data?.fullName?.trim()) { toast.error("Full Name is required."); return false; }
+    if (!data?.email?.trim()) { toast.error("Email is required."); return false; }
+    if (!data?.phoneNumber?.trim()) { toast.error("Phone Number is required."); return false; }
+    if (!data?.services || data?.services?.length === 0) { toast.error("Please select at least one service."); return false; }
+    if (!data?.workingDays || data?.workingDays?.length === 0) { toast.error("Please select at least one working day."); return false; }
 
     const statusRaw = data?.status;
     const status = Array.isArray(statusRaw)
@@ -156,7 +156,7 @@ const StylistPage = () => {
     formData.append("phoneNumber", data?.phoneNumber?.trim() || "");
     formData.append("experience", Number(data?.experience_years || 0));
     formData.append("status", status);
-    formData.append("about", data?.textarea || "");
+    formData.append("about", data?.about || "");
     formData.append("specialization", data?.specialization || "");
 
     if (Array.isArray(data?.services)) {

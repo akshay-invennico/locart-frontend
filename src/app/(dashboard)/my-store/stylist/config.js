@@ -29,7 +29,7 @@ export const addStylistConfig = {
       placeholder1: "e.g, Lock Whisperer Master",
       value1: "",
       label2: "Specialization",
-      name2: "Specialization",
+      name2: "specialization",
       placeholder2: "Location, LocTrainer",
       value2: "",
     },
@@ -89,6 +89,7 @@ export const addStylistConfig = {
     },
     {
       type: "textarea",
+      name: "about",
       label: "About Stylist",
       label2: "Max 200 Words",
       placeholder: "Description",

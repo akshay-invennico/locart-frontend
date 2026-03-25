@@ -16,7 +16,7 @@ export const leftSidebarItems = [
     icon: <PiCirclesFourFill size={21} />,
   },
   {
-    title: "Users",
+    title: "Clients",
     url: "/users",
     icon: <FaUsers size={21} />,
   },

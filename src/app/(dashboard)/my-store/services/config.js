@@ -57,8 +57,7 @@ export const addServiceConfig = (onSubmit, categoryOptions) => ({
       label: "Add New Service",
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
       onClick: (data) => {
-        console.log("DATA RECEIVED FROM DYNAMIC FORM:", data);
-        onSubmit(data);
+        return onSubmit(data);
       },
     },
   },

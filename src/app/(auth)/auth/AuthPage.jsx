@@ -37,6 +37,7 @@ const AuthPage = () => {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loginLoading, setLoginLoading] = useState(false);
   const { setUser } = useUserContext();
 
   const {
@@ -72,6 +73,7 @@ const AuthPage = () => {
 
   // Handlers
   const handleLogin = async (data) => {
+    setLoginLoading(true);
     try {
       const res = await dispatch(loginUser(data)).unwrap();
       setUser(res.user);
@@ -81,6 +83,8 @@ const AuthPage = () => {
     } catch (err) {
       const msg = err?.message || "Login failed";
       toast.error(msg);
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -149,6 +153,7 @@ const AuthPage = () => {
             handleSubmit={handleSubmit}
             handleLogin={handleLogin}
             setCurrentView={setCurrentView}
+            loginLoading={loginLoading}
           />
         );
       case "forgot-password":

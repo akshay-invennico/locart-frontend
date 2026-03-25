@@ -54,12 +54,10 @@ const filterConfig = {
       label: "Reset",
       className:
         "w-full border border-[#02C8DE] text-[#02C8DE] px-4 py-2 rounded",
-      onClick: () => handleResetFilters(),
     },
     apply: {
       label: "Apply Filters",
       className: "bg-[#02C8DE] text-white px-4 py-2 rounded w-full",
-      onClick: (data) => applyFilters(data),
     },
   },
 };

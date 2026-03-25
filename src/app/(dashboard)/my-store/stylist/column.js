@@ -36,6 +36,10 @@ export const useStylistColumns = (handleUpdateStylist) => {
         type: "standard_avatar",
         style: {
           radius: "rounded-full",
+          maxWidth: "180px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
         },
       },
     },
@@ -225,7 +229,9 @@ const EditStylistSidebar = ({ row, handleUpdateStylist }) => {
       ...EditStylistConfig.footer,
       apply: {
         ...EditStylistConfig.footer.apply,
-        onClick: (data) => handleUpdateStylist({ ...data, id: row._id }),
+        onClick: (data) => {
+          return handleUpdateStylist({ ...data, id: row._id });
+        },
       },
     },
   };

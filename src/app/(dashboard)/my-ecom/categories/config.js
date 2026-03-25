@@ -56,11 +56,6 @@ export const createCategoryConfig = {
     { type: "divider" },
 
     {
-      type: "textBlock",
-      label: "Category Icon",
-
-    },
-    {
       type: "file",
       label: "Category Icon",
       name: "category_photo"
@@ -72,7 +67,7 @@ export const createCategoryConfig = {
     { type: "input", placeholder: "e.g, Loc Retwist", name: "name" },
 
     {
-      type: "selectCheckbox",
+      type: "selectCheckboxSingle",
       name: "status",
       label: "Status",
       options: [

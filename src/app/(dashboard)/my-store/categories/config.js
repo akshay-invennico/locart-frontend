@@ -58,7 +58,6 @@ export const createCategoryConfig = {
     {
       type: "file",
       label: "Category Icon",
-      label2: "(Max 10 files)",
       name: "category_photo",
     },
     {

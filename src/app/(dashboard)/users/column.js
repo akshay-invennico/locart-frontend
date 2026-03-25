@@ -4,6 +4,7 @@ import { reactivateClientConfig, suspendClientConfig } from "./config";
 import PopupForm from "@/components/ui/popupform";
 
 export const columns = (
+  handleSendResetPasswordLink,
   handleSuspendClients,
   handleReactivateClient,
 ) => [

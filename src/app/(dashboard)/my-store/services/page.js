@@ -77,19 +77,19 @@ const ServicesPage = () => {
     (id, data) => {
       if (!data?.name?.trim()) {
         toast.error("Service name is required.");
-        return;
+        return false;
       }
       if (!data?.base_price || isNaN(Number(data?.base_price)) || Number(data?.base_price) <= 0) {
         toast.error("Please enter a valid base price greater than 0.");
-        return;
+        return false;
       }
       if (!data?.duration || isNaN(Number(data?.duration)) || Number(data?.duration) <= 0) {
         toast.error("Please enter a valid duration greater than 0.");
-        return;
+        return false;
       }
       if (!data?.category_id) {
         toast.error("Please select a category.");
-        return;
+        return false;
       }
 
       const payload = {
@@ -119,19 +119,19 @@ const ServicesPage = () => {
     (data) => {
       if (!data?.name?.trim()) {
         toast.error("Service name is required.");
-        return;
+        return false;
       }
       if (!data?.base_price || isNaN(Number(data?.base_price)) || Number(data?.base_price) <= 0) {
         toast.error("Please enter a valid base price greater than 0.");
-        return;
+        return false;
       }
       if (!data?.duration || isNaN(Number(data?.duration)) || Number(data?.duration) <= 0) {
         toast.error("Please enter a valid duration greater than 0.");
-        return;
+        return false;
       }
       if (!data?.category_id) {
         toast.error("Please select a category.");
-        return;
+        return false;
       }
 
       const formData = new FormData();

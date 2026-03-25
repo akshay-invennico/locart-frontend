@@ -99,7 +99,7 @@ const CategoryPage = () => {
   const handleCreateCategory = async (data) => {
     if (!data?.name?.trim()) {
       toast.error("Category name is required.");
-      return;
+      return false;
     }
     const payload = {
       category_photo: data.category_photo,
@@ -166,14 +166,14 @@ const CategoryPage = () => {
   const handleUpdateCategory = async (id, data) => {
     if (!data?.name?.trim()) {
       toast.error("Category name is required.");
-      return;
+      return false;
     }
     const normalizedStatus = Array.isArray(data.status)
       ? data.status[0]
       : data.status;
     if (!normalizedStatus) {
       toast.error("Please select a category status.");
-      return;
+      return false;
     }
 
     const payload = {

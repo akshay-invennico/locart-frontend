@@ -282,9 +282,10 @@ const ActionComponent = ({
                 const providedOnCancel = content.props?.onCancel;
                 return React.cloneElement(content, {
                   data,
-                  onApply: (formData, ...rest) => {
+                  onApply: async (formData, ...rest) => {
                     if (typeof providedOnApply === "function") {
-                      providedOnApply(formData, data, ...rest);
+                      const result = await providedOnApply(formData, data, ...rest);
+                      if (result === false) return;
                     }
                     setPopUpOpen(false);
                   },
@@ -331,9 +332,10 @@ const ActionComponent = ({
                     const providedOnCancel = content.props?.onCancel;
                     return React.cloneElement(content, {
                       data,
-                      onApply: (formData, ...rest) => {
+                      onApply: async (formData, ...rest) => {
                         if (typeof providedOnApply === "function") {
-                          providedOnApply(formData, data, ...rest);
+                          const result = await providedOnApply(formData, data, ...rest);
+                          if (result === false) return;
                         }
                         closeAll();
                       },

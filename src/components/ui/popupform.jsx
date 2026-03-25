@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
 import { LuLock, LuEye, LuEyeOff } from "react-icons/lu";
 import ReactDOM from "react-dom";
+import { CHECKBOX_CLASS } from "@/components/form-fields/styles";
 
 const PopupForm = ({
   config,
@@ -16,6 +17,7 @@ const PopupForm = ({
   const [formData, setFormData] = useState({});
   const [dropdownStates, setDropdownStates] = useState({});
   const [dropdownPositions, setDropdownPositions] = useState({});
+  const [showPasswords, setShowPasswords] = useState({});
   const dropdownRefs = useRef({});
 
   const handleChange = (e, name) => {
@@ -35,21 +37,19 @@ const PopupForm = ({
   };
 
   const toggleDropdown = (name) => {
-    setDropdownStates((prev) => {
-      const isOpening = !prev[name];
-      if (isOpening && dropdownRefs.current[name]) {
-        const rect = dropdownRefs.current[name].getBoundingClientRect();
-        setDropdownPositions((pos) => ({
-          ...pos,
-          [name]: {
-            top: rect.bottom + window.scrollY,
-            left: rect.left + window.scrollX,
-            width: rect.width,
-          },
-        }));
-      }
-      return { ...prev, [name]: !prev[name] };
-    });
+    const isOpening = !dropdownStates[name];
+    if (isOpening && dropdownRefs.current[name]) {
+      const rect = dropdownRefs.current[name].getBoundingClientRect();
+      setDropdownPositions((pos) => ({
+        ...pos,
+        [name]: {
+          top: rect.bottom,
+          left: rect.left,
+          width: rect.width,
+        },
+      }));
+    }
+    setDropdownStates((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
   // Close dropdown on outside click
@@ -99,7 +99,7 @@ const PopupForm = ({
 
       case "input": {
         const isPassword = field.inputType === "password";
-        const [showPassword, setShowPassword] = useState(false);
+        const showPassword = showPasswords[field.name] || false;
 
         return (
           <div className="mb-2 relative">
@@ -137,7 +137,12 @@ const PopupForm = ({
               {isPassword && (
                 <button
                   type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
+                  onClick={() =>
+                    setShowPasswords((prev) => ({
+                      ...prev,
+                      [field.name]: !prev[field.name],
+                    }))
+                  }
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                 >
                   {showPassword ? (
@@ -193,17 +198,18 @@ const PopupForm = ({
       case "selectCheckbox": {
         const selectedOptions = formData[field.name] || [];
         const isOpen = dropdownStates[field.name] || false;
-        const pos = dropdownPositions[field.name];
+        const ref = dropdownRefs.current[field.name];
+        const rect = isOpen && ref ? ref.getBoundingClientRect() : null;
 
-        const dropdownMenu = isOpen && pos
+        const dropdownMenu = isOpen && rect
           ? ReactDOM.createPortal(
               <div
                 id={`dropdown-portal-${field.name}`}
                 style={{
                   position: "fixed",
-                  top: pos.top,
-                  left: pos.left,
-                  width: pos.width,
+                  top: rect.bottom,
+                  left: rect.left,
+                  width: rect.width,
                   zIndex: 9999,
                 }}
                 className="max-h-60 overflow-auto border rounded bg-white shadow-lg"
@@ -225,14 +231,7 @@ const PopupForm = ({
                             : [...prev, opt.value];
                           setFormData((f) => ({ ...f, [field.name]: updated }));
                         }}
-                        className="w-4 h-4 rounded border border-gray-300
-                        bg-white
-                        checked:bg-[#02C8DE] 
-                        relative cursor-pointer 
-                        before:content-['✔'] before:absolute before:text-[#7B7B7B]
-                        checked:before:text-white before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2
-                        appearance-none
-                        flex items-center justify-center"
+                        className={CHECKBOX_CLASS}
                       />
                       <span
                         className={`text-sm ${
