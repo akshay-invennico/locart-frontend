@@ -1,0 +1,152 @@
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import Spinner from "@/components/common/Spinner";
+import CreateCategoryForm from "./forms/CreateCategoryForm";
+import { fetchCategoryById } from "@/state/ecom/ecomSlice";
+
+const EditCategoryLoader = ({ rowData, onEdit, onCancel }) => {
+  const dispatch = useDispatch();
+  const [initialValues, setInitialValues] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const res = await dispatch(fetchCategoryById(rowData?._id)).unwrap();
+        const d = res || {};
+
+        const mapped = {
+          name: d.name || "",
+          description: d.description || "",
+          image: d.image || "",
+          status: d.status ? d.status.toLowerCase() : "inactive",
+        };
+
+        if (mounted) setInitialValues(mapped);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [rowData?._id, dispatch]);
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-full w-full">
+        <Spinner />
+      </div>
+    );
+
+  return (
+    <CreateCategoryForm
+      isEdit
+      initialValues={initialValues}
+      onSubmit={(values) => onEdit(rowData._id, values)}
+      onCancel={onCancel}
+    />
+  );
+};
+
+export default EditCategoryLoader;
+
+export const getColumns = (
+  handleCancelOrder,
+  handleViewCategory,
+  handleUpdateCategory,
+  handleEditCategory,
+  setSidebarContent,
+  handleCategoryStatusUpdate
+) => [
+  {
+    key: "category",
+    title: "Category",
+    isPrimary: true,
+    isObject: true,
+    structure: { name: "categoryName", profile: "profile" },
+    component: {
+      type: "standard_avatar",
+      style: {
+        radius: "rounded-md",
+        border: "border border-[#00A78E]",
+      },
+    },
+  },
+  {
+    key: "productsCount",
+    title: "Attached Services",
+    component: {
+      type: "phone",
+      style: { color: "var(--color-dull-text)", fontWeight: "500" },
+    },
+  },
+  {
+    key: "status",
+    title: "Status",
+    component: {
+      type: "badge",
+      style: { borderRadius: "3.15px", padding: "8px 12px" },
+      options: {
+        value: {
+          active: "#097416",
+          inactive: "#9CA3AF",
+          used: "#BC0D10",
+        },
+      },
+    },
+  },
+  {
+    key: "actions",
+    title: "Actions",
+    component: {
+      type: "action",
+      options: {
+        actions: (row) => {
+          const isInactive = row.status?.toLowerCase() === "inactive";
+
+          return [
+            {
+              label: "View Category",
+              iconUrl: "/icons/show.svg",
+              type: "sidebar",
+              onClick: (row) => handleViewCategory(row._id),
+            },
+            {
+              label: "Edit Category",
+              iconUrl: "/icons/editBooking.svg",
+              type: "sidebar",
+              onClick: (row) =>
+                setSidebarContent(
+                  <EditCategoryLoader
+                    rowData={row}
+                    onEdit={handleUpdateCategory}
+                    onCancel={() => setSidebarContent(null)}
+                  />
+                ),
+            },
+            {
+              label: isInactive ? "Mark As Active" : "Mark As Inactive",
+              iconUrl: "/icons/markCompleted.svg",
+              type: "button",
+              onClick: () =>
+                handleCategoryStatusUpdate(
+                  row._id,
+                  isInactive ? "active" : "inactive"
+                ),
+            },
+            {
+              label: "Delete Category",
+              iconUrl: "/icons/deleteProduct.svg",
+              type: "button",
+              onClick: (row) => handleCancelOrder(row),
+            },
+          ];
+        },
+      },
+    },
+  },
+];

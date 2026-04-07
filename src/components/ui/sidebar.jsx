@@ -362,11 +362,12 @@ function SidebarGroup({ className, ...props }) {
   );
 }
 
-function SidebarGroupLabel({ className, asChild = false, ...props }) {
+const SidebarGroupLabel = React.forwardRef(({ className, asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "div";
 
   return (
     <Comp
+      ref={ref}
       data-slot="sidebar-group-label"
       data-sidebar="group-label"
       className={cn(
@@ -377,13 +378,14 @@ function SidebarGroupLabel({ className, asChild = false, ...props }) {
       {...props}
     />
   );
-}
+});
 
-function SidebarGroupAction({ className, asChild = false, ...props }) {
+const SidebarGroupAction = React.forwardRef(({ className, asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "button";
 
   return (
     <Comp
+      ref={ref}
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
@@ -396,7 +398,7 @@ function SidebarGroupAction({ className, asChild = false, ...props }) {
       {...props}
     />
   );
-}
+});
 
 function SidebarGroupContent({ className, ...props }) {
   return (
@@ -453,7 +455,7 @@ const sidebarMenuButtonVariants = cva(
   }
 );
 
-function SidebarMenuButton({
+const SidebarMenuButton = React.forwardRef(({
   asChild = false,
   isActive = false,
   variant = "default",
@@ -461,12 +463,13 @@ function SidebarMenuButton({
   tooltip,
   className,
   ...props
-}) {
+}, ref) => {
   const Comp = asChild ? Slot : "button";
   const { isMobile, state } = useSidebar();
 
   const button = (
     <Comp
+      ref={ref}
       data-slot="sidebar-menu-button"
       data-sidebar="menu-button"
       data-size={size}
@@ -497,18 +500,19 @@ function SidebarMenuButton({
       />
     </Tooltip>
   );
-}
+});
 
-function SidebarMenuAction({
+const SidebarMenuAction = React.forwardRef(({
   className,
   asChild = false,
   showOnHover = false,
   ...props
-}) {
+}, ref) => {
   const Comp = asChild ? Slot : "button";
 
   return (
     <Comp
+      ref={ref}
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
@@ -526,7 +530,7 @@ function SidebarMenuAction({
       {...props}
     />
   );
-}
+});
 
 function SidebarMenuBadge({ className, ...props }) {
   return (
@@ -603,17 +607,18 @@ function SidebarMenuSubItem({ className, ...props }) {
   );
 }
 
-function SidebarMenuSubButton({
+const SidebarMenuSubButton = React.forwardRef(({
   asChild = false,
   size = "md",
   isActive = false,
   className,
   ...props
-}) {
+}, ref) => {
   const Comp = asChild ? Slot : "a";
 
   return (
     <Comp
+      ref={ref}
       data-slot="sidebar-menu-sub-button"
       data-sidebar="menu-sub-button"
       data-size={size}
@@ -629,7 +634,7 @@ function SidebarMenuSubButton({
       {...props}
     />
   );
-}
+});
 
 export {
   Sidebar,

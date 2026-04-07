@@ -1,13 +1,12 @@
-"use client"
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { MoreVertical } from "lucide-react";
 
 export default function PortfolioCard({ data, onOpenMenu }) {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    router.push(`/my-store/portfolio/${data.id}`);
+    navigate(`/my-store/portfolio/${data.id}`);
   };
   return (
     <div onClick={handleClick} className="border rounded-xl shadow-sm hover:shadow-md transition p-3 bg-white cursor-pointer relative">

@@ -5,14 +5,15 @@ import * as SeparatorPrimitive from "@radix-ui/react-separator"
 
 import { cn } from "@/lib/utils"
 
-function Separator({
+const Separator = React.forwardRef(({
   className,
   orientation = "horizontal",
   decorative = true,
   ...props
-}) {
+}, ref) => {
   return (
     <SeparatorPrimitive.Root
+      ref={ref}
       data-slot="separator"
       decorative={decorative}
       orientation={orientation}
@@ -22,6 +23,6 @@ function Separator({
       )}
       {...props} />
   );
-}
+});
 
 export { Separator }

@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { EllipsisVertical, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +28,7 @@ const ActionComponent = ({
   const [currentAction, setCurrentAction] = useState(null);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const evaluatedActions =
     typeof actions === "function" ? actions(data) : actions || [];
@@ -61,7 +60,7 @@ const ActionComponent = ({
         finalUrl = action.url.replace(":id", data?.id || "");
       }
 
-      router.push(finalUrl);
+      navigate(finalUrl);
       setIsOpen(false);
       return;
     }
@@ -115,7 +114,7 @@ const ActionComponent = ({
   const renderIcon = (action) => {
     if (action.iconUrl) {
       return (
-        <Image src={action.iconUrl} alt={action.label} width={16} height={16} />
+        <img src={action.iconUrl} alt={action.label} width={16} height={16} />
       );
     }
     return null;

@@ -5,9 +5,10 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
 
-function Avatar({ className, ...props }) {
+const Avatar = React.forwardRef(({ className, ...props }, ref) => {
   return (
     <AvatarPrimitive.Root
+      ref={ref}
       data-slot="avatar"
       className={cn(
         "relative flex size-8 shrink-0 overflow-hidden rounded-full",
@@ -16,21 +17,23 @@ function Avatar({ className, ...props }) {
       {...props}
     />
   );
-}
+});
 
-function AvatarImage({ className, ...props }) {
+const AvatarImage = React.forwardRef(({ className, ...props }, ref) => {
   return (
     <AvatarPrimitive.Image
+      ref={ref}
       data-slot="avatar-image"
       className={cn("aspect-square size-full", className)}
       {...props}
     />
   );
-}
+});
 
-function AvatarFallback({ className, ...props }) {
+const AvatarFallback = React.forwardRef(({ className, ...props }, ref) => {
   return (
     <AvatarPrimitive.Fallback
+      ref={ref}
       data-slot="avatar-fallback"
       className={cn(
         "bg-muted flex size-full items-center justify-center rounded-full",
@@ -39,6 +42,6 @@ function AvatarFallback({ className, ...props }) {
       {...props}
     />
   );
-}
+});
 
 export { Avatar, AvatarImage, AvatarFallback };

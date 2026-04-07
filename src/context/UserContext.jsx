@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useState, useEffect } from "react";
 
 export const UserContext = createContext(null);
@@ -21,7 +19,7 @@ export const UserProvider = ({ children }) => {
 
     const fetchUser = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}auth/me`, {
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

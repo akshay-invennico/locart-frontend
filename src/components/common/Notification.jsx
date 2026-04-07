@@ -1,7 +1,5 @@
-"use client";
 import React, { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 
 const Notification = ({
   isOpen,
@@ -22,7 +20,7 @@ const Notification = ({
       case "booking":
         return (
           <div className={baseStyle}>
-            <Image
+            <img
               src="/icons/notification_booking.svg"
               alt="Booking"
               width={20}
@@ -46,7 +44,7 @@ const Notification = ({
       case "payment":
         return (
           <div className={baseStyle}>
-            <Image
+            <img
               src="/icons/notification_payment.svg"
               alt="Payment"
               width={24}
@@ -141,7 +139,7 @@ const Notification = ({
               className={`${notifications.length === 0 ? 'hidden' : 'flex '} items-center gap-1 text-sm text-primary1 font-medium hover:underline transition-all`}
             >
               <span>{isExpanded ? "Collapse" : "View More"}</span>
-              <Image
+              <img
                 src="/icons/direction.svg"
                 alt="View More"
                 width={18}

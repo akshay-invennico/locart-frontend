@@ -1,6 +1,5 @@
 import React, { useState, useId, useEffect } from "react";
 import { LuGalleryVertical, LuX } from "react-icons/lu";
-import Image from "next/image";
 
 const FileUpload = ({ onChange, value, multiple = false }) => {
   const [files, setFiles] = useState([]);
