@@ -71,7 +71,9 @@ const UsersPage = () => {
     dispatch(suspendClientsByIds({ clientIds, reason }))
       .unwrap()
       .then(() => {
-        dispatch(fetchClients(filters));
+        dispatch(
+          fetchClients({ ...filters, page: currentPage, limit: itemsPerPage })
+        );
         toast.success("Client suspended successfully");
         setBulkSuspendOpen(false);
       })
@@ -84,7 +86,9 @@ const UsersPage = () => {
     dispatch(reactivateClientById(row.id || row._id))
       .unwrap()
       .then(() => {
-        dispatch(fetchClients(filters));
+        dispatch(
+          fetchClients({ ...filters, page: currentPage, limit: itemsPerPage })
+        );
         toast.success("Client reactivated successfully");
       })
       .catch((err) => {

@@ -64,6 +64,13 @@ const ServicesPage = () => {
 
   const handleEdit = useCallback(
     (id, data) => {
+      const rawFiles = data?.services;
+      const files = rawFiles
+        ? (Array.isArray(rawFiles) ? rawFiles : [rawFiles]).filter(
+            (f) => f instanceof File
+          )
+        : [];
+
       const payload = {
         name: data?.name?.trim() || "",
         description: data?.description || "",
@@ -71,16 +78,21 @@ const ServicesPage = () => {
         base_price: parseFloat(data?.base_price) || 0,
         status: data?.status?.toLowerCase() || "inactive",
         category_id: data?.category_id?._id || data?.category_id || "",
-        services: data?.services || [],
         images_to_delete: data?.images_to_delete || [],
       };
+      if (files.length) payload.services = files;
 
       dispatch(editService({ id, data: payload }))
         .unwrap()
-        .then(() => toast.success("Service updated successfully!"))
+        .then(() => {
+          toast.success("Service updated successfully!");
+          dispatch(
+            fetchStoreServices({ page: currentPage, limit: itemsPerPage })
+          );
+        })
         .catch(() => toast.error("Failed to update service."));
     },
-    [dispatch]
+    [dispatch, currentPage]
   );
 
   const handleAddService = useCallback(

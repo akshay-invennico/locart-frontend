@@ -18,9 +18,10 @@ const EditCategoryLoader = ({ rowData, onEdit, onCancel }) => {
         const d = res || {};
 
         const mapped = {
-          name: d.name || "",
+          name: d.name || d.categoryName || "",
           description: d.description || "",
-          image: d.image || "",
+          image: null,
+          existingImage: d.image || d.category_photo || "",
           status: d.status ? d.status.toLowerCase() : "inactive",
         };
 

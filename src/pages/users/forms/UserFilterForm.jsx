@@ -6,7 +6,7 @@ const statusOptions = [
   { value: "all", label: "All" },
   { value: "active", label: "Active" },
   { value: "inactive", label: "Inactive" },
-  { value: "suspend", label: "Suspended" },
+  { value: "suspended", label: "Suspended" },
 ];
 
 const UserFilterForm = ({ initialValues, onSubmit, onReset }) => {

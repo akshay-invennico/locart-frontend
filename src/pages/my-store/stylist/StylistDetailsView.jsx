@@ -10,18 +10,30 @@ const InfoItem = ({ label, value, valueStyle }) => (
   </div>
 );
 
-const StylistDetailsView = ({ row }) => {
+const StylistDetailsView = ({ row, stylist: stylistProp }) => {
   const dispatch = useDispatch();
-  const [stylist, setStylist] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [stylist, setStylist] = useState(stylistProp || null);
+  const [loading, setLoading] = useState(!stylistProp);
 
   useEffect(() => {
+    if (stylistProp) {
+      setStylist(stylistProp);
+      setLoading(false);
+      return;
+    }
     let mounted = true;
     const load = async () => {
-      if (!row?._id) return;
+      const id = row?._id || row?.id;
+      if (!id) {
+        if (mounted) setLoading(false);
+        return;
+      }
       try {
-        const result = await dispatch(fetchStylistsById(row._id)).unwrap();
-        if (mounted) setStylist(result?.data?.stylist || result?.stylist || {});
+        const result = await dispatch(fetchStylistsById(id)).unwrap();
+        if (mounted)
+          setStylist(
+            result?.data?.stylist || result?.stylist || result?.data || result || {}
+          );
       } catch (err) {
         console.error("Error loading stylist:", err);
       } finally {
@@ -30,10 +42,10 @@ const StylistDetailsView = ({ row }) => {
     };
     load();
     return () => { mounted = false; };
-  }, [row?._id, dispatch]);
+  }, [row?._id, row?.id, stylistProp, dispatch]);
 
   if (loading) return <div className="flex items-center justify-center h-[70vh]"><Spinner /></div>;
-  if (!stylist) return <div>Error loading stylist details</div>;
+  if (!stylist) return <div className="p-4 text-gray-500">No stylist data available</div>;
 
   return (
     <div className="space-y-6">

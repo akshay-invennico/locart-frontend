@@ -275,7 +275,7 @@ const clientSlice = createSlice({
         state.loading = false;
         const suspendedIds = action.payload.clientIds;
         state.clients = state.clients.map((client) =>
-          suspendedIds.includes(client._id)
+          suspendedIds.includes(client.id) || suspendedIds.includes(client._id)
             ? { ...client, status: "suspended" }
             : client
         );
@@ -292,7 +292,9 @@ const clientSlice = createSlice({
         state.loading = false;
         const id = action.payload.id;
         state.clients = state.clients.map((client) =>
-          client._id === id ? { ...client, status: "active" } : client
+          client.id === id || client._id === id
+            ? { ...client, status: "active" }
+            : client
         );
       })
       .addCase(reactivateClientById.rejected, (state, action) => {

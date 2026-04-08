@@ -3,7 +3,7 @@ import { Formik, Form } from "formik";
 import { FormCheckboxGroup, FormTextarea } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 
-const FlagBookingForm = ({ onSubmit, onCancel }) => {
+const FlagBookingForm = ({ onSubmit, onCancel = () => {} }) => {
   return (
     <Formik
       initialValues={{ reason: [], note: "" }}
@@ -51,6 +51,24 @@ const FlagBookingForm = ({ onSubmit, onCancel }) => {
                 />
               )}
             </div>
+          </div>
+
+          <div className="flex gap-3 pt-4 mt-4 border-t border-[#E4E4E6]">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 border-[#02C8DE] text-[#02C8DE]"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={!values.reason?.length}
+              className="flex-1 bg-[#02C8DE] text-white hover:bg-[#02C8DE]/90 disabled:opacity-50"
+            >
+              Flag Booking
+            </Button>
           </div>
         </Form>
       )}

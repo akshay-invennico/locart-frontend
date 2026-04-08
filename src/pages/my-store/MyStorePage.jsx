@@ -7,6 +7,7 @@ import { SlidePanel } from "@/components/feedback";
 import StoreEditForm from "./forms/StoreEditForm";
 import Spinner from "@/components/common/Spinner";
 import CreateStore from "@/components/store/CreateStore";
+import { toast } from "sonner";
 
 const mapStoreData = (data) => ({
   storeName: data.name,
@@ -79,9 +80,17 @@ const MyStorePage = () => {
     dispatch(fetchStoreDetails());
   }, [dispatch, isCreateModalOpen]);
 
-  const handleUpdateStore = (values) => {
-    dispatch(updateStore({ id: storeId, data: values }));
-    setEditOpen(false);
+  const handleUpdateStore = async (values) => {
+    try {
+      await dispatch(updateStore({ id: storeId, data: values })).unwrap();
+      toast.success("Store updated successfully");
+      setEditOpen(false);
+      dispatch(fetchStoreDetails());
+    } catch (err) {
+      toast.error(
+        typeof err === "string" ? err : err?.message || "Failed to update store"
+      );
+    }
   };
 
   if (loading)

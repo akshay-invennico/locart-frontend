@@ -21,27 +21,35 @@ export default function UserProductOrdersPage() {
   const [searchText, setSearchText] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
 
-  const convertFiltersToParams = (data) => ({
-    deliveryStatus:
-      data?.status?.length && !data.status.includes("all")
-        ? data.status.join(",")
-        : "",
-    dateFrom: data?.dateFrom || "",
-    dateTo: data?.dateTo || "",
-    minAmount: data?.minAmount || "",
-    maxAmount: data?.maxAmount || "",
-    page: 1,
-    limit: 10,
-  });
+  const convertFiltersToParams = (data) => {
+    const toIso = (d) => {
+      if (!d) return "";
+      const dt = d instanceof Date ? d : new Date(d);
+      return isNaN(dt.getTime()) ? "" : dt.toISOString();
+    };
+    return {
+      deliveryStatus:
+        data?.status?.length && !data.status.includes("all")
+          ? data.status.join(",")
+          : "",
+      dateFrom: toIso(data?.dateFrom),
+      dateTo: toIso(data?.dateTo),
+      minAmount: data?.minAmount || "",
+      maxAmount: data?.maxAmount || "",
+      page: 1,
+      limit: 10,
+    };
+  };
 
   useEffect(() => {
+    if (!id) return;
     dispatch(
       fetchClientOrders({
         clientId: id,
         params: convertFiltersToParams(filters),
       })
     );
-  }, [filters]);
+  }, [id, filters, dispatch]);
 
   const filteredOrders = useMemo(() => {
     if (!searchText) return orders;
@@ -85,8 +93,8 @@ export default function UserProductOrdersPage() {
         issueDate: order.date
           ? new Date(order.date).toLocaleDateString()
           : row.order_date
-          ? new Date(row.order_date).toLocaleDateString()
-          : new Date().toLocaleDateString(),
+            ? new Date(row.order_date).toLocaleDateString()
+            : new Date().toLocaleDateString(),
         dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         deliveryDate: order.date ? new Date(order.date).toLocaleDateString() : "",
         client: {
@@ -98,22 +106,22 @@ export default function UserProductOrdersPage() {
         items:
           products.length > 0
             ? products.map((p) => ({
-                description: p.name || p.product?.name || "Product",
-                quantity: p.quantity || 1,
-                price: p.price ?? p.unitPrice ?? 0,
-                discount: p.discount ?? 0,
-                amount: p.subtotal ?? (p.price ?? 0) * (p.quantity ?? 1),
-              }))
+              description: p.name || p.product?.name || "Product",
+              quantity: p.quantity || 1,
+              price: p.price ?? p.unitPrice ?? 0,
+              discount: p.discount ?? 0,
+              amount: p.subtotal ?? (p.price ?? 0) * (p.quantity ?? 1),
+            }))
             : [
-                {
-                  description:
-                    row.product?.name || "Product Order #" + (row.order_id || ""),
-                  quantity: 1,
-                  price: Number(itemTotal),
-                  discount: Number(loyaltyDiscount),
-                  amount: Number(itemTotal) - Number(loyaltyDiscount),
-                },
-              ],
+              {
+                description:
+                  row.product?.name || "Product Order #" + (row.order_id || ""),
+                quantity: 1,
+                price: Number(itemTotal),
+                discount: Number(loyaltyDiscount),
+                amount: Number(itemTotal) - Number(loyaltyDiscount),
+              },
+            ],
         subtotal: Number(itemTotal).toFixed(2),
         tax: Number(taxes).toFixed(2),
         total: Number(total).toFixed(2),

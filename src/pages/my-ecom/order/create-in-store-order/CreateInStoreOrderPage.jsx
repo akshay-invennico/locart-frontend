@@ -113,7 +113,13 @@ const CreateInStoreOrderPage = () => {
     [dispatch, navigate]
   );
 
-  const handleBack = () => navigate(-1);
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate("/my-ecom/order", { replace: true });
+    }
+  };
 
   return (
     <div className="bg-white flex flex-col gap-4">

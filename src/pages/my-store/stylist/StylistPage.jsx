@@ -117,9 +117,21 @@ const StylistPage = () => {
   };
 
   const handleUpdateStylist = async (data) => {
-    const formData = buildFormData(data);
-    await dispatch(updateStylist({ id: data?.id, formData }));
-    dispatch(fetchStylists({ page: currentPage, limit: itemsPerPage }));
+    const id = data?.id || data?._id;
+    if (!id) {
+      toast.error("Stylist ID missing — cannot update.");
+      return;
+    }
+    try {
+      const formData = buildFormData(data);
+      await dispatch(updateStylist({ id, formData })).unwrap();
+      toast.success("Stylist updated successfully");
+      dispatch(fetchStylists({ page: currentPage, limit: itemsPerPage }));
+    } catch (err) {
+      toast.error(
+        typeof err === "string" ? err : err?.message || "Failed to update stylist"
+      );
+    }
   };
 
   const options = { select: true, order: false };

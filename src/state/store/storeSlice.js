@@ -68,8 +68,8 @@ export const removeService = createAsyncThunk(
   "services/removeService",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await deleteService(id);
-      return res.data.id;
+      await deleteService(id);
+      return id;
     } catch (error) {
       return rejectWithValue(error.message || "Failed to delete service");
     }

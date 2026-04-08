@@ -31,13 +31,50 @@ export default function UserBookingPage() {
   }));
 
   const filteredBookings = transformedBookings.filter((booking) => {
-    if (!searchText) return true;
-    const lowerSearch = searchText.toLowerCase();
-    return (
-      booking.stylist.toLowerCase().includes(lowerSearch) ||
-      booking.service.toLowerCase().includes(lowerSearch) ||
-      booking.booking_id?.toString().includes(lowerSearch)
+    // Search
+    if (searchText) {
+      const lowerSearch = searchText.toLowerCase();
+      const matchesSearch =
+        booking.stylist.toLowerCase().includes(lowerSearch) ||
+        booking.service.toLowerCase().includes(lowerSearch) ||
+        booking.booking_id?.toString().includes(lowerSearch);
+      if (!matchesSearch) return false;
+    }
+
+    // Status
+    const statuses = (filterValues?.status || []).filter(
+      (s) => s && s !== "all"
     );
+    if (statuses.length > 0) {
+      const bookingStatus = (booking.status || "").toLowerCase();
+      if (!statuses.map((s) => s.toLowerCase()).includes(bookingStatus)) {
+        return false;
+      }
+    }
+
+    // Date range
+    const bookingDate = booking.date ? new Date(booking.date) : null;
+    if (filterValues?.dateFrom) {
+      const from = new Date(filterValues.dateFrom);
+      if (!bookingDate || bookingDate < from) return false;
+    }
+    if (filterValues?.dateTo) {
+      const to = new Date(filterValues.dateTo);
+      if (!bookingDate || bookingDate > to) return false;
+    }
+
+    // Amount range
+    const amount = Number(
+      booking.amount_paid ?? booking.amount ?? 0
+    );
+    if (filterValues?.minAmount !== "" && filterValues?.minAmount != null) {
+      if (amount < Number(filterValues.minAmount)) return false;
+    }
+    if (filterValues?.maxAmount !== "" && filterValues?.maxAmount != null) {
+      if (amount > Number(filterValues.maxAmount)) return false;
+    }
+
+    return true;
   });
 
   useEffect(() => {
@@ -102,21 +139,21 @@ export default function UserBookingPage() {
         items:
           services.length > 0
             ? services.map((service) => ({
-                description: service.name || "Service",
-                quantity: "1 hours",
-                price: service.price || 0,
-                discount: 0,
-                amount: service.price || 0,
-              }))
+              description: service.name || "Service",
+              quantity: "1 hours",
+              price: service.price || 0,
+              discount: 0,
+              amount: service.price || 0,
+            }))
             : [
-                {
-                  description: bookingData.service?.name || "Service",
-                  quantity: "1 hours",
-                  price: amount,
-                  discount: discount,
-                  amount: amount - discount,
-                },
-              ],
+              {
+                description: bookingData.service?.name || "Service",
+                quantity: "1 hours",
+                price: amount,
+                discount: discount,
+                amount: amount - discount,
+              },
+            ],
         subtotal: Number(subtotal).toFixed(2),
         tax: Number(tax).toFixed(2),
         total: Number(total).toFixed(2),

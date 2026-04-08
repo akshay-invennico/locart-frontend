@@ -30,13 +30,18 @@ const PortfolioPage = () => {
   }, []);
 
   const handleAddPortfolio = async (formData) => {
-    const hasImages =
-      (formData?.images && Array.isArray(formData.images) && formData.images.length > 0) ||
-      (formData?.images instanceof FileList && formData.images.length > 0) ||
-      (formData?.images instanceof File) ||
-      (formData?.photos && Array.isArray(formData.photos) && formData.photos.length > 0) ||
-      (formData?.photos instanceof FileList && formData.photos.length > 0) ||
-      (formData?.photos instanceof File);
+    let hasImages = false;
+    if (formData instanceof FormData) {
+      const photos = formData.getAll("photos");
+      const images = formData.getAll("images");
+      hasImages =
+        photos.some((f) => f instanceof File) ||
+        images.some((f) => f instanceof File);
+    } else if (formData && typeof formData === "object") {
+      const pick = (v) =>
+        Array.isArray(v) ? v.length > 0 : v instanceof File || v instanceof FileList;
+      hasImages = pick(formData.images) || pick(formData.photos);
+    }
 
     if (!hasImages) {
       toast.error("Please upload at least one image.");
@@ -47,7 +52,8 @@ const PortfolioPage = () => {
       setLoading(true);
       const created = await createPortfolio(formData);
       const newAlbum = created?.data ?? created;
-      setAlbums((prev) => [newAlbum, ...prev]);
+      if (newAlbum) setAlbums((prev) => [newAlbum, ...prev]);
+      toast.success("Album created successfully");
       setIsOpen(false);
     } catch (err) {
       console.error("Create album error", err);

@@ -160,17 +160,36 @@ const OrderPage = () => {
   };
 
   const handleFlagOrders = (orderIds, reason) => {
+    if (!orderIds || orderIds.length === 0) {
+      toast.error("No orders selected to flag.");
+      return;
+    }
+
+    if (!reason) {
+      setSelectedFlagOrders(orderIds);
+      setShowFlagPopup(true);
+      return;
+    }
+
     dispatch(patchFlagOrders({ orderIds, reason }))
       .unwrap()
       .then(() => {
         toast.success("Orders flagged successfully!");
-        dispatch(fetchAllOrders());
+        dispatch(
+          fetchAllOrders({
+            page: currentPage,
+            limit: itemsPerPage,
+            orderMode: isToggled ? "store" : "",
+          })
+        );
         setShowFlagPopup(false);
         setSelectedFlagOrders([]);
       })
       .catch((err) => {
         console.error(err);
-        toast.error("Failed to flag orders!");
+        toast.error(
+          typeof err === "string" ? err : err?.message || "Failed to flag orders!"
+        );
       });
   };
 

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import StarRating from "@/components/ui/starRating";
 import Spinner from "@/components/common/Spinner";
-import { ConfirmDialog } from "@/components/feedback";
 import AddStylistForm from "./forms/AddStylistForm";
 import StylistDetailsView from "./StylistDetailsView";
 import {
@@ -10,6 +9,7 @@ import {
   removeStylist,
   fetchStylists,
 } from "@/state/stylist/stylistSlice";
+import { toast } from "sonner";
 
 export const useStylistColumns = (handleUpdateStylist) => {
   const dispatch = useDispatch();
@@ -123,8 +123,20 @@ export const useStylistColumns = (handleUpdateStylist) => {
 
 const DeleteStylistPopup = ({ row, dispatch }) => {
   const handleDelete = async () => {
-    await dispatch(removeStylist(row._id));
-    await dispatch(fetchStylists());
+    const id = row?._id || row?.id;
+    if (!id) {
+      toast.error("Stylist ID missing — cannot delete.");
+      return;
+    }
+    try {
+      await dispatch(removeStylist(id)).unwrap();
+      toast.success("Stylist deleted successfully");
+      await dispatch(fetchStylists());
+    } catch (err) {
+      toast.error(
+        typeof err === "string" ? err : err?.message || "Failed to delete stylist"
+      );
+    }
   };
 
   return (
@@ -159,10 +171,12 @@ const EditStylistSidebar = ({ row, handleUpdateStylist }) => {
 
   useEffect(() => {
     const fetchDetails = async () => {
-      if (row?._id) {
+      const stylistId = row?._id || row?.id;
+      if (stylistId) {
         try {
-          const result = await dispatch(fetchStylistsById(row._id)).unwrap();
-          const stylistData = result?.data?.stylist || result?.stylist || {};
+          const result = await dispatch(fetchStylistsById(stylistId)).unwrap();
+          const stylistData =
+            result?.data?.stylist || result?.stylist || result?.data || result || {};
 
           setInitialValues({
             id: stylistData._id,
@@ -178,7 +192,7 @@ const EditStylistSidebar = ({ row, handleUpdateStylist }) => {
             experience_years: stylistData.experience_years,
             status: stylistData.status
               ? stylistData.status.charAt(0).toUpperCase() +
-                stylistData.status.slice(1).toLowerCase()
+              stylistData.status.slice(1).toLowerCase()
               : "Active",
             about: stylistData.about,
           });
@@ -208,8 +222,10 @@ const EditStylistSidebar = ({ row, handleUpdateStylist }) => {
       isEdit
       initialValues={initialValues}
       serviceOptions={serviceOptions}
-      onSubmit={(values) => handleUpdateStylist({ ...values, id: row._id })}
-      onCancel={() => {}}
+      onSubmit={(values) =>
+        handleUpdateStylist({ ...values, id: row._id || row.id })
+      }
+      onCancel={() => { }}
     />
   );
 };
@@ -223,11 +239,17 @@ const ViewStylistAction = ({ row }) => {
     let isMounted = true;
     const loadComponent = async () => {
       try {
-        if (!row?._id) return;
+        const id = row?._id || row?.id;
+        if (!id) {
+          if (isMounted) setIsLoading(false);
+          return;
+        }
         setIsLoading(true);
-        const result = await dispatch(fetchStylistsById(row._id)).unwrap();
+        const result = await dispatch(fetchStylistsById(id)).unwrap();
         if (isMounted) {
-          setStylistData(result?.data?.stylist || result?.stylist || {});
+          setStylistData(
+            result?.data?.stylist || result?.stylist || result?.data || result || {}
+          );
         }
       } catch (error) {
         console.error("Error loading stylist details:", error);
@@ -240,7 +262,7 @@ const ViewStylistAction = ({ row }) => {
     return () => {
       isMounted = false;
     };
-  }, [row?._id, dispatch]);
+  }, [row?._id, row?.id, dispatch]);
 
   if (isLoading) {
     return (
@@ -251,8 +273,8 @@ const ViewStylistAction = ({ row }) => {
   }
 
   if (!stylistData) {
-    return <div>Error loading stylist details</div>;
+    return <div className="p-4 text-gray-500">No stylist data available</div>;
   }
 
-  return <StylistDetailsView row={{ ...row, _id: row._id }} />;
+  return <StylistDetailsView row={row} stylist={stylistData} />;
 };

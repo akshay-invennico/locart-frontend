@@ -53,6 +53,19 @@ const CreateCategoryForm = ({
             <hr className="border-gray-200" />
           </div>
 
+          {isEdit && defaults.existingImage && (
+            <div className="flex items-center gap-3">
+              <img
+                src={defaults.existingImage}
+                alt="Current category"
+                className="w-16 h-16 rounded object-cover border"
+              />
+              <span className="text-xs text-gray-500">
+                Current icon — upload a new file to replace it.
+              </span>
+            </div>
+          )}
+
           <FormFileUpload
             name={isEdit ? "image" : "category_photo"}
             label="Category Icon"

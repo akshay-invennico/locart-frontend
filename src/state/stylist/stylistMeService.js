@@ -69,6 +69,11 @@ export const createMyAppointment = async (payload) => {
   return data;
 };
 
+export const updateMyAppointment = async (id, payload) => {
+  const { data } = await api.patch(`/stylist/me/appointments/${id}`, payload);
+  return data;
+};
+
 export const updateMyAppointmentStatus = async (id, status, note) => {
   const { data } = await api.patch(`/stylist/me/appointments/${id}/status`, {
     status,

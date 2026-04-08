@@ -4,8 +4,12 @@ export const getAllAppointments = async (filters = {}) => {
   try {
     const params = {};
 
-    if (filters.status && !filters.status.includes("all")) {
-      params.status = filters.status.join(",");
+    if (filters.status) {
+      const statusArr = Array.isArray(filters.status)
+        ? filters.status
+        : String(filters.status).split(",");
+      const cleaned = statusArr.filter((s) => s && s !== "all");
+      if (cleaned.length) params.status = cleaned.join(",");
     }
 
     if (filters.joinedDate) {

@@ -42,13 +42,13 @@ const AppointmentsPage = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   // SlidePanel states
   const [showAddPanel, setShowAddPanel] = useState(false);
   const [showEditPanel, setShowEditPanel] = useState(false);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [showDetailPanel, setShowDetailPanel] = useState(false);
-  
+
   // Popup Dialog States
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showRefundPopup, setShowRefundPopup] = useState(false);
@@ -58,7 +58,7 @@ const AppointmentsPage = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]); // for bulk actions
   const [refundData, setRefundData] = useState(null);
-  
+
   const [filterFormValues, setFilterFormValues] = useState({});
 
   const dispatch = useDispatch();
@@ -118,39 +118,39 @@ const AppointmentsPage = () => {
     setFilterFormValues(formData);
     setShowFilterPanel(false);
 
-    const filters = {};
+    const filters = { page: 1, limit: itemsPerPage };
 
-    if (formData.status && formData.status.length > 0) {
-      filters.status = formData.status.join(",");
+    if (Array.isArray(formData.status) && formData.status.length > 0) {
+      filters.status = formData.status;
+    }
+
+    if (formData.joinedFrom || formData.joinedTo) {
+      filters.joinedDate = [formData.joinedFrom || "", formData.joinedTo || ""];
     }
 
     if (formData.numberRange_from || formData.numberRange_to) {
-      filters.min_amount = formData.numberRange_from || "";
-      filters.max_amount = formData.numberRange_to || "";
+      filters.numberRange = [
+        formData.numberRange_from || "",
+        formData.numberRange_to || "",
+      ];
     }
 
-    if (formData.joinedDate?.[0]) {
-      filters.start_date = formData.joinedDate[0];
-      filters.end_date = formData.joinedDate[1];
+    if (Array.isArray(formData.TimeRange) && formData.TimeRange[0]) {
+      filters.TimeRange = formData.TimeRange;
     }
 
-    if (formData.TimeRange?.[0]) {
-      filters.start_time = formData.TimeRange[0];
-      filters.end_time = formData.TimeRange[1];
-    }
+    const toIds = (arr) =>
+      (arr || [])
+        .map((s) => (typeof s === "object" ? s.value || s._id || s.id : s))
+        .filter(Boolean);
 
-    if (formData.stylist && formData.stylist.length > 0) {
-      filters.stylist_ids = formData.stylist.map((s) => s.value).join(",");
-    }
+    const stylistIds = toIds(formData.stylist);
+    if (stylistIds.length) filters.stylist = stylistIds;
 
-    if (formData.service && formData.service.length > 0) {
-      filters.service_ids = formData.service.map((s) => s.value).join(",");
-    }
+    const serviceIds = toIds(formData.service);
+    if (serviceIds.length) filters.service = serviceIds;
 
     setCurrentPage(1);
-    filters.page = 1;
-    filters.limit = itemsPerPage;
-
     dispatch(fetchAllAppointments(filters));
   };
 
@@ -173,14 +173,14 @@ const AppointmentsPage = () => {
   const getEditInitialValues = () => {
     const appt = selectedAppointment?.data || selectedAppointment;
     if (!appt) return {};
-    
+
     return {
       booking_id: appt.booking_number || "",
       date: appt.date || "",
       client_name: appt.client?.name || "",
       client_mobile: appt.client?.phone || "",
-      service_id: Array.isArray(appt.services) 
-        ? appt.services.map(s => s._id || s.id) 
+      service_id: Array.isArray(appt.services)
+        ? appt.services.map(s => s._id || s.id)
         : appt.service_id ? [appt.service_id] : [],
       stylist_id: appt.stylist?.id || appt.stylist?._id || appt.stylist_id || "",
       time_slot: appt.time || appt.time_slot || "",
@@ -278,7 +278,7 @@ const AppointmentsPage = () => {
   const handleInitiateRefundClick = async (row) => {
     const bookingId = row?.bookingId || row?.booking_id;
     if (!bookingId) return console.warn("No bookingId provided for refund");
-    
+
     try {
       const response = await dispatch(fetchRefundSummary(bookingId)).unwrap();
       setRefundData(response?.data || response);
@@ -308,8 +308,8 @@ const AppointmentsPage = () => {
         dispatch(fetchAllAppointments());
       })
       .catch((err) => {
-         console.error("Refund confirmation failed", err)
-         toast.error("Refund confirmation failed");
+        console.error("Refund confirmation failed", err)
+        toast.error("Refund confirmation failed");
       });
   };
 
@@ -614,7 +614,7 @@ const AppointmentsPage = () => {
       )}
 
       {/* Slide Panels */}
-      
+
       {/* 1. Add Panel */}
       <SlidePanel
         open={showAddPanel}
@@ -622,7 +622,7 @@ const AppointmentsPage = () => {
         title=""
         width="sm:max-w-md"
       >
-        <AddAppointmentForm 
+        <AddAppointmentForm
           existingClientOptions={existingClientOptions}
           serviceOptions={serviceOptions}
           stylistOptions={stylistOptions}
@@ -639,7 +639,7 @@ const AppointmentsPage = () => {
         width="sm:max-w-md"
       >
         {showEditPanel && selectedAppointment && (
-          <EditAppointmentForm 
+          <EditAppointmentForm
             initialValues={getEditInitialValues()}
             serviceOptions={serviceOptions}
             stylistOptions={stylistOptions}
@@ -674,7 +674,7 @@ const AppointmentsPage = () => {
         width="sm:max-w-[700px]"
       >
         {selectedAppointment && (
-          <BookingDetailsView 
+          <BookingDetailsView
             booking={selectedAppointment?.data || selectedAppointment}
             isLoctitian={isLoctitian}
             paymentStatus={selectedAppointment?.data?.payment?.payment_status || "Paid"}
@@ -694,7 +694,7 @@ const AppointmentsPage = () => {
         }}
         title=""
       >
-        <FlagBookingForm 
+        <FlagBookingForm
           onSubmit={(values) => {
             handleBulkStatusUpdate(selectedRows, "flagged", values.reason);
             setShowFlagPopup(false);
@@ -716,16 +716,13 @@ const AppointmentsPage = () => {
         }}
         title=""
       >
-        <CancelBookingForm 
+        <CancelBookingForm
           onSubmit={(values) => {
-            // First cancel
-             handleBulkStatusUpdate([selectedBooking], "cancelled", values.reason);
-             setShowCancelPopup(false);
-             
-             // Then trigger Refund modal automatically
-             if (selectedBooking?.bookingId || selectedBooking?.booking_id) {
-               handleInitiateRefundClick(selectedBooking);
-             }
+            handleBulkStatusUpdate([selectedBooking], "cancelled", values.reason);
+            setShowCancelPopup(false);
+            if (selectedBooking?.bookingId || selectedBooking?.booking_id) {
+              handleInitiateRefundClick(selectedBooking);
+            }
           }}
           onCancel={() => {
             setShowCancelPopup(false);

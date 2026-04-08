@@ -41,6 +41,55 @@ const CategoryDetailsView = ({ category, onClose }) => {
           <p className="text-sm">{category.description}</p>
         </div>
       )}
+
+      {(() => {
+        const linkedServices =
+          category.services ||
+          category.linkedServices ||
+          category.products ||
+          [];
+        if (!Array.isArray(linkedServices) || linkedServices.length === 0) {
+          return (
+            <div>
+              <p className="text-xs text-gray-500 mb-0.5">Attached Services</p>
+              <p className="text-sm text-gray-500">
+                No services attached to this category yet.
+              </p>
+            </div>
+          );
+        }
+        return (
+          <div>
+            <p className="text-xs text-gray-500 mb-2">Attached Services</p>
+            <ul className="divide-y border rounded-lg">
+              {linkedServices.map((s, i) => (
+                <li
+                  key={s._id || s.id || i}
+                  className="flex items-center justify-between px-3 py-2"
+                >
+                  <div className="flex items-center gap-3">
+                    {(s.images?.[0] || s.image) && (
+                      <img
+                        src={s.images?.[0] || s.image}
+                        alt={s.name}
+                        className="w-8 h-8 rounded object-cover border"
+                      />
+                    )}
+                    <span className="text-sm font-medium">
+                      {s.name || s.serviceName || "Untitled"}
+                    </span>
+                  </div>
+                  {s.base_price != null && (
+                    <span className="text-sm text-gray-500">
+                      ${s.base_price}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })()}
     </div>
   );
 };

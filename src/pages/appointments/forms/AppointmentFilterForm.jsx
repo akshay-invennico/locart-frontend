@@ -41,7 +41,7 @@ const AppointmentFilterForm = ({
     >
       {({ values, setFieldValue, resetForm }) => (
         <Form className="flex flex-col h-full">
-          <div className="flex-grow p-6 overflow-y-auto w-full space-y-6">
+          <div className="grow overflow-y-auto w-full space-y-6">
             <div>
               <h3 className="text-xl font-bold font-inter text-[#111111]">
                 Advanced Filters

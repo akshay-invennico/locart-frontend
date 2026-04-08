@@ -170,12 +170,8 @@ export const getColumns = (
             {
               label: "Flag Order",
               iconUrl: "/icons/flag.svg",
-              type: "popUp",
-              onAction: (data) => {
-                const reason = data?.reason || "";
-                if (!reason.trim()) return;
-                handleFlagOrders([row.order_id], reason.trim());
-              },
+              type: "action",
+              onClick: () => handleFlagOrders([row.order_id]),
             },
             {
               label: "Download Invoice",

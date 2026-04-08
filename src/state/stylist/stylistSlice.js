@@ -62,8 +62,8 @@ export const removeStylist = createAsyncThunk(
     "stylists/removeStylist",
     async (id, { rejectWithValue }) => {
         try {
-            const res = await deleteStylistById(id);
-            return res.data?.data?._id;
+            await deleteStylistById(id);
+            return id;
         } catch (error) {
             return rejectWithValue(error.message || "Failed to delete stylist");
         }

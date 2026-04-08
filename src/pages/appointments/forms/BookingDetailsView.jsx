@@ -60,22 +60,26 @@ const BookingDetailsView = ({
 
       {!isLoctitian && (
         <div className="space-y-4 border rounded-md p-4 bg-gray-50">
-          <div className="flex justify-between items-center pb-2 border-b border-gray-200">
-            <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-gray-200">
+            <h4 className="text-base font-semibold text-gray-800">
               Invoice Details
+            </h4>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="truncate text-xs text-gray-500 font-medium bg-gray-200 px-2 py-1 rounded max-w-[180px]">
+                {booking.invoiceId || booking.booking_number || booking.bookingId}
+              </span>
               {onDownloadInvoice && (
                 <button
+                  type="button"
                   onClick={() => onDownloadInvoice(booking)}
-                  className="text-[#02C8DE] hover:bg-[#02C8DE]/10 p-1.5 rounded-md transition-colors"
+                  className="shrink-0 inline-flex items-center gap-1 text-[#02C8DE] border border-[#02C8DE] hover:bg-[#02C8DE]/10 px-2 py-1 rounded-md transition-colors text-xs"
                   title="Download Invoice"
                 >
                   <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline">Download</span>
                 </button>
               )}
-            </h4>
-            <span className="text-xs text-gray-500 font-medium bg-gray-200 px-2 py-1 rounded">
-              {booking.invoiceId || booking.booking_number || booking.bookingId}
-            </span>
+            </div>
           </div>
 
           <div className="space-y-3 mt-3">

@@ -149,10 +149,12 @@ const CategoryPage = () => {
       status: normalizedStatus,
     };
 
-    if (payload.image) {
+    delete payload.existingImage;
+
+    if (payload.image instanceof File) {
       payload.category_photo = payload.image;
-      delete payload.image;
     }
+    delete payload.image;
 
     try {
       await dispatch(updateCategory({ categoryId: id, payload })).unwrap();

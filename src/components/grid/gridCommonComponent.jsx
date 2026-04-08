@@ -474,7 +474,7 @@ const GridCommonComponent = ({
                   )}
 
                   {order && (
-                    <div className="flex-shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <div className="shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
                       <span className="text-xs font-medium text-gray-600">
                         {rowIndex + 1}
                       </span>
@@ -493,15 +493,12 @@ const GridCommonComponent = ({
                   </div>
                 </div>
 
-                {/* Expand/Collapse Button */}
                 <button
                   onClick={() => toggleCardExpansion(rowIndex)}
-                  className={`ml-2 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 ${
-                    // Hide expand button if all non-primary columns are nonExpandable like activity_cell -- Activity section Component
-                    columns.filter((col) => !col.isPrimary && !col.nonExpandable)
-                      .length === 0
-                      ? "hidden"
-                      : ""
+                  className={`ml-2 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors shrink-0 ${columns.filter((col) => !col.isPrimary && !col.nonExpandable)
+                    .length === 0
+                    ? "hidden"
+                    : ""
                     }`}
                   aria-label={isExpanded ? "Collapse" : "Expand"}
                 >
@@ -548,10 +545,10 @@ const GridCommonComponent = ({
                       .map((column, colIndex) => (
                         <div
                           key={colIndex}
-                          className={`flex justify-between items-center py-1 sm:py-2 border-b border-gray-200 last:border-b-0 min-h-[2rem]
+                          className={`flex justify-between items-center py-1 sm:py-2 border-b border-gray-200 last:border-b-0 min-h-8
                         ${column.component?.style?.text}`}
                         >
-                          <span className="text-xs sm:text-sm font-medium text-gray-600 flex-shrink-0 w-24 sm:w-32">
+                          <span className="text-xs sm:text-sm font-medium text-gray-600 shrink-0 w-24 sm:w-32">
                             {column.title}
                           </span>
                           <div className="text-xs sm:text-sm text-gray-900 text-right flex-1 min-w-0 ml-2">

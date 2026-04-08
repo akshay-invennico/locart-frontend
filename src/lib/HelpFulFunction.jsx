@@ -16,7 +16,7 @@ export const UserRowProfile = ({ image, name, email, time }) => {
       </Avatar>
       <div className="flex flex-col gap-[4px]">
         <span className="text-sm font-medium text-[#282928]">{name}</span>
-        <span className="text-xs text-[var(--color-dull-text)]">
+        <span className="text-xs text-dull-text">
           {email || time}
         </span>
       </div>
@@ -44,22 +44,22 @@ export const ProductRowProfile = ({ image, productName }) => {
 const STATUS_BASE = "px-[8px] py-[4px] w-[75px] h-[31px] rounded-[4px] text-center";
 
 const STATUS_STYLES = {
-  active:    `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
-  inactive:  `bg-[#EEEEEE] text-[#7B7B7B] ${STATUS_BASE}`,
+  active: `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
+  inactive: `bg-[#EEEEEE] text-[#7B7B7B] ${STATUS_BASE}`,
   suspended: `bg-[#FFF0F1] text-[#BC0D10] ${STATUS_BASE}`,
-  upcoming:  `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
+  upcoming: `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
   completed: `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
   cancelled: `bg-[#FFF0F0] text-[#BC0D10] ${STATUS_BASE}`,
-  pending:   `bg-[#FFF6E8] text-[#FF9800] ${STATUS_BASE}`,
-  shipped:   `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
-  returned:  `bg-[#F0F0F0] text-[#7B7B7B] ${STATUS_BASE}`,
+  pending: `bg-[#FFF6E8] text-[#FF9800] ${STATUS_BASE}`,
+  shipped: `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
+  returned: `bg-[#F0F0F0] text-[#7B7B7B] ${STATUS_BASE}`,
   delivered: `bg-[#FFF0F0] text-[#BC0D10] ${STATUS_BASE}`,
-  paid:      `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
+  paid: `bg-[#EAFFED] text-[#097416] ${STATUS_BASE}`,
   inprocess: `bg-[#FFFAE9] text-[#FF9800] ${STATUS_BASE}`,
-  expired:   `bg-[#FFF0F0] text-[#BC0D10] ${STATUS_BASE}`,
-  open:      `bg-[#EEEEEE] text-[#7B7B7B] ${STATUS_BASE}`,
-  resolved:  `bg-[#EAFFED] text-[#097415] ${STATUS_BASE}`,
-  checking:  `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
+  expired: `bg-[#FFF0F0] text-[#BC0D10] ${STATUS_BASE}`,
+  open: `bg-[#EEEEEE] text-[#7B7B7B] ${STATUS_BASE}`,
+  resolved: `bg-[#EAFFED] text-[#097415] ${STATUS_BASE}`,
+  checking: `bg-[#E5FCFF] text-[#02C8DE] ${STATUS_BASE}`,
 };
 
 export const GetStatusBadge = ({ status }) => {
@@ -190,12 +190,28 @@ export const generateInvoicePDF = (invoiceData) => {
   const secondaryColor = "#666666";
 
   // --- Header ---
-  // Logo (Placeholder if image URL is not valid/accessible, using circle)
-  // doc.addImage(...) - requires base64 or valid URL. Using text placeholder for robustness if image fails, or try standard image.
-  // Using a simple circle to mimic logo
-  doc.setDrawColor(0);
-  doc.setFillColor(200, 200, 200);
-  doc.circle(65, 65, 25, 'F');
+  let logoRendered = false;
+  try {
+    const logoEl =
+      document.querySelector('img[alt="Locart"]') ||
+      document.querySelector('img[src*="logo"]');
+    if (logoEl && logoEl.complete && logoEl.naturalWidth > 0) {
+      doc.addImage(logoEl, "PNG", 40, 40, 70, 50);
+      logoRendered = true;
+    }
+  } catch (e) {
+    console.error(e, "Error occurred")
+  }
+  if (!logoRendered) {
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor("#02C8DE");
+    doc.text("LOCART", 40, 70);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(secondaryColor);
+    doc.text("Hair Salon", 40, 84);
+  }
 
   // Company Info (Right aligned)
   doc.setFontSize(24);
