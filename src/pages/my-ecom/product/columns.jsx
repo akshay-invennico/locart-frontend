@@ -29,7 +29,7 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
           }}
           className="flex items-center gap-3 text-left bg-transparent p-0 border-0 cursor-pointer group w-full"
         >
-          <div className="w-12 h-12 rounded-md overflow-hidden border border-[#00A78E] shrink-0">
+          <div className="w-12 h-12 rounded-md overflow-hidden border shrink-0">
             <img
               src={image}
               alt={name}

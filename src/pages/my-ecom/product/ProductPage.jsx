@@ -132,9 +132,9 @@ const ProductPage = () => {
     formData.append("stock_quantity", data.stock);
     formData.append("description", data.description);
 
-    data.category?.forEach((catId) => {
-      formData.append("category_id[]", catId);
-    });
+    if (data.category) {
+      formData.append("category_id[]", data.category);
+    }
 
     const res = await dispatch(createProduct(formData));
 

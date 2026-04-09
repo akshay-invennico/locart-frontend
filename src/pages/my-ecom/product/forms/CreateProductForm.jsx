@@ -1,11 +1,11 @@
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { FormInput, FormTextarea, FormCheckboxGroup, FormFileUpload } from "@/components/forms";
+import { FormInput, FormTextarea, FormSelect, FormFileUpload } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 
 const validationSchema = Yup.object({
   productName: Yup.string().required("Product name is required"),
-  category: Yup.array().min(1, "Select at least one category"),
+  category: Yup.string().required("Category is required"),
   price: Yup.number().required("Price is required").positive("Must be positive"),
   stock: Yup.number().required("Stock is required").min(0, "Cannot be negative"),
   description: Yup.string(),
@@ -15,7 +15,7 @@ const validationSchema = Yup.object({
 const CreateProductForm = ({ categoryOptions = [], onSubmit, onCancel }) => {
   const initialValues = {
     productName: "",
-    category: [],
+    category: "",
     price: "",
     stock: "",
     description: "",
@@ -52,9 +52,10 @@ const CreateProductForm = ({ categoryOptions = [], onSubmit, onCancel }) => {
             required
           />
 
-          <FormCheckboxGroup
+          <FormSelect
             name="category"
-            label="Categories"
+            label="Category"
+            placeholder="Select a category"
             options={categoryOptions}
             required
           />

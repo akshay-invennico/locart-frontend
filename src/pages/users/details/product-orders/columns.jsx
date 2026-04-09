@@ -14,7 +14,7 @@ export const columns = ({ handleDownloadInvoice } = {}) => [
       type: "standard_avatar",
       style: {
         radius: "rounded-md",
-        border: "border border-[#00A78E]",
+        border: "border",
       },
     },
   },
@@ -71,7 +71,7 @@ export const columns = ({ handleDownloadInvoice } = {}) => [
             label: "View Order",
             iconUrl: "/icons/show.svg",
             type: "sidebar",
-            onAction: () => {},
+            onAction: () => { },
           },
           {
             label: "Flag Order",

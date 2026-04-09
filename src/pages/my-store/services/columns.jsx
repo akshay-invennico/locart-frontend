@@ -7,6 +7,42 @@ export const createColumns = ({ onDelete, onEdit, categoryOptions }) => [
     isObject: true,
     sortable: true,
     structure: { name: "name", profile: "profile" },
+    render: (value, row) => {
+      const fallbackImg = "/noimage.png";
+      const image =
+        row.serviceName?.profile || row.images?.[0] || fallbackImg;
+      const name = row.name || row.serviceName?.name || "";
+      const description = row.description || "";
+
+      return (
+        <div className="flex items-center gap-3 w-full">
+          <div className="w-12 h-12 rounded-md overflow-hidden border shrink-0">
+            <img
+              src={image}
+              alt={name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = fallbackImg;
+              }}
+            />
+          </div>
+          <div className="flex-1 min-w-0 max-w-[220px]">
+            <div className="font-medium text-gray-900 truncate">{name}</div>
+            {description && (
+              <div
+                className="text-gray-500 text-sm truncate"
+                title={description}
+              >
+                {description.length > 40
+                  ? `${description.slice(0, 40)}...`
+                  : description}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    },
     component: {
       type: "standard_avatar",
       style: { radius: "rounded-full" },
