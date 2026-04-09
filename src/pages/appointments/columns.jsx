@@ -63,6 +63,18 @@ export const getColumns = ({
   {
     key: "stylistName",
     title: "Stylist",
+    isObject: true,
+    structure: {
+      name: "name",
+      email: "email",
+      profile: "profilePhoto",
+    },
+    component: {
+      type: "standard_avatar",
+      style: {
+        radius: "rounded-full",
+      },
+    },
   },
   {
     key: "serviceNames",

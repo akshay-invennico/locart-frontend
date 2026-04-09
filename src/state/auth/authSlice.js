@@ -94,17 +94,14 @@ const getInitialState = () => {
       if (raw) {
         const parsed = JSON.parse(raw);
         return {
-          ...{
-            user: null,
-            tokens: null,
-            redirect: null,
-            status: "idle",
-            error: null,
-            role: parsed.role || storedRole || null,
-            roles: parsed.roles || [],
-            forgotPasswordMessage: null,
-          },
-          // ...parsed,
+          user: parsed.user || null,
+          tokens: parsed.tokens || null,
+          redirect: null,
+          status: "idle",
+          error: null,
+          role: parsed.role || storedRole || null,
+          roles: parsed.roles || [],
+          forgotPasswordMessage: null,
         };
       }
       if (storedRole) {

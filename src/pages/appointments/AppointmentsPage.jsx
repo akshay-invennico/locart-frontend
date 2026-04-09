@@ -426,7 +426,13 @@ const AppointmentsPage = () => {
           profilePhoto: item.client.profilePhoto || "",
         }
         : { name: "N/A", email: "N/A", profile: "" },
-      stylistName: item.stylist?.name || "N/A",
+      stylistName: item.stylist
+        ? {
+            name: item.stylist.name || "N/A",
+            email: item.stylist.email || "N/A",
+            profilePhoto: item.stylist.profilePhoto || item.stylist.profile || "",
+          }
+        : { name: "N/A", email: "N/A", profilePhoto: "" },
       stylistEmail: item.stylist?.email || "N/A",
       stylistPhone: item.stylist?.phone || "N/A",
       serviceNames: item.services?.map((s) => s.name).join(", ") || "N/A",
@@ -447,7 +453,7 @@ const AppointmentsPage = () => {
       row.bookingId?.toString().toLowerCase().includes(term) ||
       row.clientName?.name?.toLowerCase().includes(term) ||
       row.clientName?.email?.toLowerCase().includes(term) ||
-      row.stylistName?.toLowerCase().includes(term) ||
+      row.stylistName?.name?.toLowerCase().includes(term) ||
       row.serviceNames?.toLowerCase().includes(term) ||
       row.status?.toLowerCase().includes(term) ||
       row.paymentStatus?.toLowerCase().includes(term)

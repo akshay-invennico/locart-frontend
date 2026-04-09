@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { Filter, Search } from "lucide-react";
 import { toast } from "sonner";
 
@@ -56,6 +57,9 @@ const StylistAppointmentsPage = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [mutating, setMutating] = useState(false);
 
+  const authUser = useSelector((state) => state.auth?.user);
+  console.log(authUser, "auth user")
+
   const { data, loading, error, run } = useStylistApi(
     () =>
       getMyAppointments({
@@ -79,7 +83,7 @@ const StylistAppointmentsPage = () => {
     return Array.from(map.values());
   }, [appointments]);
 
-  const refresh = () => run().catch(() => {});
+  const refresh = () => run().catch(() => { });
 
   /* ----------------------------- handlers ------------------------------- */
 
@@ -126,8 +130,8 @@ const StylistAppointmentsPage = () => {
       service_id: Array.isArray(appt.services)
         ? appt.services.map((s) => s._id || s.id)
         : appt.service_id
-        ? [appt.service_id]
-        : [],
+          ? [appt.service_id]
+          : [],
       stylist_id: appt.stylist?.id || appt.stylist?._id || appt.stylist_id || "",
       time_slot: appt.time || appt.time_slot || "",
       amount: appt.amount || 0,
@@ -208,12 +212,22 @@ const StylistAppointmentsPage = () => {
         time: item.time || item.start_time,
         clientName: item.client
           ? {
-              name: item.client.name || "N/A",
-              email: item.client.email || "N/A",
-              profilePhoto: item.client.profilePhoto || item.client.profile || "",
-            }
+            name: item.client.name || "N/A",
+            email: item.client.email || "N/A",
+            profilePhoto: item.client.profile || "",
+          }
           : { name: "N/A", email: "N/A", profilePhoto: "" },
-        stylistName: item.stylist?.name || "N/A",
+        stylistName: item.stylist
+          ? {
+            name: item.stylist.name || "N/A",
+            email: item.stylist.email || "N/A",
+            profilePhoto: item.stylist.profile || "",
+          }
+          : {
+            name: authUser?.name || "N/A",
+            email: authUser?.email_address || authUser?.email || "N/A",
+            profilePhoto: authUser?.profile || "",
+          },
         serviceNames:
           item.services?.map((s) => s.name).join(", ") ||
           item.service?.name ||

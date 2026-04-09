@@ -329,32 +329,7 @@ function timeAgo(dateStr) {
   return `${Math.round(diff / 86400)}d ago`;
 }
 
-const FALLBACK_ACTIVITIES = [
-  {
-    id: "1", type: "booking_completed", client_name: "Alicia Brown",
-    message: "You completed a booking for Alicia Brown", time: null, minsAgo: 4,
-  },
-  {
-    id: "2", type: "booking_cancelled", client_name: "Marcus Lee",
-    message: "Marcus Lee cancelled their booking", time: null, minsAgo: 2,
-  },
-  {
-    id: "3", type: "review", client_name: "Sophie Turner",
-    message: "New feedback received from Sophie Turner (★★★★)", time: null, minsAgo: 5,
-  },
-  {
-    id: "4", type: "availability", client_name: null,
-    message: "You updated your availability schedule", time: null, minsAgo: 10,
-  },
-  {
-    id: "5", type: "booking_confirmed", client_name: "Priya Sharma",
-    message: 'New booking confirmed with Priya Sharma for "Loc Maintenance"', time: null, minsAgo: 11,
-  },
-  {
-    id: "6", type: "review", client_name: "Liam Johnson",
-    message: 'Liam Johnson left a review: "Great experience, will return!"', time: null, minsAgo: 15,
-  },
-];
+const FALLBACK_ACTIVITIES = [];
 
 const RecentActivity = ({ activities, loading }) => {
   const items = activities?.length ? activities : FALLBACK_ACTIVITIES;
@@ -375,7 +350,13 @@ const RecentActivity = ({ activities, loading }) => {
               </div>
             </div>
           ))
-          : items.map((item) => (
+          : items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+              <Calendar className="w-10 h-10 mb-2 text-gray-300" />
+              <p className="text-sm font-medium">No recent activity</p>
+              <p className="text-xs mt-1">Your latest actions will appear here.</p>
+            </div>
+          ) : items.map((item) => (
             <div key={item.id || item._id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 transition-colors">
               {getActivityIcon(item)}
               <div className="flex-1 min-w-0">
