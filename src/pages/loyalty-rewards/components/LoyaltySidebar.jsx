@@ -12,7 +12,7 @@ const LoyaltySidebar = ({ activeTab, onTabChange }) => {
     <div className="w-[220px] bg-white border-r border-gray-200 min-h-screen pr-4 flex flex-col gap-6 z-10">
       <div>
         <h2 className="text-[12px] font-medium text-[#7B7B7B] tracking-wider mb-4">
-          Loyalty & Rewards
+          Incentive Programs
         </h2>
         <div className="flex flex-col gap-2">
           {menuItems.map((item) => {

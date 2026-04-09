@@ -36,7 +36,7 @@ export const leftSidebarItems = [
     icon: <PiShoppingCartLight size={21} />,
   },
   {
-    title: "Loyalty & Rewards",
+    title: "Incentive Programs",
     url: "/loyalty-rewards",
     icon: <FaGift size={21} />,
   },

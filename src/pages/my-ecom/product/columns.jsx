@@ -10,6 +10,54 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
       category: "category",
       profile: "profile",
     },
+    render: (value, row) => {
+      const fallbackImg = "/noimage.png";
+      const image =
+        row.product?.profile ||
+        row.imageUrls?.[0] ||
+        row.images?.[0] ||
+        fallbackImg;
+      const name = row.productName || row.product?.name || "";
+      const description = row.description || "";
+
+      return (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleViewProduct && handleViewProduct(row._id);
+          }}
+          className="flex items-center gap-3 text-left bg-transparent p-0 border-0 cursor-pointer group w-full"
+        >
+          <div className="w-12 h-12 rounded-md overflow-hidden border border-[#00A78E] shrink-0">
+            <img
+              src={image}
+              alt={name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = fallbackImg;
+              }}
+            />
+          </div>
+          <div className="flex-1 min-w-0 max-w-[220px]">
+            <div className="font-medium text-gray-900 truncate group-hover:underline">
+              {name}
+            </div>
+            {description && (
+              <div
+                className="text-gray-500 text-sm truncate"
+                title={description}
+              >
+                {description.length > 40
+                  ? `${description.slice(0, 40)}...`
+                  : description}
+              </div>
+            )}
+          </div>
+        </button>
+      );
+    },
     component: {
       type: "standard_avatar",
       style: {

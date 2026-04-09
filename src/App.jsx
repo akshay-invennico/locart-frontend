@@ -5,6 +5,7 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import AuthLayout from "@/layouts/AuthLayout";
 import UserDetailsLayout from "@/layouts/UserDetailsLayout";
 import MyStoreLayout from "@/layouts/MyStoreLayout";
+import MyEcomLayout from "@/layouts/MyEcomLayout";
 import Spinner from "@/components/common/Spinner";
 
 // Auth pages
@@ -100,11 +101,12 @@ function App() {
             </Route>
 
             {/* My Ecom */}
-            <Route path="/my-ecom/order" element={<OrderPage />} />
-            <Route path="/my-ecom/order/create-in-store-order" element={<CreateInStoreOrderPage />} />
-            <Route path="/my-ecom/product" element={<ProductPage />} />
-            <Route path="/my-ecom/categories" element={<EcomCategoriesPage />} />
-            <Route path="/my-ecom/offer" element={<OfferPage />} />
+            <Route path="/my-ecom" element={<MyEcomLayout />}>
+              <Route path="order" element={<OrderPage />} />
+              <Route path="order/create-in-store-order" element={<CreateInStoreOrderPage />} />
+              <Route path="product" element={<ProductPage />} />
+              <Route path="categories" element={<EcomCategoriesPage />} />
+            </Route>
 
             {/* Stylist routes (within dashboard layout) */}
             <Route path="/stylists/dashboard" element={<StylistDashboardPage />} />

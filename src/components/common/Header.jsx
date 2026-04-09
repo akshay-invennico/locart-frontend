@@ -56,7 +56,7 @@ const routeMap = {
 
   "/education": "Education",
   "/payment-and-payouts": "Payment & Payouts",
-  "/loyalty-rewards": "Loyalty & Rewards",
+  "/loyalty-rewards": "Incentive Programs",
   "/settings": "Settings",
 
   "/profile": "My Profile",
@@ -267,7 +267,7 @@ const Header = () => {
         <div className="relative" ref={notificationRef}>
           <div
             onClick={() => setIsNotificationOpen((prev) => !prev)}
-            className="w-[30px] h-[30px] border border-[var(--border-admin)] 
+            className="w-[30px] h-[30px] border border-(--border-admin) 
                    rounded-[6px] flex items-center justify-center shadow-sm cursor-pointer relative"
           >
             <LuBell className="text-xl text-gray-600" size={16} />
@@ -292,11 +292,11 @@ const Header = () => {
         <div className="flex flex-row gap-2 items-center">
           <div className="hidden md:flex md:flex-col gap-0.5">
             <div className="flex items-center justify-end">
-              <p className="text-[10px] font-medium text-[var(--color-dull-text)] text-left">
+              <p className="text-[10px] font-medium text-dull-text text-left">
                 Hello
               </p>
             </div>
-            <p className="text-[14px] font-medium text-[var(--dark)] truncate">
+            <p className="text-[14px] font-medium text-(--dark) truncate">
               {user?.name || "New User"}
             </p>
           </div>
@@ -329,7 +329,7 @@ const Header = () => {
                 onClick={() => navigate("/profile")}
               >
                 <User className="h-4 w-4" />
-                <span className="text-[var(--color-dull-text)]">
+                <span className="text-dull-text">
                   My Profile
                 </span>
               </DropdownMenuItem>
@@ -338,12 +338,12 @@ const Header = () => {
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4" />
-                <span className="text-[var(--color-dull-text)]">Log out</span>
+                <span className="text-dull-text">Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <div
-            className="flex md:hidden w-[30px] h-[30px] border border-[var(--border-admin)] rounded-[6px] items-center justify-center shadow-md cursor-pointer"
+            className="flex md:hidden w-[30px] h-[30px] border border-(--border-admin) rounded-[6px] items-center justify-center shadow-md cursor-pointer"
             onClick={toggle}
             data-hamburger="true"
           >
