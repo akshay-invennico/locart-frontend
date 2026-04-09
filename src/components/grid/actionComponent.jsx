@@ -278,12 +278,20 @@ const ActionComponent = ({
             <div className="p-6">
               {(() => {
                 const providedOnApply = content.props?.onApply;
+                const providedOnSubmit = content.props?.onSubmit;
                 const providedOnCancel = content.props?.onCancel;
                 return React.cloneElement(content, {
                   data,
                   onApply: async (formData, ...rest) => {
                     if (typeof providedOnApply === "function") {
                       const result = await providedOnApply(formData, data, ...rest);
+                      if (result === false) return;
+                    }
+                    setPopUpOpen(false);
+                  },
+                  onSubmit: async (formData, ...rest) => {
+                    if (typeof providedOnSubmit === "function") {
+                      const result = await providedOnSubmit(formData, ...rest);
                       if (result === false) return;
                     }
                     setPopUpOpen(false);

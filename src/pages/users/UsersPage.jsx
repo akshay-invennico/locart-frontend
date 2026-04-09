@@ -60,26 +60,26 @@ const UsersPage = () => {
     );
   };
 
-  const handleSuspendClients = (formData, rowsOrRow) => {
+  const handleSuspendClients = async (formData, rowsOrRow) => {
     const rows = Array.isArray(rowsOrRow) ? rowsOrRow : [rowsOrRow];
-    if (!rows.length) return;
+    if (!rows.length) return false;
 
     const clientIds = rows.map((row) => row.id || row.clientId || row._id);
     let reason = formData?.suspend_reason || "Repeated policy violations";
     if (formData?.note) reason += ` - ${formData.note}`;
 
-    dispatch(suspendClientsByIds({ clientIds, reason }))
-      .unwrap()
-      .then(() => {
-        dispatch(
-          fetchClients({ ...filters, page: currentPage, limit: itemsPerPage })
-        );
-        toast.success("Client suspended successfully");
-        setBulkSuspendOpen(false);
-      })
-      .catch((err) => {
-        toast.error(err || "Failed to suspend client");
-      });
+    try {
+      await dispatch(suspendClientsByIds({ clientIds, reason })).unwrap();
+      await dispatch(
+        fetchClients({ ...filters, page: currentPage, limit: itemsPerPage })
+      );
+      toast.success("Client suspended successfully");
+      setBulkSuspendOpen(false);
+      return true;
+    } catch (err) {
+      toast.error(err || "Failed to suspend client");
+      return false;
+    }
   };
 
   const handleReactivateClient = (row) => {

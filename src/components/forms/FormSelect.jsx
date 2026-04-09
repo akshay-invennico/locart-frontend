@@ -89,7 +89,7 @@ const FormSelect = ({
         <PopoverContent
           align="start"
           sideOffset={6}
-          className="w-[var(--radix-popover-trigger-width)] max-h-60 overflow-y-auto overscroll-contain p-1 rounded-lg shadow-lg border border-gray-100"
+          className="z-[1200] w-[var(--radix-popover-trigger-width)] max-h-60 overflow-y-auto overscroll-contain p-1 rounded-lg shadow-lg border border-gray-100"
           onWheel={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
         >

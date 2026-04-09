@@ -1,3 +1,5 @@
+import SuspendClientForm from "./forms/SuspendClientForm";
+
 export const columns = (
   handleSendResetPasswordLink,
   handleSuspendClients,
@@ -126,7 +128,11 @@ export const columns = (
               label: "Suspend Client",
               iconUrl: "/icons/suspendClient.svg",
               type: "popUp",
-              onAction: (data) => handleSuspendClients?.(data, row),
+              component: (
+                <SuspendClientForm
+                  onSubmit={(values) => handleSuspendClients?.(values, row)}
+                />
+              ),
             });
           }
 
@@ -134,8 +140,8 @@ export const columns = (
             actions.push({
               label: "Reactivate Client",
               iconUrl: "/icons/reactivateClient.svg",
-              type: "popUp",
-              onAction: () => handleReactivateClient?.(row),
+              type: "button",
+              onClick: () => handleReactivateClient?.(row),
             });
           }
 

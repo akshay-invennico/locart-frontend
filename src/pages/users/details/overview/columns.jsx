@@ -1,3 +1,5 @@
+import SuspendClientForm from "@/pages/users/forms/SuspendClientForm";
+
 export const columns = (handleSuspendClient, handleReactivateClient) => [
   {
     key: "actions",
@@ -14,8 +16,8 @@ export const columns = (handleSuspendClient, handleReactivateClient) => [
               {
                 label: "Reactivate Client",
                 iconUrl: "/icons/reactivateClient.svg",
-                type: "popUp",
-                onAction: () => handleReactivateClient?.(row),
+                type: "button",
+                onClick: () => handleReactivateClient?.(row),
               },
             ];
           }
@@ -25,7 +27,11 @@ export const columns = (handleSuspendClient, handleReactivateClient) => [
               label: "Suspend Client",
               iconUrl: "/icons/suspendClient.svg",
               type: "popUp",
-              onAction: (data) => handleSuspendClient?.(data, row),
+              component: (
+                <SuspendClientForm
+                  onSubmit={(values) => handleSuspendClient?.(values, row)}
+                />
+              ),
             },
           ];
         },
