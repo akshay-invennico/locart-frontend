@@ -22,17 +22,16 @@ export const getColumns = (handleDeleteOffer, handleViewOffer, handleEditOffer) 
   },
   {
     key: "discount",
-    title: "Discount(%)",
-    component: {
-      type: "phone",
-      style: {
-        color: "var(--color-dull-text)",
-      },
-    },
+    title: "Discount",
+    render: (value, row) => (
+      <span style={{ color: "var(--color-dull-text)" }}>
+        {row.discountType === "fixed" ? `$${value}` : `${value}%`}
+      </span>
+    ),
   },
   {
     key: "date",
-    title: "Validity",
+    title: "Offer Dates",
     component: {
       type: "date",
       style: { color: "var(--color-dull-text)" },

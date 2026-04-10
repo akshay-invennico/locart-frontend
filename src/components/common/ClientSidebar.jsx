@@ -18,7 +18,8 @@ const ClientSidebar = ({ sidebarItems, sidebarHeader }) => {
 
     return (
       normalizedPath.startsWith(normalizedUrl + "/") &&
-      normalizedUrl !== "/my-store"
+      normalizedUrl !== "/my-store" &&
+      normalizedUrl !== "/payment-and-payouts"
     );
   };
 

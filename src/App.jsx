@@ -6,6 +6,7 @@ import AuthLayout from "@/layouts/AuthLayout";
 import UserDetailsLayout from "@/layouts/UserDetailsLayout";
 import MyStoreLayout from "@/layouts/MyStoreLayout";
 import MyEcomLayout from "@/layouts/MyEcomLayout";
+import PaymentLayout from "@/layouts/PaymentLayout";
 import Spinner from "@/components/common/Spinner";
 
 // Auth pages
@@ -37,12 +38,14 @@ const OrderPage = lazy(() => import("@/pages/my-ecom/order/OrderPage"));
 const CreateInStoreOrderPage = lazy(() => import("@/pages/my-ecom/order/create-in-store-order/CreateInStoreOrderPage"));
 const ProductPage = lazy(() => import("@/pages/my-ecom/product/ProductPage"));
 const EcomCategoriesPage = lazy(() => import("@/pages/my-ecom/categories/CategoriesPage"));
+const VendorPage = lazy(() => import("@/pages/my-ecom/vendor/VendorPage"));
 const OfferPage = lazy(() => import("@/pages/my-ecom/offer/OfferPage"));
 
 // Other pages
 const LoyaltyRewardsPage = lazy(() => import("@/pages/loyalty-rewards/LoyaltyRewardsPage"));
 const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"));
 const PaymentAndPayoutsPage = lazy(() => import("@/pages/payment-and-payouts/PaymentAndPayoutsPage"));
+const RefundsPage = lazy(() => import("@/pages/payment-and-payouts/RefundsPage"));
 const SettingsPage = lazy(() => import("@/pages/settings/SettingsPage"));
 const EducationPage = lazy(() => import("@/pages/education/EducationPage"));
 const TestPage = lazy(() => import("@/pages/test/TestPage"));
@@ -74,7 +77,11 @@ function App() {
             <Route path="/education" element={<EducationPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/payment-and-payouts" element={<PaymentAndPayoutsPage />} />
+            {/* Payment & Payouts */}
+            <Route path="/payment-and-payouts" element={<PaymentLayout />}>
+              <Route index element={<PaymentAndPayoutsPage />} />
+              <Route path="refunds" element={<RefundsPage />} />
+            </Route>
             <Route path="/loyalty-rewards" element={<LoyaltyRewardsPage />} />
             <Route path="/test" element={<TestPage />} />
 
@@ -106,6 +113,8 @@ function App() {
               <Route path="order/create-in-store-order" element={<CreateInStoreOrderPage />} />
               <Route path="product" element={<ProductPage />} />
               <Route path="categories" element={<EcomCategoriesPage />} />
+              <Route path="vendor" element={<VendorPage />} />
+              <Route path="offer" element={<OfferPage />} />
             </Route>
 
             {/* Stylist routes (within dashboard layout) */}

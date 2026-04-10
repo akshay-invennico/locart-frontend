@@ -44,7 +44,7 @@ const LoyaltyStats = () => {
     {
       title: 'Total Points Earned',
       value: loading ? '...' : data?.totalPointsEarned ?? 0,
-      description: 'Lifetime points accumulated by all Clients.',
+      description: 'Points accumulated by all Clients.',
       icon: CheckCircle2,
       colorClass: 'bg-[#02C8DE]',
     },

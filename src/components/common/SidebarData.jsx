@@ -6,6 +6,8 @@ import {
 import { FaGift, FaUsers } from "react-icons/fa";
 import { BsShop } from "react-icons/bs";
 import { PiChartBarBold, PiShoppingCart } from "react-icons/pi";
+import { LuTruck, LuWallet, LuRotateCcw } from "react-icons/lu";
+import { MdOutlineLocalOffer } from "react-icons/md";
 
 //  Left Sidebar items
 export const leftSidebarItems = [
@@ -34,6 +36,11 @@ export const leftSidebarItems = [
     url: "/my-ecom/order",
     matchPrefixes: ["/my-ecom"],
     icon: <PiShoppingCartLight size={21} />,
+  },
+  {
+    title: "Payment & Payouts",
+    url: "/payment-and-payouts",
+    icon: <LuWallet size={21} />,
   },
   {
     title: "Incentive Programs",
@@ -165,7 +172,30 @@ export const myEcomSidebarItems = [
         height={20}
       />
     ),
+  },
+  {
+    title: "Vendors",
+    url: "/my-ecom/vendor",
+    icon: <LuTruck size={20} />,
+  },
+  {
+    title: "Offers",
+    url: "/my-ecom/offer",
+    icon: <MdOutlineLocalOffer size={20} />,
   }
+];
+
+export const paymentSidebarItems = [
+  {
+    title: "All Transactions",
+    url: "/payment-and-payouts",
+    icon: <LuWallet size={20} />,
+  },
+  {
+    title: "Refunds",
+    url: "/payment-and-payouts/refunds",
+    icon: <LuRotateCcw size={20} />,
+  },
 ];
 
 export const loctitianSidebarItems = [

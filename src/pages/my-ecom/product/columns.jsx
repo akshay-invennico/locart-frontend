@@ -75,6 +75,22 @@ export const getColumns = (handleDeleteProduct, handleProductStatusUpdate, handl
     },
   },
   {
+    key: "vendorName",
+    title: "Vendor",
+    render: (value, row) => {
+      const name = row.vendor?.name;
+      return (
+        <span className={name ? "text-gray-900" : "text-gray-400 italic"}>
+          {name || "Admin"}
+        </span>
+      );
+    },
+    component: {
+      type: "text",
+      style: { color: "var(--color-primary1)" },
+    },
+  },
+  {
     key: "stock",
     title: "Stocks",
     component: { type: "phone", style: { color: "var(--color-dull-text)" } },

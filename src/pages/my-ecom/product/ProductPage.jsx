@@ -15,6 +15,7 @@ import {
   bulkUpdateProductStatus,
   bulkDeleteProducts,
   fetchProductById,
+  fetchAllVendors,
 } from "@/state/ecom/ecomSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { exportGridCSV, exportGridPDF } from "@/lib/HelpFulFunction";
@@ -40,7 +41,7 @@ const ProductPage = () => {
   const [detailContent, setDetailContent] = useState(null);
   const [editProduct, setEditProduct] = useState(null);
 
-  const { categories, products, pagination } = useSelector(
+  const { categories, products, pagination, vendors } = useSelector(
     (state) => state.ecomOrders
   );
 
@@ -64,12 +65,18 @@ const ProductPage = () => {
     value: c._id,
   }));
 
+  const vendorOptions = vendors.map((v) => ({
+    label: v.name,
+    value: v._id,
+  }));
+
   useEffect(() => {
     dispatch(fetchAllProducts(filters));
   }, [filters]);
 
   useEffect(() => {
     dispatch(fetchAllCategories({ type: "product" }));
+    dispatch(fetchAllVendors({}));
   }, [dispatch]);
 
   const handleDeleteProduct = (row) => {
@@ -136,6 +143,14 @@ const ProductPage = () => {
       formData.append("category_id[]", data.category);
     }
 
+    if (data.vendor) {
+      formData.append("vendor_id", data.vendor);
+      if (data.salesPrice) formData.append("sales_price", data.salesPrice);
+      if (data.salesType) formData.append("sales_type", data.salesType);
+      if (data.vendorPaymentType) formData.append("vendor_payment_type", data.vendorPaymentType);
+      if (data.vendorPaymentValue) formData.append("vendor_payment_value", data.vendorPaymentValue);
+    }
+
     const res = await dispatch(createProduct(formData));
 
     if (createProduct.fulfilled.match(res)) {
@@ -192,6 +207,20 @@ const ProductPage = () => {
       categoryIds.forEach((catId) => {
         if (catId) formData.append("category_id[]", catId);
       });
+    }
+
+    if (data.vendor_id) {
+      formData.append("vendor_id", data.vendor_id);
+      if (data.salesPrice) formData.append("sales_price", data.salesPrice);
+      if (data.salesType) formData.append("sales_type", data.salesType);
+      if (data.vendorPaymentType) formData.append("vendor_payment_type", data.vendorPaymentType);
+      if (data.vendorPaymentValue) formData.append("vendor_payment_value", data.vendorPaymentValue);
+    } else {
+      formData.append("vendor_id", "");
+      formData.append("sales_price", "");
+      formData.append("sales_type", "");
+      formData.append("vendor_payment_type", "");
+      formData.append("vendor_payment_value", "");
     }
 
     if (data.new_images && data.new_images.length > 0) {
@@ -413,6 +442,7 @@ const ProductPage = () => {
       >
         <CreateProductForm
           categoryOptions={categoryOptions}
+          vendorOptions={vendorOptions}
           onSubmit={handleCreateProduct}
           onCancel={() => setShowCreatePanel(false)}
         />
@@ -431,6 +461,7 @@ const ProductPage = () => {
           <EditProductForm
             product={editProduct}
             categoryOptions={categoryOptions}
+            vendorOptions={vendorOptions}
             onSubmit={handleUpdateProductSubmit}
             onCancel={() => {
               setShowEditPanel(false);

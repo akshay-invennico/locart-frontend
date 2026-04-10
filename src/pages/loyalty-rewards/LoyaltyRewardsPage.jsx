@@ -58,7 +58,7 @@ const LoyaltyRewardsPage = () => {
       )
     },
     {
-      header: "Lifetime Points",
+      header: "#Number of Points",
       accessor: "lifetime_points_value",
       render: (row) => (
         <span className="text-primary1 font-bold">

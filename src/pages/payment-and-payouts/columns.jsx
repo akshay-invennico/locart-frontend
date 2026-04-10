@@ -1,9 +1,19 @@
-import { Eye, Trash } from "lucide-react";
-
-export const paymentColumns = [
+export const getPaymentColumns = (handleViewTransaction) => [
   {
     key: "id",
     title: "ID",
+    render: (value, row) => (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleViewTransaction?.(row);
+        }}
+        className="text-[#02C8DE] font-medium hover:underline bg-transparent border-0 p-0 cursor-pointer"
+      >
+        {row.transactionId}
+      </button>
+    ),
   },
   {
     key: "date",
@@ -34,7 +44,7 @@ export const paymentColumns = [
     component: {
       type: "currency",
       style: {
-        color: "#00A78E",
+        color: "#02C8DE",
         fontWeight: "500",
       },
       sign: "+$",
@@ -57,9 +67,9 @@ export const paymentColumns = [
       },
       options: {
         value: {
-          Paid: "#16A34A",
-          "In Process": "#F59E0B",
-          Failed: "#DC2626",
+          paid: "#16A34A",
+          "in process": "#F59E0B",
+          failed: "#DC2626",
         },
       },
     },
@@ -71,18 +81,12 @@ export const paymentColumns = [
       type: "action",
       style: {},
       options: {
-        actions: [
+        actions: (row) => [
           {
             label: "View",
-            icon: <Eye className="w-4 h-4" />,
+            iconUrl: "/icons/show.svg",
             type: "sidebar",
-            component: <div>View Payment Details</div>,
-          },
-          {
-            label: "Delete",
-            icon: <Trash className="w-4 h-4" />,
-            type: "popUp",
-            component: <div>Delete Payment</div>,
+            onClick: (row) => handleViewTransaction?.(row),
           },
         ],
       },

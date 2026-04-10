@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllOrders, updateOrderStatus, getAllProducts, getAllCategories, createEcomOrder, flagOrders, updateProductStatusService, deleteProductService, updateCategoryStatusService, deleteCategoryService, getOrderById, createProductService, bulkUpdateProductStatusService, bulkDeleteProductsService, getProductById, getCategoryById, createCategoryService, updateCategoryService, updateProductService } from "./ecomService";
+import { getAllOrders, updateOrderStatus, getAllProducts, getAllCategories, createEcomOrder, flagOrders, updateProductStatusService, deleteProductService, updateCategoryStatusService, deleteCategoryService, getOrderById, createProductService, bulkUpdateProductStatusService, bulkDeleteProductsService, getProductById, getCategoryById, createCategoryService, updateCategoryService, updateProductService, getAllVendors, getVendorById, createVendorService, updateVendorService, deleteVendorService, toggleVendorStatusService, getAllOffers, getOfferById, createOfferService, updateOfferService, deleteOfferService, bulkDeleteOffersService, updateOfferStatusService } from "./ecomService";
 
 export const fetchAllOrders = createAsyncThunk(
   "ecom/fetchAllOrders",
@@ -237,12 +237,173 @@ export const createOrder = createAsyncThunk(
 
 
 
+// ── Vendor Thunks ──
+
+export const fetchAllVendors = createAsyncThunk(
+  "ecom/fetchAllVendors",
+  async (filters, { rejectWithValue }) => {
+    try {
+      const data = await getAllVendors(filters);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchVendorById = createAsyncThunk(
+  "ecom/fetchVendorById",
+  async (vendorId, { rejectWithValue }) => {
+    try {
+      const data = await getVendorById(vendorId);
+      return data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const createVendor = createAsyncThunk(
+  "ecom/createVendor",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const data = await createVendorService(formData);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const updateVendor = createAsyncThunk(
+  "ecom/updateVendor",
+  async ({ vendorId, formData }, { rejectWithValue }) => {
+    try {
+      const data = await updateVendorService(vendorId, formData);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const deleteVendorAction = createAsyncThunk(
+  "ecom/deleteVendor",
+  async (vendorId, { rejectWithValue }) => {
+    try {
+      await deleteVendorService(vendorId);
+      return { vendorId };
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const toggleVendorStatus = createAsyncThunk(
+  "ecom/toggleVendorStatus",
+  async (vendorId, { rejectWithValue }) => {
+    try {
+      const data = await toggleVendorStatusService(vendorId);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// ── Offer Thunks ──
+
+export const fetchAllOffers = createAsyncThunk(
+  "ecom/fetchAllOffers",
+  async (filters, { rejectWithValue }) => {
+    try {
+      const data = await getAllOffers(filters);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchOfferById = createAsyncThunk(
+  "ecom/fetchOfferById",
+  async (offerId, { rejectWithValue }) => {
+    try {
+      const data = await getOfferById(offerId);
+      return data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const createOffer = createAsyncThunk(
+  "ecom/createOffer",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const data = await createOfferService(payload);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const updateOffer = createAsyncThunk(
+  "ecom/updateOffer",
+  async ({ offerId, payload }, { rejectWithValue }) => {
+    try {
+      const data = await updateOfferService(offerId, payload);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const deleteOfferAction = createAsyncThunk(
+  "ecom/deleteOffer",
+  async (offerId, { rejectWithValue }) => {
+    try {
+      await deleteOfferService(offerId);
+      return { offerId };
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const bulkDeleteOffers = createAsyncThunk(
+  "ecom/bulkDeleteOffers",
+  async (offerIds, { rejectWithValue }) => {
+    try {
+      const data = await bulkDeleteOffersService(offerIds);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const updateOfferStatus = createAsyncThunk(
+  "ecom/updateOfferStatus",
+  async ({ offerId, status }, { rejectWithValue }) => {
+    try {
+      const data = await updateOfferStatusService(offerId, status);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
 const ecomSlice = createSlice({
   name: "ecomOrders",
   initialState: {
     orders: [],
     products: [],
     categories: [],
+    vendors: [],
     loading: false,
     error: null,
     orderCreated: null,
@@ -252,6 +413,19 @@ const ecomSlice = createSlice({
     selectedProductLoading: false,
     selectedCategory: null,
     selectedCategoryLoading: false,
+    selectedVendor: null,
+    selectedVendorLoading: false,
+    vendorLoading: false,
+    offers: [],
+    offerLoading: false,
+    selectedOffer: null,
+    selectedOfferLoading: false,
+    offerPagination: {
+      page: 1,
+      totalPages: 1,
+      total: 0,
+      limit: 10,
+    },
     pagination: {
       page: 1,
       totalPages: 1,
@@ -571,8 +745,153 @@ const ecomSlice = createSlice({
       .addCase(updateCategory.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // ── Vendor Reducers ──
+      .addCase(fetchAllVendors.pending, (state) => {
+        state.vendorLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllVendors.fulfilled, (state, action) => {
+        state.vendorLoading = false;
+        const vendors = action.payload?.data || [];
+        state.vendors = (Array.isArray(vendors) ? vendors : []).map((v) => ({
+          ...v,
+          status: v.isActive ? "active" : "inactive",
+        }));
+      })
+      .addCase(fetchAllVendors.rejected, (state, action) => {
+        state.vendorLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchVendorById.pending, (state) => {
+        state.selectedVendorLoading = true;
+        state.selectedVendor = null;
+      })
+      .addCase(fetchVendorById.fulfilled, (state, action) => {
+        state.selectedVendorLoading = false;
+        state.selectedVendor = action.payload;
+      })
+      .addCase(fetchVendorById.rejected, (state, action) => {
+        state.selectedVendorLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(createVendor.pending, (state) => {
+        state.vendorLoading = true;
+        state.error = null;
+      })
+      .addCase(createVendor.fulfilled, (state, action) => {
+        state.vendorLoading = false;
+        state.vendors.unshift({
+          ...action.payload,
+          status: action.payload.isActive ? "active" : "inactive",
+        });
+      })
+      .addCase(createVendor.rejected, (state, action) => {
+        state.vendorLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateVendor.fulfilled, (state, action) => {
+        state.vendorLoading = false;
+        state.vendors = state.vendors.map((v) =>
+          v._id === action.payload._id
+            ? { ...action.payload, status: action.payload.isActive ? "active" : "inactive" }
+            : v
+        );
+      })
+      .addCase(deleteVendorAction.pending, (state) => {
+        state.vendorLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteVendorAction.fulfilled, (state, action) => {
+        state.vendorLoading = false;
+        state.vendors = state.vendors.filter((v) => v._id !== action.payload.vendorId);
+      })
+      .addCase(deleteVendorAction.rejected, (state, action) => {
+        state.vendorLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(toggleVendorStatus.fulfilled, (state, action) => {
+        const updated = action.payload;
+        state.vendors = state.vendors.map((v) =>
+          v._id === updated._id
+            ? { ...updated, status: updated.isActive ? "active" : "inactive" }
+            : v
+        );
+      })
+      // ── Offer Reducers ──
+      .addCase(fetchAllOffers.pending, (state) => {
+        state.offerLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllOffers.fulfilled, (state, action) => {
+        state.offerLoading = false;
+        const { data, pagination } = action.payload || {};
+        state.offers = Array.isArray(data) ? data : [];
+        if (pagination) {
+          state.offerPagination = {
+            page: pagination.page || 1,
+            limit: pagination.limit || 10,
+            total: pagination.total || 0,
+            totalPages: pagination.totalPages || 1,
+          };
+        }
+      })
+      .addCase(fetchAllOffers.rejected, (state, action) => {
+        state.offerLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchOfferById.pending, (state) => {
+        state.selectedOfferLoading = true;
+        state.selectedOffer = null;
+      })
+      .addCase(fetchOfferById.fulfilled, (state, action) => {
+        state.selectedOfferLoading = false;
+        state.selectedOffer = action.payload;
+      })
+      .addCase(fetchOfferById.rejected, (state, action) => {
+        state.selectedOfferLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(createOffer.pending, (state) => {
+        state.offerLoading = true;
+        state.error = null;
+      })
+      .addCase(createOffer.fulfilled, (state, action) => {
+        state.offerLoading = false;
+        state.offers.unshift(action.payload);
+      })
+      .addCase(createOffer.rejected, (state, action) => {
+        state.offerLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateOffer.fulfilled, (state, action) => {
+        state.offerLoading = false;
+        state.offers = state.offers.map((o) =>
+          o._id === action.payload._id ? action.payload : o
+        );
+      })
+      .addCase(deleteOfferAction.pending, (state) => {
+        state.offerLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteOfferAction.fulfilled, (state, action) => {
+        state.offerLoading = false;
+        state.offers = state.offers.filter((o) => o._id !== action.payload.offerId);
+      })
+      .addCase(deleteOfferAction.rejected, (state, action) => {
+        state.offerLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(bulkDeleteOffers.fulfilled, (state, action) => {
+        const deletedIds = action.payload?.deleted || [];
+        state.offers = state.offers.filter((o) => !deletedIds.includes(o._id));
+      })
+      .addCase(updateOfferStatus.fulfilled, (state, action) => {
+        const updated = action.payload;
+        state.offers = state.offers.map((o) =>
+          o._id === updated._id ? updated : o
+        );
       });
-
 
   },
 });

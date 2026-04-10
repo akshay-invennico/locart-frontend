@@ -3,6 +3,16 @@ import * as Yup from "yup";
 import { FormInput, FormTextarea, FormSelect, FormFileUpload } from "@/components/forms";
 import { Button } from "@/components/ui/button";
 
+const salesTypeOptions = [
+  { label: "Regular", value: "regular" },
+  { label: "Consignment", value: "consignment" },
+];
+
+const vendorPaymentTypeOptions = [
+  { label: "Percentage (%)", value: "percentage" },
+  { label: "Fixed ($)", value: "fixed" },
+];
+
 const validationSchema = Yup.object({
   productName: Yup.string().required("Product name is required"),
   category: Yup.string().required("Category is required"),
@@ -10,9 +20,30 @@ const validationSchema = Yup.object({
   stock: Yup.number().required("Stock is required").min(0, "Cannot be negative"),
   description: Yup.string(),
   products: Yup.mixed(),
+  vendor: Yup.string(),
+  salesPrice: Yup.number().when("vendor", {
+    is: (val) => !!val,
+    then: (schema) => schema.required("Sales price is required").positive("Must be positive"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  salesType: Yup.string().when("vendor", {
+    is: (val) => !!val,
+    then: (schema) => schema.required("Sales type is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  vendorPaymentType: Yup.string().when("vendor", {
+    is: (val) => !!val,
+    then: (schema) => schema.required("Payment type is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  vendorPaymentValue: Yup.number().when("vendor", {
+    is: (val) => !!val,
+    then: (schema) => schema.required("Payment value is required").positive("Must be positive"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
-const CreateProductForm = ({ categoryOptions = [], onSubmit, onCancel }) => {
+const CreateProductForm = ({ categoryOptions = [], vendorOptions = [], onSubmit, onCancel }) => {
   const initialValues = {
     productName: "",
     category: "",
@@ -20,6 +51,11 @@ const CreateProductForm = ({ categoryOptions = [], onSubmit, onCancel }) => {
     stock: "",
     description: "",
     products: null,
+    vendor: "",
+    salesPrice: "",
+    salesType: "",
+    vendorPaymentType: "percentage",
+    vendorPaymentValue: "",
   };
 
   return (
@@ -28,7 +64,7 @@ const CreateProductForm = ({ categoryOptions = [], onSubmit, onCancel }) => {
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, values, setFieldValue }) => (
         <Form className="space-y-5">
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-1">Add Product</h3>
@@ -82,6 +118,66 @@ const CreateProductForm = ({ categoryOptions = [], onSubmit, onCancel }) => {
             label="Description"
             placeholder="Product Description"
           />
+
+          <hr className="border-gray-200" />
+
+          <FormSelect
+            name="vendor"
+            label="Vendor"
+            placeholder="Select a vendor (optional)"
+            options={vendorOptions}
+            onChange={(e) => {
+              const val = e.target.value;
+              setFieldValue("vendor", val);
+              if (!val) {
+                setFieldValue("salesPrice", "");
+                setFieldValue("salesType", "");
+                setFieldValue("vendorPaymentType", "percentage");
+                setFieldValue("vendorPaymentValue", "");
+              }
+            }}
+          />
+
+          {values.vendor && (
+            <div className="space-y-4 rounded-md border border-gray-200 bg-gray-50 p-4">
+              <p className="text-sm font-semibold text-gray-700">Vendor Pricing</p>
+
+              <FormInput
+                name="salesPrice"
+                label="Sales Price"
+                type="number"
+                placeholder="Enter sales price"
+                required
+              />
+
+              <FormSelect
+                name="salesType"
+                label="Sales Type"
+                placeholder="Select sales type"
+                options={salesTypeOptions}
+                required
+              />
+
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Vendor Payment</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <FormSelect
+                    name="vendorPaymentType"
+                    label="Type"
+                    options={vendorPaymentTypeOptions}
+                    required
+                  />
+                  <FormInput
+                    name="vendorPaymentValue"
+                    label={values.vendorPaymentType === "percentage" ? "Value (%)" : "Value ($)"}
+                    type="number"
+                    placeholder={values.vendorPaymentType === "percentage" ? "e.g, 15" : "e.g, 20"}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-2">
             <Button

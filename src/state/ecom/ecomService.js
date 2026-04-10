@@ -243,3 +243,138 @@ export const updateProductService = async (productId, formData) => {
     throw error.response?.data || error.message;
   }
 };
+
+// ── Vendor Services ──
+
+export const getAllVendors = async (filters = {}) => {
+  try {
+    const params = new URLSearchParams();
+    if (filters.status) params.append("status", filters.status);
+    const response = await api.get(`vendor?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getVendorById = async (vendorId) => {
+  try {
+    const response = await api.get(`vendor/${vendorId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const createVendorService = async (formData) => {
+  try {
+    const response = await api.post("vendor", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateVendorService = async (vendorId, formData) => {
+  try {
+    const response = await api.put(`vendor/${vendorId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const deleteVendorService = async (vendorId) => {
+  try {
+    const response = await api.delete(`vendor/${vendorId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const toggleVendorStatusService = async (vendorId) => {
+  try {
+    const response = await api.patch(`vendor/${vendorId}/status`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// ── Offer Services ──
+
+export const getAllOffers = async (filters = {}) => {
+  try {
+    const params = new URLSearchParams();
+    if (filters.search) params.append("search", filters.search);
+    if (filters.status) params.append("status", filters.status);
+    if (filters.offerCondition) params.append("offerCondition", filters.offerCondition);
+    if (filters.page) params.append("page", filters.page);
+    if (filters.limit) params.append("limit", filters.limit);
+    const response = await api.get(`offer?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getOfferById = async (offerId) => {
+  try {
+    const response = await api.get(`offer/${offerId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const createOfferService = async (payload) => {
+  try {
+    const response = await api.post("offer", payload);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateOfferService = async (offerId, payload) => {
+  try {
+    const response = await api.put(`offer/${offerId}`, payload);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const deleteOfferService = async (offerId) => {
+  try {
+    const response = await api.delete(`offer/${offerId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const bulkDeleteOffersService = async (offerIds) => {
+  try {
+    const response = await api.delete("offer/bulk-delete", {
+      data: { offerIds },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateOfferStatusService = async (offerId, status) => {
+  try {
+    const response = await api.patch(`offer/${offerId}/status`, { status });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

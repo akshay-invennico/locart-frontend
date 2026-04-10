@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import GridCommonComponent from "@/components/grid/gridCommonComponent";
 import { getColumns } from "./columns";
 import { Input } from "@/components/ui/input";
@@ -12,72 +13,143 @@ import CreateOfferForm from "./forms/CreateOfferForm";
 import OfferFilterForm from "./forms/OfferFilterForm";
 import OfferDetailsView from "./OfferDetailsView";
 
+import {
+  fetchAllOffers,
+  createOffer,
+  updateOffer,
+  deleteOfferAction,
+  bulkDeleteOffers,
+  fetchAllProducts,
+  fetchAllCategories,
+} from "@/state/ecom/ecomSlice";
+
 const options = {
   select: true,
   order: false,
 };
 
 const OfferPage = () => {
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [showCannotDeletePopup, setShowCannotDeletePopup] = useState(false);
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [createdOffers, setCreatedOffers] = useState([]);
+  const dispatch = useDispatch();
+  const { offers, offerLoading, products, categories } = useSelector(
+    (state) => state.ecomOrders
+  );
 
-  const [showBulkCannotDeletePopup, setShowBulkCannotDeletePopup] = useState(false);
-  const [selectedBulkOffers, setSelectedBulkOffers] = useState([]);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+
   const [showBulkDeletePopup, setShowBulkDeletePopup] = useState(false);
+  const [selectedBulkOffers, setSelectedBulkOffers] = useState([]);
 
   const [showCreate, setShowCreate] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [viewOffer, setViewOffer] = useState(null);
   const [editOffer, setEditOffer] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const productOptions = [
-    { value: "Aloe Locking Gel", label: "Aloe Locking Gel" },
-    { value: "Lavender Calming Mist", label: "Lavender Calming Mist" },
-    { value: "Cactus Hydrating Serum", label: "Cactus Hydrating Serum" },
-  ];
+  useEffect(() => {
+    dispatch(fetchAllOffers());
+    dispatch(fetchAllProducts({ limit: 1000 }));
+    dispatch(fetchAllCategories({ limit: 1000, type: "ecommerce" }));
+  }, [dispatch]);
 
-  const categoryOptions = [
-    { value: "Beauty", label: "Beauty" },
-    { value: "Wellness", label: "Wellness" },
-    { value: "Accessories", label: "Accessories" },
-  ];
+  const productOptions = useMemo(
+    () =>
+      products.map((p) => ({
+        value: p._id,
+        label: p.productName || p.product?.name || p._id,
+      })),
+    [products]
+  );
 
-  const handleCreateOffer = (formData) => {
-    const transformedOffer = {
-      id: Date.now(),
-      offerName: formData.offerName || "",
-      couponCode: formData.couponCode || "",
-      discount: formData.discount || "",
-      maxDiscount: formData.maxDiscount || "",
-      status: formData.status?.toLowerCase() || "inactive",
-      date: formData.dateRange?.from || new Date().toISOString(),
-      usageStats: "0/100 Used",
-      OfferCondition: formData.offerCondition || "",
-      DateRange: {
-        from: formData.dateRange?.from,
-        to: formData.dateRange?.to,
-      },
-      description: formData.description || "",
-      selectedDropdownItems: formData.offerCondition === "Product"
-        ? productOptions.filter(p => formData.selectedProducts?.includes(p.value))
-        : formData.offerCondition === "Categories"
-          ? categoryOptions.filter(c => formData.selectedCategories?.includes(c.value))
-          : [],
-      cartValue: formData.cartValue || "",
-    };
+  const categoryOptions = useMemo(
+    () =>
+      categories.map((c) => ({
+        value: c._id,
+        label: c.categoryName || c.name || c._id,
+      })),
+    [categories]
+  );
 
-    setCreatedOffers((prev) => [...prev, transformedOffer]);
-    setShowCreate(false);
-    toast.success("Offer created successfully");
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    dispatch(fetchAllOffers({ search: query }));
   };
 
-  const handleUpdateOffer = (formData) => {
-    const transformedOffer = { ...editOffer, ...formData };
-    setCreatedOffers((prev) => prev.map(o => o.id === editOffer.id ? transformedOffer : o));
-    setEditOffer(null);
-    toast.success("Offer updated successfully");
+  const handleCreateOffer = async (formData, { setSubmitting }) => {
+    try {
+      const payload = {
+        offerName: formData.offerName,
+        couponCode: formData.couponCode,
+        discountType: formData.discountType,
+        discount: Number(formData.discount),
+        maxDiscount: formData.discountType === "percentage" ? Number(formData.maxDiscount) : null,
+        dateRange: formData.dateRange,
+        status: formData.status,
+        offerCondition: formData.offerCondition,
+        selectedProducts:
+          formData.offerCondition === "Product"
+            ? formData.selectedProducts
+            : [],
+        selectedCategories:
+          formData.offerCondition === "Categories"
+            ? formData.selectedCategories
+            : [],
+        cartValue:
+          formData.offerCondition === "Cart Value"
+            ? Number(formData.cartValue)
+            : null,
+        description: formData.description,
+      };
+
+      await dispatch(createOffer(payload)).unwrap();
+      setShowCreate(false);
+      toast.success("Offer created successfully");
+      dispatch(fetchAllOffers());
+    } catch (err) {
+      toast.error(err?.message || "Failed to create offer");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleUpdateOffer = async (formData, { setSubmitting }) => {
+    try {
+      const payload = {
+        offerName: formData.offerName,
+        couponCode: formData.couponCode,
+        discountType: formData.discountType,
+        discount: Number(formData.discount),
+        maxDiscount: formData.discountType === "percentage" ? Number(formData.maxDiscount) : null,
+        dateRange: formData.dateRange,
+        status: formData.status,
+        offerCondition: formData.offerCondition,
+        selectedProducts:
+          formData.offerCondition === "Product"
+            ? formData.selectedProducts
+            : [],
+        selectedCategories:
+          formData.offerCondition === "Categories"
+            ? formData.selectedCategories
+            : [],
+        cartValue:
+          formData.offerCondition === "Cart Value"
+            ? Number(formData.cartValue)
+            : null,
+        description: formData.description,
+      };
+
+      await dispatch(
+        updateOffer({ offerId: editOffer._id, payload })
+      ).unwrap();
+      setEditOffer(null);
+      toast.success("Offer updated successfully");
+      dispatch(fetchAllOffers());
+    } catch (err) {
+      toast.error(err?.message || "Failed to update offer");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDeleteOffer = (row) => {
@@ -85,20 +157,17 @@ const OfferPage = () => {
     setShowDeletePopup(true);
   };
 
-  const confirmDeleteOffer = () => {
-    const offerName = selectedOffer?.offerName?.trim()?.toLowerCase();
-    const offerExists = createdOffers?.some(
-      (offer) =>
-        offer.offerName?.trim()?.toLowerCase() === offerName
-    );
-
-    if (offerExists) {
+  const confirmDeleteOffer = async () => {
+    try {
+      await dispatch(deleteOfferAction(selectedOffer._id)).unwrap();
       setShowDeletePopup(false);
-      setShowCannotDeletePopup(true);
-    } else {
-      setShowDeletePopup(false);
-      setCreatedOffers(prev => prev.filter(o => o.id !== selectedOffer?.id));
+      setSelectedOffer(null);
       toast.success("Offer deleted successfully");
+    } catch (err) {
+      setShowDeletePopup(false);
+      toast.error(
+        err?.message || "Failed to delete offer"
+      );
     }
   };
 
@@ -109,15 +178,29 @@ const OfferPage = () => {
       const initialValues = {
         offerName: row.offerName || "",
         couponCode: row.couponCode || "",
-        discount: typeof row.discount === 'string' ? row.discount.replace('%', '') : row.discount || "",
-        maxDiscount: typeof row.maxDiscount === 'string' ? row.maxDiscount.replace('$', '') : row.maxDiscount || "",
-        status: Array.isArray(row.status) ? (row.status[0] ? row.status[0].charAt(0).toUpperCase() + row.status[0].slice(1) : "Active") : row.status || "Active",
-        dateRange: row.DateRange || { from: null, to: null },
-        offerCondition: row.OfferCondition || "Product",
-        selectedProducts: row.OfferCondition === 'Product' && row.selectedDropdownItems ? row.selectedDropdownItems.map(i => i.value) : [],
-        selectedCategories: row.OfferCondition === 'Categories' && row.selectedDropdownItems ? row.selectedDropdownItems.map(i => i.value) : [],
-        cartValue: row.cartValue ? String(row.cartValue).replace('$', '') : "",
-        description: row.description || ""
+        discountType: row.discountType || "percentage",
+        discount: row.discount || "",
+        maxDiscount: row.maxDiscount || "",
+        status:
+          typeof row.status === "string"
+            ? row.status.charAt(0).toUpperCase() + row.status.slice(1)
+            : "Active",
+        dateRange: row.dateRange || { from: null, to: null },
+        offerCondition: row.offerCondition || "Product",
+        selectedProducts:
+          row.offerCondition === "Product" && row.selectedProducts
+            ? row.selectedProducts.map((p) =>
+                typeof p === "string" ? p : p._id
+              )
+            : [],
+        selectedCategories:
+          row.offerCondition === "Categories" && row.selectedCategories
+            ? row.selectedCategories.map((c) =>
+                typeof c === "string" ? c : c._id
+              )
+            : [],
+        cartValue: row.cartValue ? String(row.cartValue) : "",
+        description: row.description || "",
       };
       setEditOffer({ ...row, _initialValues: initialValues });
     }
@@ -139,6 +222,12 @@ const OfferPage = () => {
     },
   ];
 
+  // Map offers for grid display
+  const gridData = offers.map((offer) => ({
+    ...offer,
+    date: offer.dateRange?.from || offer.createdAt,
+  }));
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between gap-2 mb-4 w-full">
@@ -147,6 +236,8 @@ const OfferPage = () => {
           <Input
             className="pl-10 h-10 w-full border border-gray-300 rounded-md"
             placeholder="Search here..."
+            value={searchQuery}
+            onChange={handleSearch}
           />
         </div>
 
@@ -181,7 +272,7 @@ const OfferPage = () => {
 
       <div className="w-full">
         <GridCommonComponent
-          data={[...createdOffers]}
+          data={gridData}
           options={options}
           columns={columns?.map((col) => {
             if (col.key === "actions") {
@@ -211,22 +302,9 @@ const OfferPage = () => {
               type: "button",
               onClick: (selectedRows) => {
                 if (!selectedRows || selectedRows.length === 0) return;
-
-                const undeletable = selectedRows.filter((selectedOffer) => {
-                  const offerName = selectedOffer?.offerName?.trim()?.toLowerCase();
-                  return createdOffers.some(
-                    (offer) => offer.offerName?.trim()?.toLowerCase() === offerName
-                  );
-                });
-
-                if (undeletable.length > 0) {
-                  setSelectedBulkOffers(undeletable);
-                  setShowBulkCannotDeletePopup(true);
-                } else {
-                  setSelectedBulkOffers(selectedRows);
-                  setShowBulkDeletePopup(true);
-                }
-              }
+                setSelectedBulkOffers(selectedRows);
+                setShowBulkDeletePopup(true);
+              },
             },
           ]}
         />
@@ -237,61 +315,46 @@ const OfferPage = () => {
         open={showDeletePopup}
         onClose={() => setShowDeletePopup(false)}
         onConfirm={confirmDeleteOffer}
-        title="Delete Offers?"
-        description="Are you sure you want to delete this selected Offers? This action will notify the Clients and initiate the deletion process. Once deleted, this offers cannot be undone."
+        title="Delete Offer?"
+        description="Are you sure you want to delete this selected Offer? This action cannot be undone."
         confirmLabel="Delete Offer"
         confirmVariant="destructive"
-      />
-
-      {/* Cannot Delete Single */}
-      <ConfirmDialog
-        open={showCannotDeletePopup}
-        onClose={() => setShowCannotDeletePopup(false)}
-        onConfirm={() => setShowCannotDeletePopup(false)}
-        title="Cannot Delete Offers"
-        description="This offer cannot be deleted because there are Offers currently listed under it. Please remove the offers before attempting to delete the offer."
-        confirmLabel="Back To Main Page"
-        cancelLabel="Close"
       />
 
       {/* Bulk Delete Offers */}
       <ConfirmDialog
         open={showBulkDeletePopup}
         onClose={() => setShowBulkDeletePopup(false)}
-        onConfirm={() => {
-          setShowBulkDeletePopup(false);
-          toast.success(`Successfully deleted ${selectedBulkOffers.length} offer(s)`);
+        onConfirm={async () => {
+          try {
+            const ids = selectedBulkOffers.map((o) => o._id);
+            const result = await dispatch(bulkDeleteOffers(ids)).unwrap();
+            setShowBulkDeletePopup(false);
+            setSelectedBulkOffers([]);
+
+            const deletedCount = result?.deleted?.length || 0;
+            const skippedCount = result?.skipped?.length || 0;
+
+            if (skippedCount > 0) {
+              toast.warning(
+                `Deleted ${deletedCount} offer(s). ${skippedCount} offer(s) skipped (already used).`
+              );
+            } else {
+              toast.success(
+                `Successfully deleted ${deletedCount} offer(s)`
+              );
+            }
+            dispatch(fetchAllOffers());
+          } catch (err) {
+            toast.error(err?.message || "Failed to delete offers");
+            setShowBulkDeletePopup(false);
+          }
         }}
         title="Delete Selected Offers?"
-        description="Are you sure you want to delete this selected Offers? This action will notify the Clients and initiate the deletion process. Once deleted, this offers cannot be undone."
+        description="Are you sure you want to delete the selected Offers? This action cannot be undone."
         confirmLabel="Delete Selection"
         confirmVariant="destructive"
       />
-
-      {/* Cannot Delete Bulk */}
-      <ConfirmDialog
-        open={showBulkCannotDeletePopup}
-        onClose={() => {
-          setShowBulkCannotDeletePopup(false);
-          setSelectedBulkOffers([]);
-        }}
-        onConfirm={() => {
-          setShowBulkCannotDeletePopup(false);
-          setSelectedBulkOffers([]);
-        }}
-        title="Cannot Delete Selected Offers"
-        description="These selected offers cannot be deleted because they already exist in the system. Please remove the offers before attempting to delete."
-        confirmLabel="Back To Main Page"
-        cancelLabel="Close"
-      >
-        <div className="mt-4">
-          <ul className="list-disc list-inside text-red-600 text-sm space-y-1 max-h-40 overflow-y-auto bg-red-50 p-3 rounded-md">
-            {selectedBulkOffers.map((offer, i) => (
-              <li key={i}>{offer.offerName || "Unnamed Offer"}</li>
-            ))}
-          </ul>
-        </div>
-      </ConfirmDialog>
 
       <SlidePanel
         open={showCreate}
@@ -334,10 +397,15 @@ const OfferPage = () => {
       >
         <OfferFilterForm
           onApply={(data) => {
-            console.log("Filters Applied", data);
+            const filters = {};
+            if (data.status) filters.status = data.status;
+            dispatch(fetchAllOffers(filters));
             setShowFilter(false);
           }}
-          onReset={() => console.log("Filters Reset")}
+          onReset={() => {
+            dispatch(fetchAllOffers());
+            setShowFilter(false);
+          }}
         />
       </SlidePanel>
 
