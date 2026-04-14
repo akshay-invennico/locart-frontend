@@ -1,24 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import GridCommonComponent from "@/components/grid/gridCommonComponent";
-import { RefundData } from "./refundData";
 import { getRefundColumns } from "./refundColumns";
 import { Input } from "@/components/ui/input";
 import { Download, Filter, Search } from "lucide-react";
 import { SlidePanel } from "@/components/feedback";
 import TransactionDetailView from "./TransactionDetailView";
 import ActionComponent from "@/components/grid/actionComponent";
+import {
+  fetchAllRefunds,
+  fetchTransactionDetails,
+  clearSelectedTransaction,
+} from "@/state/payment/paymentSlice";
 
 const options = {
   select: true,
   order: false,
 };
 
+const ITEMS_PER_PAGE = 10;
+
 const RefundsPage = () => {
+  const dispatch = useDispatch();
+  const { refunds, detailLoading, selectedTransaction, refundPagination } =
+    useSelector((state) => state.payment);
+
   const [showDetailPanel, setShowDetailPanel] = useState(false);
-  const [selectedRefund, setSelectedRefund] = useState(null);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+
+  const fetchRefunds = useCallback(
+    (page = currentPage, searchTerm = search) => {
+      dispatch(
+        fetchAllRefunds({
+          page,
+          limit: ITEMS_PER_PAGE,
+          search: searchTerm,
+        })
+      );
+    },
+    [dispatch, currentPage, search]
+  );
+
+  useEffect(() => {
+    fetchRefunds(currentPage, search);
+  }, [currentPage]);
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+
+    if (searchTimeout) clearTimeout(searchTimeout);
+    setSearchTimeout(
+      setTimeout(() => {
+        setCurrentPage(1);
+        fetchRefunds(1, value);
+      }, 500)
+    );
+  };
 
   const handleViewRefund = (row) => {
-    setSelectedRefund(row);
+    dispatch(fetchTransactionDetails(row._id));
     setShowDetailPanel(true);
   };
 
@@ -29,12 +72,12 @@ const RefundsPage = () => {
     {
       label: "Download PDF",
       icon: <Download className="w-4 h-4 text-[#7B7B7B]" />,
-      onClick: () => {},
+      onClick: () => { },
     },
     {
       label: "Download CSV",
       icon: <Download className="w-4 h-4 text-[#7B7B7B]" />,
-      onClick: () => {},
+      onClick: () => { },
     },
   ];
 
@@ -46,6 +89,8 @@ const RefundsPage = () => {
           <Input
             className="pl-10 h-10 w-full border border-gray-300 rounded-md"
             placeholder="Search here..."
+            value={search}
+            onChange={handleSearch}
           />
         </div>
 
@@ -64,7 +109,7 @@ const RefundsPage = () => {
 
       <div>
         <GridCommonComponent
-          data={RefundData}
+          data={refunds}
           options={options}
           columns={columns?.map((col) => {
             if (col.key === "actions") {
@@ -87,6 +132,13 @@ const RefundsPage = () => {
               bg: "bg-gray-100",
             },
           }}
+          pagination={{
+            currentPage: refundPagination.page,
+            totalPages: refundPagination.totalPages,
+            totalItems: refundPagination.total,
+            itemsPerPage: ITEMS_PER_PAGE,
+            onPageChange: (page) => setCurrentPage(page),
+          }}
         />
       </div>
 
@@ -94,18 +146,14 @@ const RefundsPage = () => {
         open={showDetailPanel}
         onClose={() => {
           setShowDetailPanel(false);
-          setSelectedRefund(null);
+          dispatch(clearSelectedTransaction());
         }}
         width="sm:max-w-[480px]"
       >
-        {selectedRefund && (
-          <TransactionDetailView
-            transaction={{
-              ...selectedRefund,
-              user: selectedRefund.client,
-            }}
-          />
-        )}
+        <TransactionDetailView
+          transaction={selectedTransaction}
+          loading={detailLoading}
+        />
       </SlidePanel>
     </div>
   );

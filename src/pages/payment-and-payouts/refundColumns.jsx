@@ -1,8 +1,6 @@
-import { Flag } from "lucide-react";
-
 export const getRefundColumns = (handleViewRefund) => [
   {
-    key: "transactionId",
+    key: "transaction_id",
     title: "Transaction ID",
     render: (value, row) => (
       <button
@@ -13,7 +11,7 @@ export const getRefundColumns = (handleViewRefund) => [
         }}
         className="inline-flex items-center gap-1.5 text-[#02C8DE] font-medium hover:underline bg-transparent border-0 p-0 cursor-pointer"
       >
-        {row.transactionId}
+        {row.transaction_id ? `#TRN${row.transaction_id}` : `#${row._id?.slice(-8)}`}
       </button>
     ),
   },
@@ -21,50 +19,53 @@ export const getRefundColumns = (handleViewRefund) => [
     key: "date",
     title: "Date & Time",
     render: (value, row) => {
-      const formatted = (() => {
-        try {
-          const d = new Date(row.date);
-          return d.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          });
-        } catch {
-          return row.date || "-";
-        }
-      })();
-      return (
-        <span className="text-gray-600">
-          {formatted}
-          <span className="ml-3 text-gray-400">{row.time}</span>
-        </span>
-      );
+      try {
+        const d = new Date(row.created_at);
+        const date = d.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+        const time = d.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+        return (
+          <span className="text-gray-600">
+            {date}
+            <span className="ml-3 text-gray-400">{time}</span>
+          </span>
+        );
+      } catch {
+        return "-";
+      }
     },
   },
   {
-    key: "client",
+    key: "user",
     title: "Client",
-    render: (value) => (
-      <span className="text-[#02C8DE] font-medium">{value}</span>
+    render: (value, row) => (
+      <span className="text-[#02C8DE] font-medium">{row.user?.name || "-"}</span>
     ),
   },
   {
-    key: "type",
+    key: "type_label",
     title: "Type",
   },
   {
     key: "amount",
     title: "Amount",
     render: (value) => (
-      <span className="text-red-500 font-medium">-${value}</span>
+      <span className="text-red-500 font-medium">-${Number(value || 0).toFixed(2)}</span>
     ),
   },
   {
-    key: "method",
+    key: "payment_processor",
     title: "Method",
   },
   {
-    key: "status",
+    key: "transaction_status",
     title: "Status",
     component: {
       type: "badge",
@@ -77,6 +78,7 @@ export const getRefundColumns = (handleViewRefund) => [
         value: {
           refunded: "#02C8DE",
           "in process": "#F59E0B",
+          pending: "#F59E0B",
         },
       },
     },

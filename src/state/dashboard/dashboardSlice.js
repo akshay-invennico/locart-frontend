@@ -99,14 +99,21 @@ const dashboardSlice = createSlice({
       .addCase(fetchTopPerformingStylist.fulfilled, (state, action) => {
         state.loading = false;
         const incoming = action.payload?.stylists || [];
-        state.stylists = incoming.map((s) => ({
-          rank: s.rank,
-          stylist: { name: s.stylist, email: s.stylist.email, profile: s.stylist.profile },
-          salon: s.salon,
-          appointments: s.appointments,
-          avg_rating: s.avgRating,
-          revenue: s.revenueGenerated,
-        }));
+        state.stylists = incoming.map((s) => {
+          const stylistObj = typeof s.stylist === "object" ? s.stylist : {};
+          return {
+            rank: s.rank,
+            stylist: {
+              name: stylistObj.name || s.stylist,
+              email: stylistObj.email || s.email || "",
+              profile: stylistObj.profile || stylistObj.profile_image || s.profile || "",
+            },
+            salon: s.salon,
+            appointments: s.appointments,
+            avg_rating: s.avgRating,
+            revenue: s.revenueGenerated,
+          };
+        });
       })
       .addCase(fetchTopPerformingStylist.rejected, (state, action) => {
         state.loading = false;
@@ -120,7 +127,13 @@ const dashboardSlice = createSlice({
         const incoming = action.payload?.products || [];
         state.products = incoming.map((p) => ({
           rank: p.rank,
-          product: { name: p.productName, profile: p.productImage || "" },
+          product: {
+            name: p.productName,
+            profile: p.productImage || "",
+            email: ((p.description || p.shortDescription || "").length > 40
+              ? (p.description || p.shortDescription || "").slice(0, 40) + "..."
+              : p.description || p.shortDescription || ""),
+          },
           unit_sold: p.unitsSold,
           revenue: p.totalRevenue,
         }));

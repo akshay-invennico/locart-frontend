@@ -1,6 +1,6 @@
 export const getPaymentColumns = (handleViewTransaction) => [
   {
-    key: "id",
+    key: "transaction_id",
     title: "ID",
     render: (value, row) => (
       <button
@@ -11,31 +11,49 @@ export const getPaymentColumns = (handleViewTransaction) => [
         }}
         className="text-[#02C8DE] font-medium hover:underline bg-transparent border-0 p-0 cursor-pointer"
       >
-        {row.transactionId}
+        {row.transaction_id ? `#TRN${row.transaction_id}` : `#${row._id?.slice(-8)}`}
       </button>
     ),
   },
   {
     key: "date",
     title: "Date",
-    component: {
-      type: "date",
-      style: {},
-      options: {
-        format: "dd MMM, yyyy",
-      },
+    render: (value, row) => {
+      try {
+        const d = new Date(row.created_at);
+        return d.toLocaleDateString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        });
+      } catch {
+        return "-";
+      }
     },
   },
   {
     key: "time",
     title: "Time",
+    render: (value, row) => {
+      try {
+        const d = new Date(row.created_at);
+        return d.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+      } catch {
+        return "-";
+      }
+    },
   },
   {
     key: "user",
     title: "User",
+    render: (value, row) => row.user?.name || "-",
   },
   {
-    key: "type",
+    key: "type_label",
     title: "Type",
   },
   {
@@ -52,11 +70,12 @@ export const getPaymentColumns = (handleViewTransaction) => [
     },
   },
   {
-    key: "method",
+    key: "payment_processor",
     title: "Method",
+    render: () => "Stripe",
   },
   {
-    key: "status",
+    key: "transaction_status",
     title: "Status",
     component: {
       type: "badge",
@@ -68,8 +87,11 @@ export const getPaymentColumns = (handleViewTransaction) => [
       options: {
         value: {
           paid: "#16A34A",
+          completed: "#16A34A",
           "in process": "#F59E0B",
+          pending: "#F59E0B",
           failed: "#DC2626",
+          refunded: "#6B7280",
         },
       },
     },
@@ -81,14 +103,17 @@ export const getPaymentColumns = (handleViewTransaction) => [
       type: "action",
       style: {},
       options: {
-        actions: (row) => [
-          {
-            label: "View",
-            iconUrl: "/icons/show.svg",
-            type: "sidebar",
-            onClick: (row) => handleViewTransaction?.(row),
-          },
-        ],
+        actions: () => {
+          const items = [
+            {
+              label: "View",
+              iconUrl: "/icons/show.svg",
+              type: "sidebar",
+              onClick: (row) => handleViewTransaction?.(row),
+            },
+          ];
+          return items;
+        },
       },
     },
   },

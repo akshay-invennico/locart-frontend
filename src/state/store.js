@@ -6,6 +6,7 @@ import appointmentReducer from "../state/appointment/appointmentSlice";
 import stylistReducer from "../state/stylist/stylistSlice";
 import storeReducer from "../state/store/storeSlice";
 import clientReducer from "../state/client/clientSlice";
+import paymentReducer from "../state/payment/paymentSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -15,5 +16,6 @@ export const store = configureStore({
     stylists: stylistReducer,
     salon: storeReducer,
     client: clientReducer,
+    payment: paymentReducer,
   },
 });

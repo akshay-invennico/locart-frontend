@@ -10,6 +10,7 @@ export const productColumns = [
     sortable: true,
     structure: {
       name: "name",
+      email: "email",
       profile: "profile",
     },
     component: {
