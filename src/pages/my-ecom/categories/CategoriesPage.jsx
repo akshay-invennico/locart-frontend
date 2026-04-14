@@ -42,7 +42,7 @@ const CategoriesPage = () => {
   const [filterFormValues, setFilterFormValues] = useState({});
 
   const dispatch = useDispatch();
-  const { categories, pagination } = useSelector(
+  const { categories, pagination, loading } = useSelector(
     (state) => state.ecomOrders
   );
 
@@ -306,7 +306,12 @@ const CategoriesPage = () => {
       </div>
 
       <div className="w-full">
-        <GridCommonComponent
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Spinner />
+          </div>
+        )}
+        {!loading && <GridCommonComponent
           data={formattedCategories}
           options={options}
           columns={columns?.map((col) => {
@@ -345,7 +350,7 @@ const CategoriesPage = () => {
               onClick: (rows) => setBulkDeletePopup({ show: true, rows })
             },
           ]}
-        />
+        />}
       </div>
 
       <ConfirmDialog

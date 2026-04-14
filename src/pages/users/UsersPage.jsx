@@ -19,6 +19,7 @@ import {
 import { sendForgotPassword } from "@/state/auth/authSlice";
 import { exportGridPDF, exportGridCSV } from "@/lib/HelpFulFunction";
 import { toast } from "sonner";
+import Spinner from "@/components/common/Spinner";
 
 const options = {
   select: true,
@@ -30,6 +31,7 @@ const UsersPage = () => {
   const clients = useSelector((state) => state.client.clients);
   const filters = useSelector((state) => state.client.filters);
   const pagination = useSelector((state) => state.client.pagination);
+  const loading = useSelector((state) => state.client.loading);
 
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -186,7 +188,12 @@ const UsersPage = () => {
         </div>
       </div>
 
-      <GridCommonComponent
+      {loading && (
+        <div className="flex justify-center items-center py-20">
+          <Spinner />
+        </div>
+      )}
+      {!loading && <GridCommonComponent
         data={clients || []}
         options={options}
         columns={columns(
@@ -215,7 +222,7 @@ const UsersPage = () => {
             },
           },
         ]}
-      />
+      />}
 
       {/* Filter Sidebar */}
       <SlidePanel

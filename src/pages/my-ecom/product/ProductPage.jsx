@@ -25,6 +25,7 @@ import ProductFilterForm from "./forms/ProductFilterForm";
 import CreateProductForm from "./forms/CreateProductForm";
 import EditProductForm from "./forms/EditProductForm";
 import ProductDetailsView from "./ProductDetailsView";
+import Spinner from "@/components/common/Spinner";
 
 const options = {
   select: true,
@@ -41,7 +42,7 @@ const ProductPage = () => {
   const [detailContent, setDetailContent] = useState(null);
   const [editProduct, setEditProduct] = useState(null);
 
-  const { categories, products, pagination, vendors } = useSelector(
+  const { categories, products, pagination, vendors, loading } = useSelector(
     (state) => state.ecomOrders
   );
 
@@ -375,7 +376,12 @@ const ProductPage = () => {
       </div>
 
       <div className="w-full">
-        <GridCommonComponent
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Spinner />
+          </div>
+        )}
+        {!loading && <GridCommonComponent
           data={products || []}
           options={options}
           columns={columns?.map((col) => {
@@ -418,7 +424,7 @@ const ProductPage = () => {
               onClick: (rows) => setBulkDeletePopup({ show: true, rows }),
             },
           ]}
-        />
+        />}
       </div>
 
       {/* Filter Panel */}

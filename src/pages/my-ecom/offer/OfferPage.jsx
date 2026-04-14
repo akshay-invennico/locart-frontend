@@ -22,6 +22,7 @@ import {
   fetchAllProducts,
   fetchAllCategories,
 } from "@/state/ecom/ecomSlice";
+import Spinner from "@/components/common/Spinner";
 
 const options = {
   select: true,
@@ -271,7 +272,12 @@ const OfferPage = () => {
       </div>
 
       <div className="w-full">
-        <GridCommonComponent
+        {offerLoading && (
+          <div className="flex justify-center items-center py-20">
+            <Spinner />
+          </div>
+        )}
+        {!offerLoading && <GridCommonComponent
           data={gridData}
           options={options}
           columns={columns?.map((col) => {
@@ -307,7 +313,7 @@ const OfferPage = () => {
               },
             },
           ]}
-        />
+        />}
       </div>
 
       {/* Delete Single Offer */}

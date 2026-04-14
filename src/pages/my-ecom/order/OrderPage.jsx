@@ -19,6 +19,7 @@ import { SlidePanel, ConfirmDialog } from "@/components/feedback";
 import OrderFilterForm from "./forms/OrderFilterForm";
 import FlagOrderForm from "./forms/FlagOrderForm";
 import OrderDetailsView from "./OrderDetailsView";
+import Spinner from "@/components/common/Spinner";
 
 const options = {
   select: true,
@@ -39,7 +40,7 @@ const OrderPage = () => {
   const [filterValues, setFilterValues] = useState({});
   const itemsPerPage = 10;
 
-  const { orders, pagination } = useSelector((state) => state.ecomOrders);
+  const { orders, pagination, loading } = useSelector((state) => state.ecomOrders);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -337,7 +338,12 @@ const OrderPage = () => {
       </div>
 
       <div className="w-full">
-        <GridCommonComponent
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Spinner />
+          </div>
+        )}
+        {!loading && <GridCommonComponent
           data={filteredOrders || []}
           options={options}
           columns={columns?.map((col) => {
@@ -444,7 +450,7 @@ const OrderPage = () => {
               ],
             },
           ]}
-        />
+        />}
       </div>
 
       {/* Filter Sidebar */}

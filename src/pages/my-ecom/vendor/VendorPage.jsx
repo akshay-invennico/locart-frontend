@@ -21,6 +21,7 @@ import VendorFilterForm from "./forms/VendorFilterForm";
 import CreateVendorForm from "./forms/CreateVendorForm";
 import EditVendorForm from "./forms/EditVendorForm";
 import VendorDetailsView from "./VendorDetailsView";
+import Spinner from "@/components/common/Spinner";
 
 const options = {
   select: true,
@@ -43,7 +44,7 @@ const VendorPage = () => {
   });
 
   const dispatch = useDispatch();
-  const { vendors } = useSelector((state) => state.ecomOrders);
+  const { vendors, vendorLoading } = useSelector((state) => state.ecomOrders);
 
   useEffect(() => {
     dispatch(fetchAllVendors(filters));
@@ -282,7 +283,12 @@ const VendorPage = () => {
       </div>
 
       <div className="w-full">
-        <GridCommonComponent
+        {vendorLoading && (
+          <div className="flex justify-center items-center py-20">
+            <Spinner />
+          </div>
+        )}
+        {!vendorLoading && <GridCommonComponent
           data={filteredVendors || []}
           options={options}
           columns={columns?.map((col) => {
@@ -318,7 +324,7 @@ const VendorPage = () => {
               onClick: (rows) => setBulkDeletePopup({ show: true, rows }),
             },
           ]}
-        />
+        />}
       </div>
 
       {/* Filter Panel */}
