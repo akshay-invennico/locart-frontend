@@ -1,187 +1,251 @@
-import FileUpload from "../modules/FileUpload";
-import { Input } from "../ui/input";
-import { useState } from "react";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { storeCreate } from "@/state/store/storeSlice";  
+import { storeCreate } from "@/state/store/storeSlice";
 import { toast } from "sonner";
+import { FormInput, FormTextarea, FormFileUpload } from "@/components/forms";
+import { Button } from "@/components/ui/button";
 
+const urlRule = Yup.string()
+  .trim()
+  .url("Enter a valid URL (including http:// or https://)")
+  .nullable();
+
+const storeSchema = Yup.object({
+  logo: Yup.mixed().required("Store logo is required"),
+  coverImage: Yup.mixed().required("Cover image is required"),
+  name: Yup.string().trim().required("Store name is required"),
+  streetAddress: Yup.string().trim().required("Street address is required"),
+  city: Yup.string().trim().required("City is required"),
+  state: Yup.string().trim().required("State is required"),
+  zipCode: Yup.string()
+    .trim()
+    .matches(/^[0-9A-Za-z\s-]{3,10}$/, "Enter a valid zip code")
+    .required("Zip code is required"),
+  mapLink: urlRule,
+  phone: Yup.string()
+    .trim()
+    .matches(/^[0-9+\-()\s]{7,20}$/, "Enter a valid phone number")
+    .required("Phone is required"),
+  email: Yup.string()
+    .trim()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  website: urlRule,
+  facebook: urlRule,
+  instagram: urlRule,
+  linkedin: urlRule,
+  twitter: urlRule,
+  about: Yup.string().trim().max(1000, "About must be 1000 characters or less"),
+});
+
+const initialValues = {
+  logo: null,
+  coverImage: null,
+  name: "",
+  streetAddress: "",
+  city: "",
+  state: "",
+  zipCode: "",
+  mapLink: "",
+  phone: "",
+  email: "",
+  website: "",
+  facebook: "",
+  instagram: "",
+  linkedin: "",
+  twitter: "",
+  about: "",
+};
 
 export default function CreateStore({ onClose }) {
-
-  const [storeLogo, setStoreLogo] = useState(null);
-  const [coverImage, setCoverImage] = useState(null);
   const dispatch = useDispatch();
 
-  const [form, setForm] = useState({
-    name: "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    map: "",
-    phone: "",
-    email: "",
-    website: "",
-    facebook: "",
-    instagram: "",
-    linkedin: "",
-    twitter: "",
-    about: ""
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = (values, { setSubmitting }) => {
     const formData = new FormData();
-  
-    if (storeLogo) formData.append("logo", storeLogo);
-    if (coverImage) formData.append("coverImage", coverImage);
-  
-    formData.append("name", form.name);
-    formData.append("streetAddress", form.address);
-    formData.append("city", form.city);
-    formData.append("state", form.state);
-    formData.append("zipCode", form.zip);
-    formData.append("mapLink", form.map);
-    formData.append("phone", form.phone);
-    formData.append("email", form.email);
-    formData.append("website", form.website);
-    formData.append("facebook", form.facebook);
-    formData.append("instagram", form.instagram);
-    formData.append("linkedin", form.linkedin); 
-    formData.append("twitter", form.twitter);
-    formData.append("about", form.about);
-  
+
+    if (values.logo) formData.append("logo", values.logo);
+    if (values.coverImage) formData.append("coverImage", values.coverImage);
+
+    const fields = [
+      "name",
+      "streetAddress",
+      "city",
+      "state",
+      "zipCode",
+      "mapLink",
+      "phone",
+      "email",
+      "website",
+      "facebook",
+      "instagram",
+      "linkedin",
+      "twitter",
+      "about",
+    ];
+    fields.forEach((key) => formData.append(key, values[key] ?? ""));
+
     dispatch(storeCreate(formData))
       .unwrap()
       .then(() => {
-        toast("Store created successfully!");
+        toast.success("Store created successfully!");
         onClose();
       })
       .catch((err) => {
         console.error("Error:", err);
-        toast(err || "Error creating store");
-      });
-  };  
+        toast.error(err?.message || err || "Error creating store");
+      })
+      .finally(() => setSubmitting(false));
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 overflow-y-auto max-h-[90vh]">
-
         <h2 className="text-xl font-semibold">Create Store</h2>
-        <p className="text-gray-500 mb-6">Enter your store details to create your profile.</p>
+        <p className="text-gray-500 mb-6">
+          Enter your store details to create your profile.
+        </p>
 
-        <div className="mb-4">
-          <label className="text-black text-[14px] font-medium mb-3">Store Logo</label>
-          <FileUpload onChange={(file) => setStoreLogo(file)} />
-        </div>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={storeSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="space-y-4">
+              <FormFileUpload
+                name="logo"
+                label="Store Logo"
+                accept="image/png,image/jpeg"
+                required
+              />
 
-        <div className="mb-4">
-          <label className="text-black text-[14px] font-medium mb-3">Cover Image</label>
-          <FileUpload onChange={(file) => setCoverImage(file)} />
-        </div>
+              <FormFileUpload
+                name="coverImage"
+                label="Cover Image"
+                accept="image/png,image/jpeg"
+                required
+              />
 
-        <div className="grid grid-cols-1 gap-3">
+              <FormInput
+                name="name"
+                label="Store Name"
+                placeholder="Store Name"
+                required
+              />
 
-          <label className="flex flex-col gap-1">
-            <span>Store Name</span>
-            <Input name="name" value={form.name} onChange={handleChange} placeholder="Store Name" className="input" />
-          </label>
+              <FormInput
+                name="streetAddress"
+                label="Street Address"
+                placeholder="Street Address"
+                required
+              />
 
-          <label className="flex flex-col gap-1">
-            <span>Street Address</span>
-            <Input name="address" value={form.address} onChange={handleChange} placeholder="Street Address" className="input" />
-          </label>
+              <div className="grid grid-cols-2 gap-3">
+                <FormInput
+                  name="city"
+                  label="City"
+                  placeholder="City"
+                  required
+                />
+                <FormInput
+                  name="state"
+                  label="State"
+                  placeholder="State"
+                  required
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1">
-              <span>City</span>
-              <Input name="city" value={form.city} onChange={handleChange} placeholder="City" className="input" />
-            </label>
+              <div className="grid grid-cols-2 gap-3">
+                <FormInput
+                  name="zipCode"
+                  label="Zip Code"
+                  placeholder="Zip Code"
+                  required
+                />
+                <FormInput
+                  name="mapLink"
+                  label="Map Link"
+                  placeholder="https://maps.example.com/..."
+                />
+              </div>
 
-            <label className="flex flex-col gap-1">
-              <span>State</span>
-              <Input name="state" value={form.state} onChange={handleChange} placeholder="State" className="input" />
-            </label>
-          </div>
+              <div className="grid grid-cols-2 gap-3">
+                <FormInput
+                  name="phone"
+                  label="Phone"
+                  placeholder="Phone"
+                  required
+                />
+                <FormInput
+                  name="email"
+                  label="Email"
+                  type="email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1">
-              <span>Zip Code</span>
-              <Input name="zip" value={form.zip} onChange={handleChange} placeholder="Zip Code" className="input" />
-            </label>
+              <FormInput
+                name="website"
+                label="Website"
+                placeholder="https://example.com"
+              />
 
-            <label className="flex flex-col gap-1">
-              <span>Map Link</span>
-              <Input name="map" value={form.map} onChange={handleChange} placeholder="Map Link" className="input" />
-            </label>
-          </div>
+              <div className="grid grid-cols-2 gap-3">
+                <FormInput
+                  name="facebook"
+                  label="Facebook"
+                  placeholder="Facebook URL"
+                />
+                <FormInput
+                  name="instagram"
+                  label="Instagram"
+                  placeholder="Instagram URL"
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1">
-              <span>Phone</span>
-              <Input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone" className="input" />
-            </label>
+              <div className="grid grid-cols-2 gap-3">
+                <FormInput
+                  name="linkedin"
+                  label="LinkedIn"
+                  placeholder="LinkedIn URL"
+                />
+                <FormInput
+                  name="twitter"
+                  label="Twitter"
+                  placeholder="Twitter URL"
+                />
+              </div>
 
-            <label className="flex flex-col gap-1">
-              <span>Email</span>
-              <Input name="email" value={form.email} onChange={handleChange} placeholder="Email" className="input" />
-            </label>
-          </div>
+              <FormTextarea
+                name="about"
+                label="About"
+                placeholder="Write something about the salon"
+                rows={4}
+              />
 
-          <label className="flex flex-col gap-1">
-            <span>Website</span>
-            <Input name="website" value={form.website} onChange={handleChange} placeholder="Website" className="input" />
-          </label>
-
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1">
-              <span>Facebook</span>
-              <Input name="facebook" value={form.facebook} onChange={handleChange} placeholder="Facebook" className="input" />
-            </label>
-
-            <label className="flex flex-col gap-1">
-              <span>Instagram</span>
-              <Input name="instagram" value={form.instagram} onChange={handleChange} placeholder="Instagram" className="input" />
-            </label>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1">
-              <span>Linkedin</span>
-              <Input name="linkedin" value={form.linkedin} onChange={handleChange} placeholder="Linkedin" className="input" />
-            </label>
-
-            <label className="flex flex-col gap-1">
-              <span>Twitter</span>
-              <Input name="twitter" value={form.twitter} onChange={handleChange} placeholder="Twitter" className="input" />
-            </label>
-          </div>
-
-          <label className="flex flex-col gap-1">
-            <span>About</span>
-            <textarea
-              name="about"
-              value={form.about}
-              onChange={handleChange}
-              rows="4"
-              placeholder="Write something about the salon"
-              className="input resize-y px-3 py-2 border rounded-xl"
-            ></textarea>
-          </label>
-        </div>
-
-        <div className="flex justify-between mt-6 gap-x-6">
-          <button onClick={onClose} className="w-full px-6 py-2 border border-gray-300 rounded-lg cursor-pointer">
-            Cancel
-          </button>
-
-          <button onClick={handleSubmit} className="w-full px-6 py-2 bg-primary1 text-white rounded-lg cursor-pointer">
-            Create Store
-          </button>
-        </div>
+              <div className="flex justify-between mt-6 gap-x-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 border-gray-300"
+                  onClick={onClose}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1 bg-primary1 hover:bg-primary1/90 text-white"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating..." : "Create Store"}
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );
