@@ -26,7 +26,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@react-pdf/renderer": "^3.3.0",
     "@reduxjs/toolkit": "^2.9.0",
-    "axios": "1.12.2",
+    "axios": "^1.15.2",
     "card": "^2.5.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
